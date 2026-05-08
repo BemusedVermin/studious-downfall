@@ -1,36 +1,10 @@
 # Repository Scripts
 
-Small utilities used by automation (review subagents, CI helpers). Each
-script is **pre-approved** in `.claude/settings.local.json` so it runs
-without a permission prompt.
+Small utilities used by automation (review subagents, CI helpers).
 
-## `ci-local.sh`
-
-Run every CI gate from `.github/workflows/ci.yml` locally, in the same order, with the same flags. Mirror of:
-
-1. `cargo fmt --check`
-2. `cargo clippy --workspace --exclude beast-render --all-targets -- -D warnings`
-3. `cargo test --workspace --exclude beast-render --all-targets --locked`
-4. `cargo test --workspace --exclude beast-render --doc --locked`
-5. `cargo clippy -p beast-render --no-default-features --features headless --all-targets -- -D warnings`
-6. `cargo test  -p beast-render --no-default-features --features headless --all-targets --locked`
-7. `cargo deny check`                                                   *(skipped if cargo-deny isn't installed)*
-8. `cargo llvm-cov` summary                                             *(skipped if cargo-llvm-cov isn't installed)*
-9. `.github/scripts/run-quality-metrics.sh`                             *(skipped if `lizard` isn't installed)*
-10. `cargo build --release --workspace --exclude beast-render --locked`
-11. `cargo build --release -p beast-render --headless --locked`
-12. `cargo test --test determinism_test --release` *(once the M1 target lands)*
-
-### Usage
-
-```bash
-scripts/ci-local.sh                  # fail-fast (recommended for pre-push)
-scripts/ci-local.sh --keep-going     # run every gate, then list failures
-scripts/ci-local.sh --quick          # skip release builds, coverage, quality
-scripts/ci-local.sh --no-render      # skip the SDL3-from-source render steps
-```
-
-The script forces `RUSTFLAGS=-D warnings` and `CARGO_INCREMENTAL=0` so the local run matches CI bit-for-bit. Optional gates (cargo-deny, cargo-llvm-cov, lizard) print a clear "skipped" line when the tool isn't installed instead of failing.
+For local CI gates use the [justfile](../justfile) — `just check` runs
+ruff lint, format-check, pyright, and pytest in the same order as
+`.github/workflows/ci.yml`.
 
 ---
 
@@ -62,23 +36,24 @@ endpoint:
   "event": "REQUEST_CHANGES",
   "comments": [
     {
-      "path": "crates/beast-ui/src/widget.rs",
-      "line": 35,
+      "path": "src/emergent_systems/system.py",
+      "line": 88,
       "side": "RIGHT",
-      "body": "**LOW** — Add `Serialize`/`Deserialize` derives so a future widget tree save..."
+      "body": "**HIGH** — V_T construction must not collapse `Distribution[State]` and `Population[State]` (paper §3.4 line 583). Re-add the type split."
     },
     {
-      "path": "crates/beast-ui/src/widget/list.rs",
+      "path": "src/emergent_systems/viability.py",
       "start_line": 50,
-      "line": 55,
+      "line": 60,
       "side": "RIGHT",
-      "body": "**MEDIUM** — Multi-line comment example..."
+      "body": "**MEDIUM** — This `ClosureViability` superclass prejudges Conjecture C1 (paper §5.1). Keep the four formalisms separate — see CLAUDE.md."
     }
   ]
 }
 ```
 
 Notes:
+
 - `line` is 1-based and refers to the line in the **new** file (`side:
   RIGHT`) by default.
 - For multi-line comments, `start_line` and `line` together describe a
@@ -103,7 +78,8 @@ MUST match the verdict the agent states in the body's first line:
 the body says `**APPROVE**` leaves any prior `CHANGES_REQUESTED` from
 the same reviewer active, blocking the merge despite the verdict —
 this is the regression tracked in
-[#246](https://github.com/BemusedVermin/evolution-simulation/issues/246).
+[BemusedVermin/evolution-simulation#246](https://github.com/BemusedVermin/evolution-simulation/issues/246),
+the upstream repo this script was ported from.
 
 `post-pr-review.sh` rejects payloads whose `event` is not one of
 `APPROVE` / `REQUEST_CHANGES` / `COMMENT`, so a typo (e.g.
@@ -134,4 +110,7 @@ When you (a reviewer subagent) need to post a review:
 3. Parse the JSON output for the new review id if you need it (the
    script writes the API response to stdout).
 
-Do **not** issue separate `pull_request_review_write` + `add_comment_to_pending_review` + `submit_pending` MCP calls. Each one of those is a permission-prompt landmine; the script is one approved call.
+Do **not** issue separate `pull_request_review_write` +
+`add_comment_to_pending_review` + `submit_pending` MCP calls. Each one
+of those is a permission-prompt landmine; the script is one approved
+call.
