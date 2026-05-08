@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "emergent-systems"
+version = "0.1.0"
+description = "A scaffold for the substrate-agnostic emergent-systems framework. Implements the typed five-slot model from McGuire (2026); component bodies are user-supplied."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Liam McGuire", email = "liammcg44@gmail.com" }]
+keywords = ["artificial-life", "emergence", "evolutionary-computation", "jax"]
+
+dependencies = [
+    "jax>=0.4.30",
+    "jaxtyping>=0.2.34",
+    "beartype>=0.18",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0",
+    "ruff>=0.5",
+    "pyright>=1.1.370",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/emergent_systems"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N", "SIM"]
+ignore = [
+    "E501",   # line length handled by formatter
+    "N806",   # uppercase locals — we use them for math symbols (X, P) in code
+    "N803",   # uppercase argument names — same reason
+    "F722",   # jaxtyping uses string-shape annotations like Float[Array, "N D"]
+    "F821",   # jaxtyping shape vars look like undefined names to ruff
+    "UP007",  # X | Y union — sometimes still need typing.Union for older runtime
+    "UP037",  # jaxtyping shape strings look like forward refs that ruff wants to unquote
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["N802"]   # test names can be loose
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
+reportMissingTypeStubs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

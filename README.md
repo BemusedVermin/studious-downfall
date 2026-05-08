@@ -1,0 +1,54 @@
+# emergent-systems
+
+A typed JAX scaffold for the substrate-agnostic emergent-systems framework defined in
+[`docs/emergent_systems.tex`](docs/emergent_systems.tex).
+
+## What this is
+
+The paper specifies an emergent system as a typed 5-tuple
+
+```text
+S = (X, V, F, T, O)
+```
+
+— substrate, variation, viability, interaction topology, observer — operating on a joint state
+space `Z = X × M+(X)` via the iteration rule
+`(x_{t+1}, μ_{t+1}) = (S̃_F ∘ Ṽ_T ∘ Φ̃)(x_t, μ_t)`.
+
+This library encodes those types as Python `Protocol`s and provides the harness that wires them
+together. **The library does not ship concrete simulators.** Implementers supply the slots; the
+library composes, validates, and runs them.
+
+## What the user supplies
+
+| Slot | Protocol | Paper symbol |
+|---|---|---|
+| Substrate | `Substrate[State, DynamicsParam]` | `X = (X, Φ, μ_0)` |
+| Variation | `Variation[State, Params]` | `V : X × Θ → P(X)` |
+| Viability | `ViabilityFilter[State]` | `F : M+(X) → M+(X)` |
+| Topology | `InteractionTopology` | `T_t` |
+| Observer | `StatefulObserver[State, ObserverState]` | `O_s` |
+| Entity detection | `EntityDetector[State]` | `e = (S, π)` |
+
+## Naming convention
+
+Identifiers are plain English. Each one carries a `# paper: <symbol>` comment so the code and
+the paper can be navigated together without translation.
+
+## Quickstart
+
+```bash
+uv sync
+uv run pytest
+```
+
+## Performance bottlenecks
+
+The library flags hot paths likely to become bottlenecks in pure Python/JAX with the
+`PERF` convention (see [`src/emergent_systems/perf.py`](src/emergent_systems/perf.py)). Comments
+of the form `# PERF[reason]: ...` mark candidates for a port to a faster language.
+
+## Status
+
+The framework's conjectures (C1–C3) and open problems (OP1–OP3) are deliberately **not** baked
+into the type hierarchy. See [`docs/emergent_systems.tex`](docs/emergent_systems.tex) §5.1.

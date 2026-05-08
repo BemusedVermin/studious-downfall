@@ -1,0 +1,1511 @@
+% =============================================================================
+%  A Unified Mathematical Framework for Substrate-Agnostic Emergent Systems
+%  IEEE-style LaTeX source. Compile with: pdflatex emergent_systems.tex
+%  (run twice for cross-references)
+% =============================================================================
+\documentclass[journal]{IEEEtran}
+
+% ---------- Encoding & fonts ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% \usepackage{lmodern}  % Optional; uncomment if you have lmodern installed (most full TeX distributions do).
+\usepackage[expansion=false]{microtype}  % drop "expansion=false" if you have lmodern or another scalable font
+
+% ---------- Math ----------
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+
+% ---------- Layout and references ----------
+\usepackage{enumitem}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+
+% ---------- Hyperlinks ----------
+\usepackage[hidelinks]{hyperref}
+
+% ---------- Theorem environments ----------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+% Conjectures and open problems use named labels (C1, C2, ...; OP1, OP2, ...).
+% We define unnumbered theorem-like environments and provide the label manually.
+\theoremstyle{plain}
+\newtheorem*{conjecturestar}{Conjecture}
+\newtheorem*{openproblemstar}{Open Problem}
+
+% Convenience: a conjecture/open-problem with an explicit short tag.
+\newenvironment{namedconjecture}[1]{%
+  \begin{conjecturestar}[#1]%
+}{\end{conjecturestar}}
+\newenvironment{namedopenproblem}[1]{%
+  \begin{openproblemstar}[#1]%
+}{\end{openproblemstar}}
+
+% ---------- Research-note environment ----------
+\newenvironment{implnote}[1][Computational implication]{%
+  \par\smallskip\noindent\emph{#1.}\ }{\par\smallskip}
+
+% Local topic headings avoid IEEEtran's visually heavy "1)" subsubsection
+% style while still creating anchors for cross-references.
+\newcounter{topic}[subsection]
+\renewcommand{\thetopic}{\thesubsection.\arabic{topic}}
+\newcommand{\topic}[1]{%
+  \refstepcounter{topic}%
+  \par\smallskip\noindent\textbf{#1.}\ }
+
+% ---------- Math shortcuts ----------
+\DeclareMathOperator{\EI}{EI}
+\DeclareMathOperator{\CE}{CE}
+\DeclareMathOperator{\KL}{KL}
+\DeclareMathOperator{\Param}{Param}
+\DeclareMathOperator{\supp}{supp}
+\newcommand{\Hmax}{\mathbf{H}_{\max}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Pmeas}{\mathcal{P}}
+\newcommand{\Mplus}{\mathcal{M}_{+}}
+\newcommand{\X}{\mathbf{X}}
+
+% =============================================================================
+\title{A Unified Mathematical Framework for Substrate-Agnostic Emergent Systems}
+\author{Liam~McGuire%
+\thanks{Liam McGuire is an unaffiliated researcher. Address:
+Seattle, Washington, United States. Email: liammcg44@gmail.com.}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Research on emergent systems spans artificial life, open-ended evolution,
+multi-agent reinforcement learning, cultural evolution, active inference, and
+causal-emergence theory. These literatures often study related phenomena using
+incompatible mathematical objects, which makes comparison across substrates and
+evaluation regimes difficult. This paper proposes a substrate-agnostic
+mathematical framework organized around five typed components: substrate,
+variation, viability, interaction topology, and observer--evaluator. The
+framework specifies how these components compose, how entities can be defined
+through support sets and scale projections, and how Hoel-style causal emergence
+can be posed as an assessment problem for the resulting systems. The framework
+is illustrated with representative instances from cellular automata,
+continuous artificial-life fields, program-based evolution, multi-agent
+systems, and foundation-model-mediated search, followed by a worked composite
+example and implementation checklist. The paper also separates established
+definitions from conjectural unifications and states open problems whose
+resolution would determine the framework's scope. The result is a methodology
+for specifying, comparing, and implementing emergent-system models without
+assuming a single substrate, fitness landscape, or observer.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Artificial life, causal emergence, open-ended evolution, substrate-agnostic
+systems, viability.
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+Emergent-system research has produced a broad range of models, including
+cellular automata, continuous artificial-life substrates, digital organisms,
+multi-agent learning systems, cultural-evolution models, and active-inference
+architectures. Although these systems differ substantially in implementation
+and interpretation, many of them can be described in terms of five recurring
+roles: a substrate, a variation process, a viability criterion, an interaction
+topology, and an observer or evaluator. This paper gives those roles a common
+mathematical typing and studies the resulting composition rules.
+
+The proposed framework is intentionally non-prescriptive. It specifies the
+kinds of objects that occupy each role and the ways in which the roles compose,
+but it does not impose a particular fitness landscape, topology, observer,
+or theory of agency. Its purpose is therefore comparative and constructive:
+comparative because it provides a common vocabulary for existing traditions,
+and constructive because it identifies reusable modules for building composite
+systems.
+
+The main contributions are as follows. First, the paper defines a
+substrate-agnostic emergent system as a typed tuple with an explicit iteration
+rule. Second, it introduces composition operators for heterogeneous substrates
+and coupled variation channels. Third, it proposes an information-theoretic
+entity definition that separates physical support from scale of description.
+Fourth, it positions viability, observer-relative novelty, and causal emergence
+as related but distinct assessment problems. Finally, it records the principal
+conjectures and open problems rather than presenting them as settled results.
+
+\section{Background and Related Work}\label{sec:background}
+
+Emergent-system research spans several traditions that often share modelling
+roles while differing in notation and substrate. Cellular automata and
+continuous artificial-life systems emphasize substrate dynamics and local
+interaction rules; digital-organism and open-ended-evolution systems emphasize
+variation, selection, and persistent novelty; multi-agent and cultural-evolution
+models emphasize topology-mediated transmission; and active-inference models
+emphasize viability-like constraints expressed through Markov blankets and
+free-energy parameterisations.
+
+Emergence itself remains contested. In artificial life, Gershenson argues for
+an information-based view in which emergent structure is information present at
+one scale but absent at another \cite{gershenson2023emergence}. Hoel's causal
+emergence programme gives a more specific criterion: a macro-description is
+emergent when it has greater effective information than an appropriate
+micro-description \cite{hoel2013macro,hoel2017map}. These views are compatible
+with the present paper's separation between substrate dynamics and assessment:
+the substrate generates trajectories, while an observer or causal analysis
+decides whether a higher-scale description carries new information.
+
+Open-ended evolution adds a second pressure on any framework for emergence:
+the system should not merely produce a single surprising pattern, but should
+continue to generate meaningful novelty. Classic novelty search made this
+operational by rewarding behavioral distance from an archive rather than direct
+objective improvement \cite{lehman2011novelty}. Recent analysis clarifies that
+novelty search is best understood at the level of archive coverage and
+saturation, rather than as a purely objectiveless process
+\cite{wiegand2024simple}. Quality-Diversity algorithms extend this idea by
+maintaining repertoires of diverse high-performing solutions; recent Lenia work
+uses this approach to discover diverse self-organizing patterns in a continuous
+cellular-automaton substrate \cite{faldor2024leniaqd}. Novelty can also be
+used as an auxiliary objective for unbounded search spaces, where it helps
+identify promising regions before local optimization \cite{ishizawa2025novelty}.
+
+Open-endedness is also broader than genetic evolution. Cultural evolution has
+been proposed as a complementary case in which cumulative modification,
+affordance discovery, and exaptation generate new kinds of novelty
+\cite{borg2024culturalopenendedness}. Abiotic evolving systems provide useful
+counterpoints: Hazen and Wong analyze mineral evolution as a case where
+functional information increases but appears bounded, sharpening the distinction
+between bounded diversity growth and genuinely open-ended evolution
+\cite{hazen2024bounded}. Stepney's recent overview of virtual artificial life
+likewise emphasizes that artificial life spans many substrates, including
+synthetic, robotic, wetware, and purely computational systems, and that no
+single implementation mechanism exhausts the design space
+\cite{stepney2025virtualalife}.
+
+Large language models and foundation models introduce a newer route to
+variation and evaluation. LLM-based genetic programming uses a language model
+inside evolutionary operators for code generation and mutation
+\cite{hemberg2024llmgp}; related foundation-model-guided exploration methods
+use learned priors or embedding spaces to bias search toward semantically
+interesting regions \cite{lehman2024large,kumar2024asal,faldor2024omniepic}.
+These systems make the observer--evaluator slot especially important: novelty
+may be measured not only in physical state space or behavior space, but also in
+learned representational spaces.
+
+This paper is closest in spirit to four families of prior work. First, the
+algebra of open dynamical systems \cite{vagner2015algebras,schultz2020sheaves}
+provides compositional tools for wiring dynamical systems together. Second,
+information-theoretic individuality \cite{krakauer2020individuality} motivates
+the separation between physical support and scale of description. Third,
+novelty-and-learnability accounts of open-endedness
+\cite{hughes2024openendedness} motivate observer-relative evaluation. Fourth,
+Hoel-style causal emergence provides a quantitative emergence criterion based on
+effective information across scales. The present contribution is not a
+replacement for those traditions. It is a typing and composition scaffold that
+makes their recurring roles explicit: substrate, variation, viability,
+interaction topology, and observer--evaluator. The framework therefore treats
+dynamical-regime descriptors such as Wolfram classes, edge-of-chaos behavior,
+and self-organized criticality as substrate-side properties, while treating
+causal emergence and observer-relative novelty as assessment problems over
+trajectories.
+
+\section{Methodology}\label{sec:methodology}
+
+\subsection{Notation and conventions}
+
+Throughout, $\N, \R_{\geq 0}, \R$ have their usual meanings. Table~\ref{tab:notation}
+collects the notation used across multiple sections; symbols introduced only
+locally are defined where they appear. Composition is written $\circ$, product
+measure spaces use $\otimes$, and disjoint unions use $\sqcup$. Discrete time
+indices are $t \in \N$; population indices are $i \in \{1,\dots,N\}$.
+
+\begin{table*}[!t]
+\caption{Recurring notation used throughout the framework.}
+\label{tab:notation}
+\centering
+\renewcommand{\arraystretch}{1.12}
+\setlength{\tabcolsep}{4pt}
+\scriptsize
+\begin{tabular}{@{}p{0.16\textwidth} p{0.29\textwidth} p{0.49\textwidth}@{}}
+\hline
+\textbf{Symbol} & \textbf{Name} & \textbf{Role in the paper} \\
+\hline
+$\mathcal{S}$ & Scaffolded system & Full substrate-agnostic emergent system. \\
+$\X=(X,\Phi,\mu_0)$ & Substrate & State space, substrate dynamics, and initial population measure. \\
+$X$ & State space & Underlying measurable space on which substrate states live. \\
+$x_t$ & Substrate state & State of $X$ at tick $t$. \\
+$\mu_t \in \Mplus(X)$ & Population measure & Finite positive measure representing entities inhabiting the substrate. \\
+$Z=X\times\Mplus(X)$ & Joint state space & State space for the lifted tick update. \\
+$\Phi$ & Substrate dynamics & Updates substrate state; stochastic variants map into $\Pmeas(X)$. \\
+$V$ / $V_T$ & Variation operator & Generates variants; $V_T$ is the population-level kernel mediated by topology. \\
+$F$ / $S_F$ & Viability filter & Selects or reweights the post-variation population. \\
+$T_t$ & Interaction topology & Hypergraph or graph over current entities at tick $t$. \\
+$O$ / $O_s$ & Observer--evaluator & Scores trajectories; $O_s$ additionally carries observer state such as an archive. \\
+$\widetilde{\Phi},\widetilde V_T,\widetilde S_F$ & Lifted operators & Slot operators lifted to act on $Z$. \\
+$\mathcal{E}_t$ & Entity set & Entities detected at time $t$. \\
+$e=(S,\pi)$ & Entity & Supporting set $S$ plus scale projection $\pi$. \\
+$\pi$ & Scale projection & Map from supported microstate to entity-level description. \\
+$\boxtimes_\kappa$ & Substrate composition & Coupled composition of heterogeneous substrates using coupling datum $\kappa$. \\
+$\kappa$ & Substrate coupling & Cross-substrate map that re-parameterises component dynamics. \\
+$\diamond_\rho$ & Variation-channel composition & Coupled composition of variation channels using coupling rule $\rho$. \\
+$\rho$ & Variation coupling & Rule coupling one variation channel's sampling to another. \\
+$\Pmeas(Y)$ & Probability measures & Probability measures on measurable space $Y$. \\
+$\Mplus(Y)$ & Finite positive measures & Finite non-negative measures on measurable space $Y$. \\
+$\Pi$ & Coarse-graining & Partition or quotient used in causal-emergence assessment. \\
+$\EI(M)$ & Effective information & Hoel-style effective information of a Markov chain $M$. \\
+$\CE(M,\Pi)$ & Causal emergence & Difference $\EI(M^\Pi)-\EI(M)$ at coarse-graining $\Pi$. \\
+$\Omega$ & Open-endedness metric & Residence-time/open-endedness metric used by some observers. \\
+\hline
+\end{tabular}
+\end{table*}
+
+Given a partially ordered set $(P,\sqsubseteq)$, a \emph{closure operator} is
+a map $c : 2^P \to 2^P$ satisfying (i) extensivity $A \subseteq c(A)$,
+(ii) monotonicity $A \subseteq B \Rightarrow c(A) \subseteq c(B)$, and
+(iii) idempotence $c(c(A)) = c(A)$. A set $A$ is \emph{closed} iff $A = c(A)$.
+
+\subsection{Proposed System Definition}\label{sec:framework}
+
+A \textbf{substrate-agnostic emergent system} is a tuple
+\[
+  \mathcal{S} \;=\; \big( \X, \, V, \, F, \, T, \, O \big),
+\]
+where the substrate $\X = (X,\Phi,\mu_0)$ provides the state space $X$
+(\S\ref{sec:substrates}), and $V,F,T,O$ are the variation, viability,
+interaction-topology, and observer operators respectively. The system evolves on the
+\emph{joint state space}
+\[
+  Z \;:=\; X \times \Mplus(X),
+\]
+whose elements $(x,\mu)$ pair a substrate state $x \in X$ with a population
+measure $\mu \in \Mplus(X)$ over the entities (\S\ref{sec:entities})
+currently inhabiting $x$. Each slot induces a lifted operator on $Z$:
+\begin{align*}
+  \widetilde\Phi    \,:\, Z \to Z,\quad &(x,\mu) \mapsto \big(\Phi(x),\,\Phi_{*}\mu\big),\\
+  \widetilde V_{T}  \,:\, Z \to Z,\quad &(x,\mu) \mapsto \big(x,\,V_{T}(\mu;x)\big),\\
+  \widetilde S_{F}  \,:\, Z \to Z,\quad &(x,\mu) \mapsto \big(x,\,F(\mu)\big),
+\end{align*}
+where $\Phi_{*}\mu$ is the push-forward of $\mu$ along $\Phi$ (the identity
+in substrate-as-population paradigms in which the population is implicit in
+$x$); $V_{T}(\mu;x)$ is the population-level variation kernel induced by $V$
+under topology $T_t$, formalised in \S\ref{sec:vt}; and $F$ is the viability
+filter of \S\ref{sec:viability}. The \textbf{iteration rule} at each tick
+$t \mapsto t+1$ is
+\[
+  (x_{t+1}, \mu_{t+1}) \;=\;
+  \big(\widetilde S_{F} \circ \widetilde V_{T} \circ \widetilde\Phi\big)(x_t, \mu_t).
+\]
+The observer $O$ acts on trajectories $(x_t,\mu_t)_{t\geq 0}$ rather than on
+single ticks. The slots are formalised in \S\ref{sec:substrates} and
+\S\S\ref{sec:variation}--\ref{sec:observer}; entities in
+\S\ref{sec:entities}; and emergence in \S\ref{sec:emergence}. The choice of
+iteration order is itself a modelling commitment; alternative orderings are
+discussed in \S\ref{sec:scope}.
+
+In less compressed terms, $\mathcal{S}$ is the recipe for a simulation. The
+substrate is the material being simulated: a lattice of cells, a continuous
+field, a swarm of particles, a population of programs, or a coupled product of
+such materials. Variation proposes changes to the population living on that
+material; viability decides which proposed entities remain; topology says who
+can affect whom; and the observer records what the resulting trajectory looks
+like. The mathematics below fixes the types of those choices so that two
+systems can be compared without quietly changing the meaning of a slot.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  slot/.style={
+    draw,
+    rounded corners=2pt,
+    align=center,
+    minimum width=0.43\columnwidth,
+    minimum height=1.05cm,
+    inner sep=3pt
+  },
+  op/.style={
+    draw,
+    rounded corners=2pt,
+    align=center,
+    minimum width=0.22\columnwidth,
+    minimum height=0.8cm,
+    inner sep=2pt
+  },
+  arrow/.style={-{Latex[length=2mm]},thick}
+]
+\node[slot] (substrate) {Substrate\\$\X=(X,\Phi,\mu_0)$};
+\node[slot, right=0.42cm of substrate] (topology) {Interaction topology\\$T_t$};
+\node[op, below=0.55cm of substrate] (phi) {$\widetilde{\Phi}$\\dynamics};
+\node[op, right=0.18cm of phi] (var) {$\widetilde V_T$\\variation};
+\node[op, right=0.18cm of var] (viab) {$\widetilde S_F$\\viability};
+\node[slot, below=0.55cm of var] (observer) {Observer--evaluator\\$O((x_t,\mu_t)_{t\geq 0})$};
+\node[align=center, above=0.1cm of var] (state) {Joint state\\$Z=X\times\Mplus(X)$};
+
+\draw[arrow] (substrate) -- (phi);
+\draw[arrow] (topology) -- (var);
+\draw[arrow] (phi) -- (var);
+\draw[arrow] (var) -- (viab);
+\draw[arrow] (viab) |- (observer);
+\draw[arrow] (observer.west) -| node[pos=0.25,left,align=center] {assessment\\not tick update} (phi.south);
+\draw[arrow] (state) -- (var);
+\end{tikzpicture}
+\caption{The five-slot model. The substrate supplies state and dynamics;
+interaction topology mediates variation; viability filters the resulting
+population measure; and the observer--evaluator assesses trajectories rather
+than altering the default tick update.}
+\label{fig:five-slot}
+\end{figure}
+
+\begin{implnote}[Computational implication]
+The product structure is deliberate: each slot has its own typing and can be
+swapped without rewriting the others. In \S\ref{sec:parallel} we argue that
+this same modularity supports a natural GPU mapping in which each slot
+becomes a parallel kernel.
+\end{implnote}
+
+\subsection{Substrates}\label{sec:substrates}
+
+A \textbf{substrate} is a tuple
+\[
+  \X \;=\; \big( X, \, \Phi, \, \mu_0 \big),
+\]
+where $X$ is a measurable space (the \emph{substrate state space}),
+$\Phi : X \to X$ (or $\Phi : X \to \Pmeas(X)$ in the stochastic case) is a
+measurable \emph{substrate dynamics} map, and $\mu_0 \in \Mplus(X)$ is an
+initial measure. Plainly, the substrate is the simulation material plus its
+native update rule: the grid and cellular-automaton update, the Flow-Lenia
+field and its kernel dynamics, the particle state and its motion law, or the
+program space and interpreter dynamics. We deliberately \emph{exclude} a
+``neighborhood structure'' from the substrate tuple; the relationship between
+the substrate and the interaction topology is treated in \S\ref{sec:topology}.
+
+\topic{\texorpdfstring{Substrate composition operator $\boxtimes$}{Substrate composition operator}}
+
+Real instances are often heterogeneous: a Lenia field coupled to a
+meteorological forcing field coupled to a population of LLM agents. A na\"ive
+Cartesian product $X_1 \times X_2$ inherits no shared geometry, no shared
+time-scale, and no notion of cross-substrate coupling. We therefore introduce
+the \textbf{substrate composition operator} $\boxtimes$ in two flavours.
+
+\begin{definition}[Free composition]\label{def:free-composition}
+Given substrates $\X_1,\X_2$, their \emph{free composition}
+$\X_1 \boxtimes \X_2$ has state space $X_1 \times X_2$, dynamics
+$\Phi_1 \times \Phi_2$, and initial measure $\mu_0^{(1)} \otimes \mu_0^{(2)}$.
+This recovers the Cartesian product as a degenerate case (no coupling).
+\end{definition}
+
+\begin{definition}[Coupled composition]\label{def:coupled-composition}
+A \emph{coupling datum} between $\X_1$ and $\X_2$ is a pair of measurable maps
+$\kappa = (\kappa_{1\to 2}, \kappa_{2\to 1})$ with
+$\kappa_{i\to j} : X_i \to \Param(\Phi_j)$, where $\Param(\Phi_j)$ is a
+measurable space of parameters that re-shape the dynamics $\Phi_j$. The
+\emph{$\kappa$-coupled composition} $\X_1 \boxtimes_\kappa \X_2$ has state
+space $X_1 \times X_2$, dynamics
+\[
+  \widetilde\Phi(x_1,x_2) \;=\;
+  \big(\Phi_1[\kappa_{2\to 1}(x_2)](x_1),\; \Phi_2[\kappa_{1\to 2}(x_1)](x_2)\big),
+\]
+and initial measure inherited as in Definition~\ref{def:free-composition}.
+\end{definition}
+
+\begin{proposition}[Associativity up to canonical isomorphism]
+Free composition is symmetric monoidal on the category of substrates and
+substrate morphisms; coupled composition is symmetric monoidal on the
+category whose morphisms are coupling-respecting maps.
+\end{proposition}
+
+The proof reduces to the corresponding statements for the algebra of open
+dynamical systems \cite{vagner2015algebras,schultz2020sheaves,myers2021double}:
+coupling data are exactly the ``wires''
+of a wiring diagram in those formalisms, and our coupling-respecting
+morphisms are the morphisms of that wiring-diagram-algebra.
+
+\begin{implnote}[Computational implication]
+$\boxtimes_\kappa$ is the formal foundation for ``modular substrates'': the
+biological--atmospheric--cultural composite is built as
+$(\X_{\mathrm{bio}} \boxtimes_{\kappa_{12}} \X_{\mathrm{atm}}) \boxtimes_{\kappa_{23}} \X_{\mathrm{LLM}}$
+rather than as a flat Cartesian product. Each component substrate keeps its
+own kernel; coupling kernels are independent code paths.
+\end{implnote}
+
+\topic{Computational regimes}
+
+We say a substrate is \emph{lattice-like} if $X = \prod_{p\in L}\Sigma$ for
+some discrete lattice $L$ and per-site alphabet $\Sigma$ (cellular automata,
+Lenia, NCA), \emph{particle-like} if $X = \bigsqcup_n (\R^d)^n$ (Particle
+Lenia, swarms, Avida-with-positions), \emph{graph-like} if $X$ is a function
+space on a graph that may itself evolve, or \emph{discrete-program-like} if
+elements of $X$ are programs in some instruction set (Avida, LLM-policy
+substrates). $\boxtimes_\kappa$ allows arbitrary heterogeneous compositions,
+e.g.\ lattice~$\boxtimes_\kappa$~particle.
+
+\subsection{Entities}\label{sec:entities}
+
+The framework requires a precise notion of \textbf{entity}: many
+ALife applications have communities of substrate sites (a Lenia blob, a
+flock, a colony of Avida programs) acting as a single locus of variation and
+selection. We adopt an information-theoretic, substrate-agnostic definition
+that generalises the individuality framework of Krakauer \emph{et al.}
+\cite{krakauer2020individuality} and
+connects cleanly --- but not exclusively --- to the closure-operator
+viability machinery of \S\ref{sec:viability}.
+
+The definition has two reader-facing jobs. First, it identifies the part of the
+substrate that currently supports the thing we want to call an entity. Second,
+it states the scale at which we will describe that thing. A flock may be
+supported by many particles but described by a centroid; a program may be
+supported by one memory region and described by its raw instruction sequence.
+
+\begin{definition}[Entity]\label{def:entity}
+Let $\X=(X,\Phi,\mu_0)$ be a substrate, and let $X = \prod_{p\in P} X_p$ be a
+(possibly trivial) decomposition of the state space into per-site factors
+indexed by a set $P$ of \emph{substrate sites}. An \emph{entity} at time $t$
+is a pair $e = (S, \pi)$ consisting of:
+\begin{enumerate}[leftmargin=2em,itemsep=2pt]
+  \item a \emph{supporting set} $S \subseteq P$ of substrate sites, and
+  \item a \emph{scale projection}
+        $\pi : \prod_{p\in S} X_p \to Y_S$
+        to a measurable feature space $Y_S$,
+\end{enumerate}
+such that, with $\mathbf{x}_S^t := (x_p^t)_{p\in S}$ and
+$\mathbf{x}_{\bar S}^t := (x_p^t)_{p\notin S}$,
+
+\begin{description}[leftmargin=2em,itemsep=4pt]
+  \item[(E1) Persistence (information closure).]
+  There exists $\tau \geq 1$ such that
+  \[
+    I\!\left(\pi(\mathbf{x}_S^{t+\tau});\, \pi(\mathbf{x}_S^{t}) \,\big|\, \mathbf{x}_{\bar S}^{t}\right)
+    \;\geq\;
+    I\!\left(\pi(\mathbf{x}_S^{t+\tau});\, \mathbf{x}_S^{t}\right) - \varepsilon,
+  \]
+  for a specified tolerance $\varepsilon \geq 0$. Thus, most information
+  predictive of $\pi$'s future is internal to $S$, conditional on the outside.
+
+  \item[(E2) Boundedness.]
+  $1 \leq |S|<\infty$ (or $S$ has finite positive measure under a fixed
+  reference measure on $P$).
+
+  \item[(E3) Compositionality.]
+  Hierarchical entities are admitted: if
+  $e_1=(S_1,\pi_1),\dots,e_k=(S_k,\pi_k)$ are entities with disjoint $S_i$,
+  then $e^* = (\bigcup S_i,\, (\pi_1,\dots,\pi_k))$ is an entity provided
+  (E1) holds at the joint scale.
+\end{description}
+\end{definition}
+
+The pair $(S,\pi)$ separates \emph{what supports the entity} (the sites $S$)
+from \emph{what scale of description we are committing to} (the projection
+$\pi$). Trivial $\pi=\mathrm{id}$ recovers raw-state entities (e.g.\ an Avida
+program). Non-trivial $\pi$ recovers macroscopic entities such as Lenia
+\emph{Orbium} (where $\pi$ might be a centroid-and-mass map) or
+particle-system flocks (where $\pi$ might be the empirical centroid and
+inertia tensor).
+
+(E1) closely resembles the ``informational closure'' criterion of
+Krakauer \emph{et al.} \cite{krakauer2020individuality} and Bertschinger
+\emph{et al.} \cite{bertschinger2008autonomy}. It is
+\emph{not} identical to the closure-operator characterisation of viable
+supporting sets in \S\ref{sec:viability} --- that machinery operates on the
+structure of the supporting set $S$ alone, while (E1) operates jointly on
+$(S,\pi)$. The relationship is left as a conjecture
+(\S\ref{sec:c1}).
+
+The scale projection $\pi$ explicitly anticipates the coarse-graining
+structure of causal emergence (\S\ref{sec:emergence}): every entity carries
+with it a candidate macroscale at which one may compute effective
+information.
+
+\begin{implnote}
+Detecting entities reduces to (i) a search over candidate supporting sets $S$
+(e.g.\ connected components above a threshold for Lenia, or autopoietic
+preimages for Game-of-Life gliders), and (ii) a search over scale projections
+$\pi$. Both steps are embarrassingly parallel across candidates; see
+\S\ref{sec:parallel}.
+\end{implnote}
+
+\subsection{Variation}\label{sec:variation}
+
+A \textbf{variation operator} is a measurable map
+\[
+  V \;:\; X \times \Theta \;\to\; \Pmeas(X),
+\]
+where $\Theta$ is a parameter space (mutation rate, recombination
+probabilities, gradient step size, prompt-perturbation distribution).
+Stochastic, deterministic, and gradient-based variation are unified by
+allowing $V$ to be a Markov kernel; deterministic variation is the Dirac case.
+In ordinary simulator language, $V$ is the mutation, recombination, rewrite,
+or optimisation step that proposes candidate next entities.
+
+Instances span Gaussian/uniform mutation, bit-flip, $k$-point and uniform
+recombination, evolution strategies \cite{salimans2017es}, gradient descent
+(treated as deterministic $V$), prompt mutation for LLM-policies,
+foundation-model-guided variation \cite{lehman2024large}, and Intrinsically
+Motivated Goal Exploration Processes \cite{forestier2022imgep}.
+
+A \textbf{variation channel} is a pair $(V_c, \Theta_c)$ identified with one
+inheritance lineage (genetic, cultural, etc.). Coupled inheritance channels
+require an operation richer than a tensor product. We define a \textbf{channel
+composition operator} $\diamond$:
+
+\begin{definition}[Channel composition]
+Given channels $V_1$ and $V_2$ that act on substrate components $\X_1$ and
+$\X_2$ of a coupled substrate $\X_1\boxtimes_\kappa \X_2$, and a
+\emph{coupling rule} $\rho$ specifying how sampling in one channel may
+condition sampling in the other (e.g.\ cultural variation may depend on
+genetic state \cite{boyd1985culture}), the composed channel
+$V_1 \diamond_\rho V_2$ is the kernel
+\begin{align*}
+  &(V_1 \diamond_\rho V_2)\!\big((x_1,x_2),(\theta_1,\theta_2)\big) \\
+  &\quad=\; \int V_1(x_1,\theta_1') \, V_2(x_2,\theta_2') \,
+            \rho\big(d\theta_1',d\theta_2'\,\big|\,x_1,x_2,\theta_1,\theta_2\big).
+\end{align*}
+\end{definition}
+
+Trivial $\rho$ (independent product) recovers tensor-product variation
+$V_1 \otimes V_2$ as a special case; non-trivial $\rho$ supports
+gene--culture co-evolution \cite{boyd1985culture}, niche construction
+\cite{odlingsmee2003niche}, and stigmergic coupling \cite{grasse1959stigmergie}.
+
+\begin{implnote}
+$\diamond_\rho$ is implemented as a single fused kernel that emits both
+channels' offspring jointly when they are coupled, and as two independent
+kernels when they are not --- the same modularity argument as for
+$\boxtimes_\kappa$.
+\end{implnote}
+
+\topic{Topology-mediated population variation}\label{sec:vt}
+
+The lifted operator $\widetilde V_T$ in \S\ref{sec:framework} requires a
+\emph{population-level} variation kernel
+$V_T : \Mplus(X) \times X \to \Mplus(X)$, derived from the per-entity
+variation operator $V$ of \S\ref{sec:variation} together with the
+interaction topology $T_t$ (\S\ref{sec:topology}). Define $V_T$ as follows.
+Let $\mathcal{E}_t$ be the entity set induced by $\mu$ at substrate state
+$x$ (the entities $e=(S,\pi)$ admitted by Definition~\ref{def:entity}). Let
+$T_t$ be a hypergraph on $\mathcal{E}_t$ with hyperedge set $E(T_t)$ and
+hyperedge weights $w_e$. For each hyperedge $e \in E(T_t)$ involving
+entities $(e_1,\dots,e_r)$, choose a parameter
+$\theta_e = g\!\big(e_1,\dots,e_r\big)$ via a measurable rule $g$ (default:
+$\theta_e$ depends only on the focal entity, recovering independent
+mutation; non-trivial $g$ encodes recombination, prompt-conditioning, etc.).
+Then
+\[
+  V_T(\mu;x) \;=\; \sum_{e \in E(T_t)} w_e \,
+                   V\!\big(\,\mathrm{state}(e),\, \theta_e\,\big),
+\]
+interpreted as a finite positive measure on $X$ (the channel composition
+operator $\diamond_\rho$ of \S\ref{sec:variation-comp} extends this to
+multi-channel variation under the same construction). When $E(T_t)$ is the
+discrete set of singletons $\{\{e_i\}\}$ with unit weights, $V_T$ collapses
+to the per-entity push-forward of $V$ along $\mu$. The expression
+$\widetilde V_T(x,\mu) = (x, V_T(\mu;x))$ in \S\ref{sec:framework} now
+type-checks.
+
+\subsection{Viability}\label{sec:viability}
+
+A \textbf{viability filter} is a measurable map
+$F : \Mplus(X) \to \Mplus(X)$ that selects a sub-population of the
+post-variation population. It is the rule that says which proposed entities
+remain in the run and with what weight. We characterise the principal
+proposals in the literature in terms of closure-operator structure on
+supporting sets.
+
+\topic{Four formalisms}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Markov-blanket viability} \cite{friston2013life,kirchhoff2018blankets}.
+    An entity's supporting set is
+    required to admit a sparse-coupling decomposition into
+    internal/blanket/external states. Caveats apply
+    \cite{aguilera2022particular,biehl2021critique}; see \S\ref{sec:fep}.
+  \item \textbf{Autopoietic closure} \cite{maturana1980autopoiesis,beer2014glider,beer2015autopoiesis,beer2020origin}.
+    The supporting set must be closed under the network of
+    constitutive reactions/transitions; e.g.\ a Game-of-Life glider's
+    supporting set is closed under the GoL preimage relation restricted to
+    the entity's reaction network.
+  \item \textbf{RAF set viability} \cite{hordijk2004raf,hordijk2015algorithms}.
+    A reaction set $R'$ is a Reflexively Autocatalytic
+    Food-generated (RAF) set if every reaction in $R'$ is catalysed by
+    something in $R'$ (or in the food set) and every reactant is producible
+    from the food set within $R'$.
+  \item \textbf{Minimal Criterion Coevolution} \cite{brant2017mcc}; see also
+    \cite{lehman2011novelty}. An entity passes the filter iff it
+    satisfies a minimal qualifying predicate (e.g.\ ``solves at least one
+    maze''), with co-evolutionary feedback supplying the predicate's content.
+\end{itemize}
+
+\topic{Closure-operator interpretation}
+
+The four viability formalisms suggest, but do not yet establish, a common
+closure-operator interpretation. We therefore treat the unification as
+Conjecture~C1 (\S\ref{sec:c1}), with partial supporting evidence presented
+there. \textbf{Until C1 is settled, the four formalisms are not in general
+substitutable in code:} a simulator that swaps Markov-blanket viability for
+autopoietic closure must verify that the substitution preserves the
+predicates the rest of the system relies on. The implementation checklist
+of \S\ref{sec:checklist} therefore requires the viability formalism to be
+named explicitly, not merely as ``$F : \Mplus(X) \to \Mplus(X)$''.
+
+\topic{Hierarchical viability}
+
+Following (E3) of \S\ref{sec:entities}, we propose a \textbf{hierarchical
+viability filter} $F^*$ that accepts a composite entity $e^*$ iff each
+component entity $e_i$ satisfies its filter \emph{and} the joint scale
+projection $(\pi_1,\dots,\pi_k)$ also satisfies a top-level filter. This is
+the obvious move; verifying that the four formalisms behave correctly under
+hierarchical composition is open (\S\ref{sec:c2}).
+
+\subsection{Interaction Topology}\label{sec:topology}
+
+The \textbf{interaction topology} specifies \emph{who interacts with whom}:
+it is a graph (or, more generally, a hypergraph or simplicial complex) on
+entities, possibly time-varying. It is not the material geometry itself. A
+substrate may be a square lattice, while the interaction topology may be the
+graph of gliders that collide, agents that exchange messages, or particles
+within a $k$-nearest-neighbour radius.
+
+\topic{Interaction topology vs substrate topology}
+
+Two distinct notions of topology must be kept separate:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Substrate topology.} The intrinsic geometry of the substrate
+    state space $X$ (e.g.\ the lattice $L$ of a CA; the manifold structure of
+    $\R^d$ for particle systems). This is a property of $\X$ in
+    \S\ref{sec:substrates} and \emph{does not appear in the substrate
+    tuple} --- it is
+    whatever geometry the dynamics $\Phi$ already presupposes.
+  \item \textbf{Interaction topology.} A causal coupling structure $T$ on
+    \emph{entities}: $T$ is a (possibly weighted, possibly directed,
+    possibly time-varying) graph
+    $T_t \subseteq \mathcal{E}_t \times \mathcal{E}_t$, where
+    $\mathcal{E}_t$ is the entity set at time $t$.
+\end{itemize}
+
+The two coincide only in homogeneous lattice CA where every entity is one
+site. Otherwise they differ --- a Lenia \emph{Orbium} and a meteorological
+field couple via a specific spatial overlap relation that is neither the
+lattice topology of the CA nor the trivial complete graph on entities.
+
+\topic{Interaction topology definition}
+
+An \textbf{interaction topology} is a measurable family $T = (T_t)_{t\in\N}$
+where each $T_t$ is a hypergraph on $\mathcal{E}_t$ together with edge
+weights in some semiring $R$ (typically $\R_{\geq 0}$ or $\{0,1\}$).
+Instances include lattice neighbourhoods, range-based interactions on $\R^d$
+($k$NN, $\varepsilon$-ball), social graphs (sampled or fixed), pairwise game
+graphs (donor--recipient pairings as in \cite{vallinder2024cultural}), and
+stigmergic indirect-coupling topologies in which interactions pass through
+the substrate rather than directly between entities \cite{grasse1959stigmergie}.
+
+\topic{Multi-regime topologies}\label{sec:multi-regime-topologies}
+
+When several coupling regimes coexist (a colony with both within-colony
+chemical signalling and between-colony pheromone trails), $T$ is no longer a
+single graph but a \textbf{layered multiplex}:
+$T = \bigsqcup_\ell T^{(\ell)}$ with non-negative layer weights
+$(\alpha_\ell)$ summing to one (so the total interaction load per tick is
+preserved). Variation $V_T$ on a multiplex topology is the corresponding
+\emph{mixture} of layer kernels,
+$V_T(\mu;x) = \sum_\ell \alpha_\ell\, V^{(\ell)}_{T^{(\ell)}}(\mu;x)$, when
+channels are independent, or the $\diamond_\rho$-composition
+(cf.\ \S\ref{sec:variation-comp}) when they are not. The mixture form
+guarantees that $V_T(\mu;x) \in \Mplus(X)$ whenever each layer kernel is.
+
+\subsection{Observer--Evaluator}\label{sec:observer}
+
+The observer--evaluator $O$ acts on trajectories. In the stateless case, we
+model it as a functional
+\[
+  O \;:\; Z^{w} \;\to\; \R^k,
+\]
+where $Z = X \times \Mplus(X)$ is the joint state space of
+\S\ref{sec:framework} and $w \in \N \cup \{\infty\}$ is a fixed
+\emph{window length} (number of consecutive ticks $O$ consumes). Components
+of the output are interpreted as \emph{observed quantities} (novelty,
+complexity, learnability, value). Practical observers use finite $w$;
+$w=\infty$ recovers the long-trajectory limit. The window length $w$ is part
+of the observer specification and is reported in the implementation
+checklist (\S\ref{sec:checklist}).
+
+Many observers used in novelty search and Quality-Diversity algorithms are
+stateful rather than purely functional. To accommodate these cases without
+adding a sixth framework slot, we allow $O$ to carry an observer state
+$a_t \in A_O$:
+\[
+  O_s \;:\; Z^w \times A_O \to \R^k \times A_O .
+\]
+The state $a_t$ may contain an archive of previous behaviours, a descriptor
+map, a learned embedding model, a reference distribution, or a saturation
+criterion. The public output of the observer remains the score vector in
+$\R^k$; the internal state records how novelty, diversity, or boundedness is
+computed across time.
+
+Thus the observer is not another hidden force in the default simulator loop.
+It is the measurement apparatus: it watches the history and reports novelty,
+complexity, value, effective information, or another chosen quantity.
+
+\topic{Three families}\label{sec:observer-families}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Density-distance observers.} Score a window of trajectory by
+    a divergence $D(\mu_{[t-w,t]}\,\Vert\, \mu_{\mathrm{ref}})$ --- e.g.\ KL
+    divergence to a uniform reference, or Wasserstein distance to an archive.
+  \item \textbf{FM-embedding observers.} Embed states or trajectories with a
+    foundation model (vision-language or otherwise) and score in embedding
+    space, as in ASAL \cite{kumar2024asal} and OMNI-EPIC
+    \cite{faldor2024omniepic}.
+  \item \textbf{Information-theoretic observers.} Mutual information,
+    transfer entropy, integrated information, or --- at the macroscale ---
+    effective information (used as the basis of \S\ref{sec:emergence}
+    emergence).
+\end{itemize}
+
+\topic{Observer-relative novelty as divergence}
+
+Following novelty search \cite{lehman2011novelty}, learnability-oriented
+open-endedness \cite{hughes2024openendedness}, and the $\Omega$ metric
+\cite{lopezdiaz2025undecidability}, we treat observer-relative
+open-endedness as an assessment made by a specified observer. A strong version
+says that a system exhibits \textbf{observer-relative open-endedness} w.r.t.\
+$O$ iff the observer's score is unbounded along the trajectory (in a suitably
+regularised sense --- typically learnable novelty, as in
+\cite{hughes2024openendedness}). A weaker version reports sustained novelty
+or increasing functional information over a finite horizon but does not infer
+unboundedness. The distinction is important: a bounded system may still show
+emergence, adaptation, or increasing functional information, while failing a
+strict open-endedness test.
+
+This is \textbf{distinct} from the mathematical definition of emergence we
+develop in \S\ref{sec:emergence}.
+
+\topic{Adjacent possible as a special case}
+
+Tria \emph{et al.} \cite{tria2014novelties} and the P\'olya-urn-with-triggering
+family yield Heaps' law for novelty rate $\sim t^\beta$ with $\beta<1$. This
+is recovered when $O$ maintains an archive of distinct
+$\pi$-equivalence classes seen so far (with an open-ended class set) and
+emits the count of new classes per tick. First-occurrence triggers in the
+variation operator are realised by an \emph{archive feedback}
+$\rho_O : O\text{-state} \to \Theta$ that re-parameterises $V$ on
+first-occurrence events --- formally, the same $\rho$-coupling construction
+of \S\ref{sec:variation-comp} with $O$'s archive state playing the role of
+an additional channel. This keeps $V$'s signature intact while permitting
+history-dependent triggering.
+
+\subsection{Emergence}\label{sec:emergence}
+
+This paper uses a single mathematical definition of emergence:
+\textbf{Hoel-style causal emergence}, anchored on \textbf{effective
+information} \cite{hoel2013macro,hoel2017map,klein2020scales,comolatti2022causal}.
+This definition is not derived from the
+closure-operator machinery of \S\ref{sec:viability} or the observer-relative
+divergence of \S\ref{sec:observer};
+instead, the relationship between those components and causal emergence is
+posed as an open problem.
+
+\topic{Effective information}
+
+Let $M = (X,P)$ be a discrete-time, finite-state Markovian system on state
+space $X$ with transition matrix $P$,
+$P_{ij} = \Pr[x^{t+1}=j \mid x^t=i]$. Let $\Hmax$ denote the uniform
+distribution over $X$ (the \textbf{intervention distribution}: each cause is
+intervened upon equiprobably, \`a la Pearl).
+
+\begin{definition}[Effective information]
+The \emph{effective information} of $M$ is
+\[
+  \EI(M) \;:=\; I_{\Hmax}\!\big(X^t \,;\, X^{t+1}\big)
+  \;=\; \frac{1}{|X|}\sum_{i\in X}
+        D_{\KL}\!\big(P_{i,\cdot} \,\big\Vert\, \bar P_{\cdot}\big),
+\]
+where $\bar P_\cdot = |X|^{-1}\sum_i P_{i,\cdot}$ is the marginal effect
+distribution under uniform interventions. Equivalently,
+$\EI(M)= \mathbf{H}(\bar P_\cdot) - |X|^{-1}\sum_i \mathbf{H}(P_{i,\cdot})$,
+the difference between effect-distribution entropy and average row entropy.
+$\EI$ admits a decomposition into determinism (low row-entropy) and
+non-degeneracy (broad effect distribution); see \cite{hoel2013macro}.
+\end{definition}
+
+\topic{Causal emergence}
+
+Let $\Pi : X \twoheadrightarrow X_{\Pi}$ be a \textbf{coarse-graining} (a
+measurable partition of $X$ into macrostates, with $X_{\Pi}$ denoting the
+quotient set), inducing a macroscale Markov chain
+$M^{\Pi} = (X_{\Pi}, P^{\Pi})$ where $P^{\Pi}$ is the lifted transition
+matrix obtained by averaging micro-transitions weighted by a macro-state
+distribution (see \cite{klein2020scales} for the canonical choice).
+
+\begin{definition}[Causal emergence]\label{def:CE}
+The \emph{causal emergence} of $M$ at coarse-graining $\Pi$ is
+\[
+  \CE(M,\Pi) \;:=\; \EI(M^{\Pi}) - \EI(M).
+\]
+The system $M$ is \emph{causally emergent} iff
+\[
+  \sup_{\Pi}\; \CE(M,\Pi) \;>\; 0,
+\]
+i.e.\ there exists a coarse-graining at which the effective information
+strictly exceeds that of the microscale.
+\end{definition}
+
+\topic{Emergence of substrate-agnostic systems}
+
+For a system $\mathcal{S}$ in the sense of \S\ref{sec:framework}, write
+$M(\mathcal{S})$ for the Markov chain on the joint state space
+$Z = X \times \Mplus(X)$ induced by the composite update rule
+$\widetilde S_{F} \circ \widetilde V_{T} \circ \widetilde\Phi$. (For
+substrate-as-population paradigms in which $\mu$ is implicit in $x$,
+$M(\mathcal{S})$ reduces to a chain on $X$.) We say $\mathcal{S}$
+\emph{exhibits causal emergence at scale $\Pi$} iff
+$\CE(M(\mathcal{S}),\Pi) > 0$, and that $\mathcal{S}$ \emph{is causally
+emergent} iff this holds for some $\Pi$, i.e.\ if
+$\sup_{\Pi}\CE(M(\mathcal{S}),\Pi) > 0$ (Definition~\ref{def:CE}).
+
+This definition is by construction:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Intrinsic.} $\EI$ is computed from the transition matrix; no
+    external observer enters its definition. (Contrast
+    \S\ref{sec:observer}.)
+  \item \textbf{Coarse-graining-based.} The macroscale is a partition $\Pi$
+    of $Z$; not a closure condition on supporting sets. (Contrast
+    \S\ref{sec:viability}.)
+  \item \textbf{Non-trivial.} Whether $\sup_\Pi \CE>0$ holds for given
+    $\mathcal{S}$ is a non-trivial property requiring construction of $\Pi$.
+    (See \S\ref{sec:op1} for the open problem.)
+\end{itemize}
+
+\topic{Extensions and known limitations}
+
+\textbf{$\Phi$ID-based emergence} \cite{rosas2020reconciling,mediano2022parts}
+replaces partition-based coarse-grainings with
+arbitrary supervenient features $V_t = f(X_t)$, defined causally emergent iff
+$V$ has unique predictive information about $X^{t+1}$ that no microscopic
+component has. This is feature-agnostic but methodologically more demanding.
+
+\textbf{Comolatti and Hoel} \cite{comolatti2022causal} show that causal emergence is widespread
+across causation measures (over a dozen popular formalisms): emergence is
+not an artefact of using $\EI$ specifically.
+
+\textbf{Limitations.} The intervention distribution $\Hmax$ is conventional,
+not unique; results are sensitive to the choice \cite{dewhurst2021causal}. Sup-over-$\Pi$
+is only computable for small $|X|$; tractable algorithmic relaxations exist
+\cite{klein2020scales,griebenow2019scale} but do not exhaust the supremum.
+
+\begin{implnote}
+$\EI$ is a per-Markov-chain reduction; it composes with the population-level
+$\mu_t$ but does not parallelise across the population --- it is computed
+once per chain, after $\Phi,V,F$ have produced $P$. Coarse-graining search
+is itself parallel: candidate partitions can be evaluated independently.
+\end{implnote}
+
+\subsection{Evolution, Culture, and Active-Inference Models}
+
+\topic{Two channels, transmission, niche construction}
+
+A standard cultural-and-genetic system is
+\[
+  \mathcal{S} \;=\; \big(\,\X_g \boxtimes_\kappa \X_c, \;\; V_g \diamond_\rho V_c, \;\; F, \;\; T, \;\; O\,\big)
+\]
+where $\X_g$ carries the genetic state, $\X_c$ the cultural state, $\kappa$
+encodes how genetic state shapes cultural transmission and vice versa
+(gene--culture co-evolution \cite{boyd1985culture}), and the
+niche-construction map of \cite{odlingsmee2003niche} is
+implemented as a coupling kernel from population state to environmental
+sub-substrate. The Donor Game with LLM agents \cite{vallinder2024cultural} is
+the discrete instance: $\X_c$ is the prompt-conditioned policy state, $V_c$
+is prompt mutation, $T_t$ is the random donor--recipient pairing, $F$ is
+fitness-proportional reseeding.
+
+\topic{The free energy principle as a descriptive lens}\label{sec:fep}
+
+We treat the FEP \cite{friston2013life,kirchhoff2018blankets} as a
+\textbf{descriptive lens} rather than a derivation: when a system
+$\mathcal{S}$ admits a Markov-blanket decomposition that is preserved under
+$\Phi$, then internal-state dynamics can be \emph{parameterised} as
+variational free-energy minimisation. We do not claim this decomposition is
+universal; technical critiques \cite{aguilera2022particular,biehl2021critique}
+show that sparse coupling
+does not imply Markov-blanket structure in general, and Friston's reply
+\cite{friston2022reply} sharpens but does not resolve the
+challenge. The FEP is a useful \emph{parameterisation} of viability and
+observer slots when applicable; it is not a general theorem of
+substrate-agnostic systems. Morphogenesis-as-Bayesian-inference
+\cite{kuchling2020morphogenesis} is the canonical biological application.
+
+\subsection{Representative Model Instantiations}\label{sec:instances}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=3pt]
+  \item \textbf{Lenia} \cite{chan2019lenia}. $X = [0,1]^L$ on a 2D toroidal
+    lattice $L$, $\Phi$ a
+    kernel-convolution-and-growth update.
+  \item \textbf{Flow-Lenia} \cite{plantec2023flowlenia,plantec2025flowlenia}.
+    Adds local mass conservation and parameter localisation, enabling
+    multi-species cohabitation.
+  \item \textbf{Particle Lenia} \cite{mordvintsev2022particle}.
+    Energy-based Lagrangian particle reformulation.
+  \item \textbf{Neural Cellular Automata} \cite{mordvintsev2020nca}. $\Phi$ is a small neural
+    network applied per-cell.
+  \item \textbf{Differentiable Logic CA} \cite{miotti2025dlca}, building on
+    differentiable logic gate networks \cite{petersen2022logic,petersen2024convlogic}.
+    Discrete-state CA with differentiable training via logic-gate softmaxes.
+  \item \textbf{Particle / swarm.} Boids, Particle Life. Particle-like
+    substrate; interaction topology a $k$-NN or $\varepsilon$-ball.
+  \item \textbf{Avida} \cite{lenski2003origin}; original system
+    \cite{adami1994avida}.
+    Discrete-program substrate.
+  \item \textbf{LLM-policy substrate.} Prompt-conditioned policies as
+    elements of $X$; $V$ is prompt mutation or LLM-mediated re-writing
+    \cite{vallinder2024cultural,lehman2024large}.
+\end{itemize}
+
+\begin{table*}[!t]
+\caption{Default slot choices for canonical substrate families.}
+\label{tab:defaults}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{3pt}
+\scriptsize
+\begin{tabular}{@{}p{0.13\textwidth} p{0.205\textwidth} p{0.19\textwidth} p{0.19\textwidth} p{0.19\textwidth}@{}}
+\hline
+\textbf{Slot} & \textbf{Lattice-like} & \textbf{Particle-like} & \textbf{Graph-like} & \textbf{Program-like} \\
+\hline
+$\pi$ (entity scale) &
+  connected component above threshold $\to$ centroid $+$ mass &
+  flock identifier $\to$ centroid $+$ inertia tensor &
+  community identifier $\to$ membership vector &
+  $\pi=\mathrm{id}$ (raw program) \\
+$V$ default &
+  parameter-localised Gaussian on kernel weights &
+  Gaussian on per-particle parameters &
+  edge rewiring $+$ vertex resampling &
+  bit-flip $+$ instruction insertion \\
+$F$ default &
+  autopoietic closure on the local reaction network &
+  spatial-cohesion threshold (cluster persists $\geq \tau$ ticks) &
+  RAF detection on edge-catalysis graph &
+  MCC predicate (executes a non-trivial program) \\
+$T$ default &
+  Moore neighbourhood on $L$ &
+  $k$-NN on positions &
+  the underlying graph itself &
+  trivial / topology supplied by interaction protocol \\
+$O$ default &
+  $\Omega$ metric on attractors &
+  density-distance archive on $\R^{d}$ &
+  graph-level invariants $+$ embedding novelty &
+  fitness $+$ FM-embedding novelty \\
+Window &
+  $w \approx \tau_{\mathrm{relax}}$ &
+  $w \approx \tau_{\mathrm{relax}}$ &
+  $w \approx \mathrm{diam}(G)$ &
+  $w \approx K$ instructions \\
+\hline
+\end{tabular}
+\end{table*}
+
+\topic{Component-Level Instances}\label{sec:components}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=3pt]
+  \item \textbf{Variation:} Gaussian/uniform mutation, bit-flip, $k$-point
+    recombination, ES \cite{salimans2017es}, gradient descent
+    (deterministic $V$), prompt mutation, IMGEP \cite{forestier2022imgep},
+    and FM-guided exploration \cite{kumar2024asal,faldor2024omniepic}.
+  \item \textbf{Viability:} Markov-blanket viability; autopoietic closure
+    \cite{beer2014glider,beer2015autopoiesis,beer2020origin}; RAF detection
+    \cite{hordijk2004raf,hordijk2015algorithms}; MCC \cite{brant2017mcc};
+    novelty-archive viability \cite{lehman2011novelty}; Quality-Diversity /
+    MAP-Elites filters; POET viability \cite{wang2019poet,wang2020enhanced}.
+  \item \textbf{Interaction topology:} lattice neighbourhoods; range-based
+    on $\R^d$; static social graphs; dynamic pairing graphs (Donor Game
+    \cite{vallinder2024cultural}); stigmergic indirect coupling.
+  \item \textbf{Observer:} density-distance archives (novelty search);
+    CLIP-embedding observers (ASAL \cite{kumar2024asal});
+    Hughes--Dennis novelty-and-learnability \cite{hughes2024openendedness};
+    $\Omega$ metric \cite{lopezdiaz2025undecidability}.
+\end{itemize}
+
+\topic{Default choices for canonical substrate families}\label{sec:defaults}
+
+The framework is permissive but a simulator author needs starting points.
+Table~\ref{tab:defaults} covers the four substrate families introduced in
+\S\ref{sec:substrates}; deviations should be reported in the
+implementation checklist (\S\ref{sec:checklist}).
+
+These are starting points only; an author who departs from them must
+specify the alternative explicitly in the checklist of
+\S\ref{sec:checklist}.
+
+\topic{Worked Composite Example}\label{sec:worked}
+
+We instantiate every typed object of the scaffold for a Flow-Lenia coupled
+to an LLM-naming agent. The point is not the system's empirical interest
+but to exhibit a fully-specified instance: a simulator author wishing to
+implement the framework can follow this template line-for-line and obtain
+a typed iteration rule.
+
+\paragraph{Substrate}
+$\X = \X_{\mathrm{FL}} \boxtimes_{\kappa} \X_{\mathrm{LLM}}$, where
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $\X_{\mathrm{FL}} = \big([0,1]^{L},\; \Phi_{\mathrm{FL}},\;
+        \mu_{0}^{\mathrm{FL}}\big)$ with $L = (\mathbb{Z}/H\mathbb{Z})\times(\mathbb{Z}/W\mathbb{Z})$ a
+        toroidal lattice and $\Phi_{\mathrm{FL}}$ the Flow-Lenia
+        kernel-convolution-and-growth update of
+        \cite{plantec2023flowlenia};
+  \item $\X_{\mathrm{LLM}} = \big(\Sigma^{*},\; \mathrm{id},\;
+        \mu_{0}^{\mathrm{LLM}}\big)$ with $\Sigma^{*}$ the space of token
+        sequences and the LLM substrate dynamics taken to be the identity
+        (the LLM is queried, not autonomously evolved);
+  \item coupling
+        $\kappa = (\kappa_{\mathrm{FL}\to\mathrm{LLM}},\,
+                    \kappa_{\mathrm{LLM}\to\mathrm{FL}})$ with
+        $\kappa_{\mathrm{FL}\to\mathrm{LLM}}(x_{\mathrm{FL}}) =
+         \mathrm{render}(x_{\mathrm{FL}})$ (a text-prompt context drawn
+        from the rendered frame) and
+        $\kappa_{\mathrm{LLM}\to\mathrm{FL}}(x_{\mathrm{LLM}})$ a
+        per-creature scalar viability bonus indexed by the entity's
+        support $S$ each tick.
+\end{itemize}
+
+\paragraph{Entities}
+For each connected component $S \subseteq L$ of
+$\{p \in L : x^{\mathrm{FL}}_{p} \geq \theta\}$ above mass-threshold
+$\theta$, define
+\begin{align*}
+  \pi_{\mathrm{FL}}\big((x_{p})_{p\in S}\big) \;=\;
+  &\Big(\,\tfrac{1}{m}\textstyle\sum_{p\in S} p\, x_{p},\; m\Big),\\
+  m \,:=&\, \textstyle\sum_{p\in S} x_{p},
+\end{align*}
+giving an $\R^{2}\!\times\!\R_{\geq 0}$-valued centroid-and-mass scale
+projection. LLM agents are atomic entities: $S$ a singleton, $\pi=\mathrm{id}$.
+
+\paragraph{Variation}
+$V = V_{\mathrm{FL}} \diamond_{\rho} V_{\mathrm{LLM}}$ with
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $V_{\mathrm{FL}}(x;\theta) = \mathcal{N}(x,\, \sigma^{2} I)$
+        applied to the parameter-localised Flow-Lenia kernel weights
+        \cite{plantec2025flowlenia};
+  \item $V_{\mathrm{LLM}}(x;\theta)$ resamples each token of $x$ with
+        probability $p_{\mathrm{rewrite}}$ from the LLM marginal
+        $q(\cdot \mid \mathrm{context})$;
+  \item $\rho(d\theta'_{\mathrm{LLM}} \mid x_{\mathrm{FL}},
+              x_{\mathrm{LLM}}, \theta_{\mathrm{LLM}})$ re-weights the
+        token marginals proportionally to the recent naming-success score
+        of the named creatures, biasing prompt mutations toward referents
+        that paid off in the last $W$ ticks.
+\end{itemize}
+
+\paragraph{Viability}
+$F = F^{*}$ a hierarchical filter (\S\ref{sec:viability}):
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item each Flow-Lenia entity $e_{\mathrm{FL}} = (S,\pi_{\mathrm{FL}})$
+        passes iff its support $S$ is closed under the local
+        mass-conservation reaction network --- autopoietic closure
+        \cite{beer2014glider};
+  \item each LLM agent passes iff it has successfully named at least one
+        Flow-Lenia entity in the last $W$ ticks (MCC predicate
+        \cite{brant2017mcc});
+  \item $F^{*}$ accepts the joint configuration iff both component filters
+        pass and $|\mathcal{E}_{t+1}^{\mathrm{FL}}| \geq 1$ (a non-extinction
+        top-level predicate).
+\end{itemize}
+
+\paragraph{Interaction topology}
+$T_{t} = T_{t}^{(1)} \sqcup T_{t}^{(2)} \sqcup T_{t}^{(3)}$ a three-layer
+multiplex with weights $(\alpha_{1},\alpha_{2},\alpha_{3})$:
+$T_{t}^{(1)}$ is spatial-overlap on $L$ for Flow-Lenia entities
+(hyperedges = pairs whose supports intersect within radius $r$);
+$T_{t}^{(2)}$ is uniformly random pairing of LLM judges and namers;
+$T_{t}^{(3)}$ is the bipartite stigmergic layer connecting an LLM agent to
+each Flow-Lenia entity it has named.
+
+\paragraph{Observer}
+$O = (O_{\Omega},\, O_{\mathrm{CLIP}})$ with window $w = W$:
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $O_{\Omega}\big((x_{t-w:t},\mu_{t-w:t})\big)$ is the
+        residence-time $\Omega$ metric of
+        \cite{lopezdiaz2025undecidability} on the time series of distinct
+        Flow-Lenia attractors;
+  \item $O_{\mathrm{CLIP}}\big((x_{t-w:t},\mu_{t-w:t})\big)$ is the mean
+        cosine novelty of CLIP embeddings of (frame, name) pairs against
+        an archive of size $A$.
+\end{itemize}
+
+\paragraph{Iteration rule}
+$(x_{t+1},\mu_{t+1}) =
+  \big(\widetilde S_{F^{*}} \circ
+        \widetilde V_{T_{t}} \circ
+        \widetilde\Phi\big)(x_{t},\mu_{t})$
+exactly as in \S\ref{sec:framework}, with each lifted operator constructed
+as specified above.
+
+\paragraph{Emergence assessment (open)}
+Whether $\sup_{\Pi}\CE(M(\mathcal{S}),\Pi) > 0$ holds for this system is a
+concrete instance of OP1 (\S\ref{sec:op1}).
+
+\medskip
+
+The scaffold's non-prescriptiveness is now visible: every slot can be
+ablated independently --- replace $V_{\mathrm{LLM}}$ with random prompts,
+swap $F^{*}$ for Markov-blanket viability, collapse the multiplex $T$ to a
+complete graph, narrow $O$ to $O_{\mathrm{CLIP}}$ alone --- and the
+resulting system remains an instance of the same scaffold. Conformance
+(\S\ref{sec:checklist}) requires only that each ablation reports its
+choices in the same template.
+
+\subsection{Implementation and Reproducibility}\label{sec:parallel}
+
+Implementation is part of the methodology because the framework is intended
+to be reproducible as a simulator scaffold, not only interpreted as a
+taxonomy. This subsection therefore records the algorithmic control flow,
+synchronization boundaries, complexity assumptions, and reporting checklist
+needed to instantiate $\mathcal{S}$ in software. No source code is required;
+the pseudocode records control flow and synchronization points. The five-slot
+decomposition is preserved: each slot becomes its own kernel.
+
+\topic{Inputs and conventions}
+
+Let $N$ be the population size of entities; $|X|$ be the substrate state
+size (e.g.\ $H\times W$ for a 2D lattice, or $D$ for an $\R^D$ particle
+system); $c_\Phi, c_V, c_F$ be the per-call costs of one substrate update,
+one variation draw, and one viability evaluation respectively;
+$c_{\mathrm{nn}}$ the cost of a neighbourhood lookup or $k$-NN query; and
+$P$ the number of parallel workers (SMs $\times$ warp-equivalents in CUDA
+terms; XLA threads in JAX terms).
+
+\topic{Per-tick algorithm}
+
+At each tick $t \to t+1$:
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{$\Phi$-kernel (substrate dynamics).} For each substrate site
+    or particle, apply $\Phi$ in parallel.
+    \begin{itemize}[leftmargin=1.2em,itemsep=2pt]
+      \item \emph{Lattice / NCA / Lenia / Flow-Lenia:} a local stencil. Each
+        thread computes the update for one site, reading from a halo.
+        Embarrassingly parallel modulo halo exchange.
+      \item \emph{Particle / swarm:} parallel over particles; each thread
+        queries its neighbourhood via a spatial-hash or BVH index. $k$-NN
+        is the interaction step.
+      \item \emph{Discrete-program substrates (Avida-like):} parallel over
+        programs; each thread executes one program for $K$ instructions.
+    \end{itemize}
+  \item \textbf{$T$-kernel (interaction topology lookup).} Build $T_t$ if
+    dynamic. Local stencils need no global structure; $k$-NN/$\varepsilon$-ball
+    lookups require a spatial index, which itself parallelises in
+    $O(\log |X|)$ depth. Social graphs are gather operations indexed by an
+    adjacency list.
+  \item \textbf{$V$-kernel (variation).} For each entity $i$ in parallel,
+    draw mutated offspring. Per-entity variation is embarrassingly parallel;
+    recombination requires an additional gather step indexed by mating
+    pairs (selected via $T$).
+  \item \textbf{$F$-kernel (viability).} For each entity in parallel,
+    evaluate viability predicate. Fitness-proportional selection requires a
+    parallel prefix sum (scan) over the population --- a $\log N$-depth
+    synchronisation barrier.
+  \item \textbf{$\mu$-reduction.} Update population measure; for
+    mass-conserving substrates (Flow-Lenia) include a global mass reduction
+    over the lattice --- another $O(\log |X|)$-depth scan.
+  \item \textbf{$O$-kernel (observer).} Optionally: archive update,
+    divergence computation, or FM embedding. $k$-NN novelty is all-to-all
+    (or approximate-NN) across the archive; FM embedding is an
+    embarrassingly parallel batch forward pass.
+\end{enumerate}
+
+The scaffold's products $S_F \circ V_T \circ \Phi$ map onto \textbf{kernels
+with explicit synchronisation only at boundaries between slots}. Within a
+slot, parallelism is per-site (for $\Phi,F$) or per-entity (for $V$,
+novelty).
+
+\topic{Single-threaded complexity}
+
+Per tick, ignoring constants:
+\begin{align*}
+  T_1(N,|X|)=O\big(& |X|c_\Phi + |E_T|c_{\mathrm{nn}} \\
+    &+ Nc_V + Nc_F + c_O(N,|X|)\big),
+\end{align*}
+where $|E_T|$ is the number of edges in $T_t$ (e.g.\ $O(|X|)$ for lattices
+with bounded-degree neighbourhoods, $O(Nk)$ for $k$-NN, $O(N^2)$ for
+complete pairwise interaction) and $c_O$ depends on observer family.
+
+\topic{Many-threaded complexity}
+
+With $P$ parallel workers, ideal-case (no contention) per-tick cost is
+\begin{align*}
+  T_P(N,|X|)=O\bigg(&
+    \frac{|X|c_\Phi + |E_T|c_{\mathrm{nn}}}{P} \\
+    &+ \frac{Nc_V + Nc_F + c_O(N,|X|)}{P} \\
+    &+(\log N + \log |X|)c_{\mathrm{sync}}\bigg),
+\end{align*}
+where the $\log$ terms come from population-level reductions
+($\mu$-mass conservation; fitness-proportional selection prefix-sum) and
+from spatial-index construction. In the lattice case with
+$|E_T|=\Theta(|X|)$ and stencil cost $c_\Phi=\Theta(1)$, this collapses to
+$O(|X|/P + N/P + \log|X|)$.
+
+\topic{Communication patterns}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Embarrassingly parallel.} Per-site $\Phi$ on a lattice (with
+    halo); per-entity $V$ when channels are independent; per-entity $F$ when
+    the predicate is local; FM-embedding observers (batch forward).
+  \item \textbf{Local stencils.} Lenia/NCA/Flow-Lenia $\Phi$-kernels; halo
+    width = kernel radius. Standard CUDA shared-memory stencil pattern.
+  \item \textbf{Population-level reductions.} Mass conservation in
+    Flow-Lenia ($O(\log|X|)$); fitness-proportional selection prefix sum
+    ($O(\log N)$); $\Omega$-metric residence-time reductions.
+  \item \textbf{All-to-all.} $k$-NN observers against archive (all current
+    entities vs all archive entries); naive $O(NM)$, approximate-NN
+    $O(N\log M)$.
+  \item \textbf{Gather operations.} Social-graph indexed lookups;
+    $T$-mediated mating pair gather. Bandwidth-limited rather than
+    compute-limited.
+\end{itemize}
+
+\topic{Random-number considerations}
+
+Each parallel worker requires an independent stream. Counter-based RNGs
+such as Philox 4$\times$32-10 \cite{salmon2011parallel} are
+appropriate: stream $(i,t)$ is a key-counter pair
+$((\text{global seed},i),t)$, allowing reproducible per-worker streams
+without locks or pre-computation. JAX's \texttt{jax.random.split} API
+instantiates exactly this pattern.
+
+\topic{Modularity and code-reuse benefits}
+
+Each of the five slots becomes a separate kernel. Implementations are:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Reusable across substrates:} the $V$-kernel for Gaussian
+    mutation is identical whether the substrate is Lenia or a Boids swarm;
+    only the input shape differs.
+  \item \textbf{Reusable across viability formalisms:} Markov-blanket,
+    autopoietic, RAF, and MCC viability all type as
+    $\Mplus(X)\to\Mplus(X)$; switching between them is a single function
+    pointer, not a rewrite.
+  \item \textbf{Reusable across observers:} density-distance, FM-embedding,
+    and EI-based observers all take a trajectory and return a vector in
+    $\R^k$.
+\end{itemize}
+
+This is the pragmatic payoff of the abstract slot decomposition.
+
+\topic{Implementation Checklist}\label{sec:checklist}
+
+A reproducible $\mathcal{S}$-implementation reports, for each slot:
+\begin{enumerate}[leftmargin=2em,itemsep=2pt]
+  \item Substrate $\X=(X,\Phi,\mu_0)$, including
+    $\boxtimes_\kappa$-decomposition if composite.
+  \item Entity definition (supporting set determination; scale projection
+    $\pi$).
+  \item Variation channels and any $\diamond_\rho$ couplings.
+  \item Viability filter family (named, not merely typed) and predicates;
+    if departing from the default of \S\ref{sec:defaults}, justify.
+  \item Interaction topology including any multiplex layers and weights
+    $(\alpha_\ell)$.
+  \item Observer family, window length $w$, and state variables, if any
+    (archive size, embedding model, reference distribution, etc.).
+  \item Descriptor space, archive update rule, saturation criterion, and
+    boundedness/open-endedness test used by the observer.
+  \item Iteration order. Default:
+    $\widetilde S_F \circ \widetilde V_T \circ \widetilde\Phi$. Any
+    deviation (e.g.\ $\widetilde V_T \circ \widetilde S_F \circ
+    \widetilde\Phi$ for asynchronous selection) is stated explicitly.
+  \item RNG provenance per kernel (counter-based scheme,
+    $(\mathrm{seed},\,\mathrm{worker\,id},\,t)$ key triple).
+  \item Per-tick wall-clock and theoretical complexity.
+  \item Pseudocode or executable specification for initialization, tick
+    update, observer-state update, stopping rule, and outputs.
+\end{enumerate}
+
+\paragraph{Minimal pseudocode}
+A conformant implementation supplies at least the following control-flow
+template, specialised to its chosen slots:
+\begin{enumerate}[leftmargin=2em,itemsep=2pt]
+  \item Initialise $(x_0,\mu_0)$, topology state, observer state $a_0$, and
+    RNG keys.
+  \item For $t=0,\ldots,T-1$, compute $x'=\Phi(x_t)$ and push $\mu_t$
+    forward if entities are explicit.
+  \item Build or update $T_t$ and draw the varied population
+    $\mu' = V_{T_t}(\mu_t;x')$.
+  \item Apply the viability filter $\mu_{t+1}=F(\mu')$ and set
+    $x_{t+1}=x'$.
+  \item Evaluate $(o_t,a_{t+1})=O_s((x,\mu)_{t-w:t+1},a_t)$, update any
+    archive, and test the stopping or saturation criterion.
+  \item Return trajectory summaries, observer outputs, archive state, and
+    reproducibility metadata.
+\end{enumerate}
+
+\paragraph{Conformance}
+Two implementations are \emph{conformant} with respect to the framework
+when they (i) agree on the typing of each slot
+(\S\ref{sec:framework}--\S\ref{sec:observer}); (ii) report all eleven items
+of the checklist with values, not just slot names; (iii) preserve the
+iteration order of item~8 or explicitly declare a variant; and (iv)
+specify the entity-detection rule consistently with
+Definition~\ref{def:entity}. Conformance does \emph{not} require choice of
+the same fitness landscape, observer family, or coarse-graining $\Pi$;
+those are user-level choices. It does require that a comparison across two
+implementations be a comparison of choices, not of unstated defaults.
+
+\section{Results}\label{sec:results}
+
+% Results intentionally left open until empirical or formal results are added.
+
+\section{Discussion}\label{sec:discussion}
+
+\subsection{Conjectures and Open Problems}\label{sec:conjectures}
+
+This section consolidates \emph{all} claims in the scaffold that we have
+\emph{not} proven. They are stated as conjectures or open problems to
+distinguish them from definitions and established propositions.
+
+\topic{Conjecture (closure-operator unification of viability)}\label{sec:c1}
+
+\begin{namedconjecture}{C1: closure-operator unification of viability}
+Each of the four viability formalisms --- Markov-blanket viability,
+autopoietic closure, RAF set membership, and MCC --- corresponds to a
+closure operator $c_\bullet$ on a partial order of supporting sets (suitable
+to the formalism), in the sense that an entity passes the filter iff its
+supporting set is closed under $c_\bullet$.
+\end{namedconjecture}
+
+\paragraph{Status} Partial evidence:
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \emph{Autopoiesis.} Beer's formalisation of Game-of-Life gliders
+    \cite{beer2014glider,beer2015autopoiesis} explicitly uses preimage-closure on the reaction
+    network --- this is a genuine closure operator on the reaction-set
+    lattice.
+  \item \emph{RAF.} The RAF property is defined exactly as ``$R'$ is closed
+    under reflexive autocatalysis and food-generation''; the maxRAF is the
+    largest closed set. Hordijk \& Steel's polynomial-time algorithm is a
+    closure-iteration. This case is essentially proven.
+  \item \emph{Markov blanket.} The statistical decomposition is \emph{not
+    obviously} a closure operator. Sparse-coupling implies blanket
+    structure only under additional conditions
+    \cite{aguilera2022particular,heins2022sparse}. C1 in this case is genuinely open.
+  \item \emph{MCC.} The minimal criterion is a predicate, not obviously a
+    closure. Reformulating it as ``smallest set of solver-and-problem pairs
+    satisfying mutual qualification'' gives a closure-like structure but
+    the equivalence is unproven.
+\end{itemize}
+
+A proof of C1 would unify the four formalisms abstractly; a refutation
+(e.g.\ a counterexample for the Markov-blanket case) would reveal that
+``viability'' is genuinely heterogeneous.
+
+\topic{Conjecture (hierarchical viability composition)}\label{sec:c2}
+
+\begin{namedconjecture}{C2: hierarchical viability composition}
+Under the entity composition rule (E3), each viability formalism in C1 lifts
+to hierarchical entities such that $F^*$-validity at the composite level
+implies $F$-validity of each component. Equivalently: if each component
+closure operator agrees on its component supporting set, the composite is
+closed under the joint closure operator.
+\end{namedconjecture}
+
+\paragraph{Status} Open. Beer's autopoietic gliders compose correctly under
+simple unions; RAF sets do not in general (a union of two RAFs is not
+necessarily an RAF without their joint catalyses), giving a partial
+counterexample for one direction.
+
+\topic{Conjecture (observer-relative novelty as divergence)}
+
+\begin{namedconjecture}{C3: observer-relative novelty as divergence}
+All three observer families in \S\ref{sec:observer-families} ---
+density-distance, FM-embedding,
+information-theoretic --- are instances of a single divergence-functional
+schema $O[\mu] = D(\mu \,\Vert\, \mu_{\mathrm{ref}})$ for a context-dependent
+reference $\mu_{\mathrm{ref}}$.
+\end{namedconjecture}
+
+\paragraph{Status} Plausible by inspection but unproven in generality.
+
+\topic{Open problem (causal emergence of scaffolded systems)}\label{sec:op1}
+
+\begin{namedopenproblem}{OP1: causal emergence of scaffolded systems}
+Find substrate--viability pairs $(\X, F)$ for which one can prove
+$\sup_\Pi \CE(M(\mathcal{S}),\Pi)>0$ for the scaffolded system $\mathcal{S}$.
+\end{namedopenproblem}
+
+This manuscript does \emph{not} attempt a proof of OP1. Concrete candidate
+systems include:
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \emph{Flow-Lenia substrates with Markov-blanket viability filters.}
+    Are these emergent in the sense of Definition~\ref{def:CE}?
+  \item \emph{Differentiable Logic CA implementing Conway's Game of Life.}
+    Israeli and Goldenfeld \cite{israeli2004irreducibility,israeli2006coarse}
+    showed Class III/IV ECAs admit
+    non-trivial coarse-grainings; does CE follow?
+  \item \emph{POET / Enhanced POET coevolved environments and agents.} Is
+    there a coarse-graining at which environment--agent dynamics achieve
+    higher EI than the joint microscale?
+\end{itemize}
+
+OP1 is the scaffold's first concrete open problem.
+
+\topic{Open problem (FEP-as-lens scope)}
+
+\begin{namedopenproblem}{OP2: FEP-as-lens scope}
+Characterise precisely the substrate--dynamics pairs for which the FEP is
+informative as a parameterisation of viability and observer slots, in light
+of \cite{aguilera2022particular,biehl2021critique} and Friston's reply
+\cite{friston2022reply}.
+\end{namedopenproblem}
+
+\topic{Open problem (interaction-topology expressiveness)}
+
+\begin{namedopenproblem}{OP3: interaction-topology expressiveness}
+Is the multiplex-with-$\diamond_\rho$ formalism in
+\S\ref{sec:multi-regime-topologies} universal, in the
+sense that every ``natural'' multi-coupling-regime ALife system can be
+expressed as a multiplex with countably many layers? A categorical
+formulation would express this in terms of the operad of wiring diagrams
+\cite{vagner2015algebras}.
+\end{namedopenproblem}
+
+\subsection{Scope and Commitments}\label{sec:scope}
+
+The scaffold \textbf{commits to} the five-slot decomposition, the substrate
+composition operator $\boxtimes_\kappa$, the variation-channel composition
+operator $\diamond_\rho$, the entity definition (Def.~\ref{def:entity}), the
+strict separation of substrate topology from interaction topology, the
+canonical iteration order
+$\widetilde S_F \circ \widetilde V_T \circ \widetilde\Phi$ (variants must be
+declared), and the Hoel-style definition of emergence
+(Def.~\ref{def:CE}).
+
+The scaffold \textbf{stays neutral on} the choice of fitness landscape, the
+choice of interaction-topology family, the choice of observer family (we
+offer three but commit to none), the metaphysical status of agency, the
+specific closure-operator structure of viability formalisms (left as
+Conjecture~C1), and --- critically --- the relationship between causal
+emergence and the rest of the framework (left as OP1).
+
+\subsection{Limitations and Submission Positioning}
+
+The framework is intended to support comparison rather than to impose a single
+theory of agency, fitness, or open-endedness. Its main advantage is that a
+model can vary one slot while holding the others fixed, making ablations and
+cross-substrate comparisons explicit. Its main limitation is that several
+unifications remain conjectural: C1--C3 and OP1--OP3 identify where the
+framework still requires either proof, counterexample, or domain-specific
+instantiation.
+
+For IEEE submission, the manuscript should therefore be read as a methodology
+and framework paper rather than an empirical benchmark paper. The representative
+instances and worked composite example demonstrate expressibility and
+implementation structure; they do not by themselves establish a new empirical
+state of the art. A venue that expects experimental validation may require a
+follow-on section with simulator results, ablations, or a quantitative
+comparison across at least two substrate families.
+
+\section{Conclusion}
+
+% Conclusion intentionally left blank until results are added.
+\bibliographystyle{IEEEtran}
+\bibliography{emergent_systems}
+
+\end{document}
