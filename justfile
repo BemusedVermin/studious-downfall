@@ -1,6 +1,10 @@
 DOC_DIR := "docs"
 PAPER_NAME := "emergent_systems"
 
+# Use Windows PowerShell on Windows; just falls back to `sh` elsewhere.
+# The `[unix]` / `[windows]` recipe attributes below pick the right body per host.
+set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
+
 default:
     just --list
 
@@ -38,9 +42,16 @@ typecheck:
 check: lint typecheck test
 
 # Remove Python build/cache directories.
+[unix]
 clean-py:
     -rm -rf .pytest_cache .ruff_cache .pyright dist build
     -find src tests -type d -name __pycache__ -exec rm -rf {} +
+
+# Remove Python build/cache directories.
+[windows]
+clean-py:
+    -Remove-Item -Recurse -Force -ErrorAction SilentlyContinue .pytest_cache, .ruff_cache, .pyright, dist, build
+    -Get-ChildItem -Path src, tests -Filter __pycache__ -Recurse -Directory -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
 # ---- Paper ------------------------------------------------------------------
 
