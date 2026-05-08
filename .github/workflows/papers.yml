@@ -1,0 +1,209 @@
+# Builds every LaTeX paper under docs/ and publishes the PDFs to GitHub Pages.
+#
+# Validation: every PR and push runs `latexmk -halt-on-error` per paper. Each
+#   paper is its own matrix leg, so one broken paper does not mask the others
+#   and PR reviewers see a separate check per artefact.
+# Publish: only push-to-master deploys to Pages. The site is a flat list of the
+#   built PDFs plus a generated index.html.
+#
+# Discovery rule (kept simple on purpose — the "scaffolding paper + per-result
+# papers" layout is documented in docs/papers/README.md once issue #32 lands):
+#   - docs/emergent_systems.tex                 -> slug "scaffolding"
+#   - docs/papers/<slug>/paper.tex              -> slug "<slug>"
+#
+# Pages requirement: enable in repo settings under
+#   Settings -> Pages -> Build and deployment -> Source: GitHub Actions.
+# The very first deploy will fail with a clear message until that is set.
+
+name: papers
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'docs/**.tex'
+      - 'docs/**.bib'
+      - 'docs/**.cls'
+      - 'docs/**.sty'
+      - 'docs/papers/**'
+      - '.github/workflows/papers.yml'
+  pull_request:
+    paths:
+      - 'docs/**.tex'
+      - 'docs/**.bib'
+      - 'docs/**.cls'
+      - 'docs/**.sty'
+      - 'docs/papers/**'
+      - '.github/workflows/papers.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Cancel superseded runs on the same ref. Pages deployment itself has a separate
+# queue managed by actions/deploy-pages, so cancelling a stale build is safe.
+concurrency:
+  group: papers-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
+      count: ${{ steps.set.outputs.count }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Discover paper sources
+        id: set
+        shell: bash
+        run: |
+          set -euo pipefail
+          declare -a entries=()
+
+          if [[ -f docs/emergent_systems.tex ]]; then
+            entries+=('{"workdir":"docs","root":"emergent_systems.tex","slug":"scaffolding"}')
+          fi
+
+          if [[ -d docs/papers ]]; then
+            while IFS= read -r dir; do
+              [[ -f "${dir}/paper.tex" ]] || continue
+              slug=$(basename "$dir")
+              entries+=("{\"workdir\":\"${dir}\",\"root\":\"paper.tex\",\"slug\":\"${slug}\"}")
+            done < <(find docs/papers -mindepth 1 -maxdepth 1 -type d | sort)
+          fi
+
+          if [[ ${#entries[@]} -eq 0 ]]; then
+            echo "No papers found." >&2
+            echo "matrix=[]" >> "$GITHUB_OUTPUT"
+            echo "count=0" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          IFS=,
+          json="[${entries[*]}]"
+          echo "matrix=${json}" >> "$GITHUB_OUTPUT"
+          echo "count=${#entries[@]}" >> "$GITHUB_OUTPUT"
+
+          echo "Discovered ${#entries[@]} paper(s):"
+          unset IFS
+          printf '  %s\n' "${entries[@]}"
+
+  build:
+    needs: discover
+    if: needs.discover.outputs.count != '0'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        paper: ${{ fromJSON(needs.discover.outputs.matrix) }}
+    name: build (${{ matrix.paper.slug }})
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile ${{ matrix.paper.slug }}
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: ${{ matrix.paper.root }}
+          working_directory: ${{ matrix.paper.workdir }}
+          # -halt-on-error fails fast on the first LaTeX error rather than
+          # spewing follow-on errors. -file-line-error gives clickable
+          # error locations in the runner log.
+          args: -pdf -interaction=nonstopmode -halt-on-error -file-line-error
+
+      - name: Stage PDF
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _staging
+          src="${{ matrix.paper.workdir }}/$(basename "${{ matrix.paper.root }}" .tex).pdf"
+          if [[ ! -f "$src" ]]; then
+            echo "::error::Expected PDF not produced: $src"
+            exit 1
+          fi
+          cp "$src" "_staging/${{ matrix.paper.slug }}.pdf"
+
+      - name: Upload PDF artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-${{ matrix.paper.slug }}
+          path: _staging/${{ matrix.paper.slug }}.pdf
+          retention-days: 14
+          if-no-files-found: error
+
+  publish:
+    needs: [discover, build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Download all paper artefacts
+        uses: actions/download-artifact@v4
+        with:
+          path: _artifacts
+          pattern: pdf-*
+          merge-multiple: true
+
+      - name: Assemble Pages site
+        shell: bash
+        env:
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp _artifacts/*.pdf _site/
+
+          short_sha="${SHA:0:7}"
+          built_at=$(date -u +'%Y-%m-%d %H:%M UTC')
+
+          {
+            echo '<!doctype html>'
+            echo '<html lang="en"><head>'
+            echo '<meta charset="utf-8">'
+            echo '<meta name="viewport" content="width=device-width,initial-scale=1">'
+            echo '<title>Emergent Systems — papers</title>'
+            echo '<style>'
+            echo 'body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;max-width:48rem;margin:3rem auto;padding:0 1rem;line-height:1.5;color:#222}'
+            echo 'h1{margin-bottom:.25rem}'
+            echo '.sub{color:#666;margin-top:0;font-size:.95rem}'
+            echo 'ul{padding-left:1.25rem}'
+            echo 'li{margin:.35rem 0}'
+            echo 'a{color:#0366d6;text-decoration:none}'
+            echo 'a:hover{text-decoration:underline}'
+            echo 'footer{margin-top:3rem;padding-top:1rem;border-top:1px solid #eee;color:#888;font-size:.85rem}'
+            echo '</style>'
+            echo '</head><body>'
+            echo '<h1>Emergent Systems</h1>'
+            echo "<p class=\"sub\">Built from <code>${short_sha}</code> on ${built_at}.</p>"
+            echo '<h2>Papers</h2>'
+            echo '<ul>'
+            for pdf in _site/*.pdf; do
+              [[ -f "$pdf" ]] || continue
+              name=$(basename "$pdf" .pdf)
+              echo "  <li><a href=\"${name}.pdf\">${name}</a></li>"
+            done
+            echo '</ul>'
+            echo "<footer>Source: <a href=\"https://github.com/${REPO}\">${REPO}</a></footer>"
+            echo '</body></html>'
+          } > _site/index.html
+
+          echo "Site contents:"
+          ls -la _site/
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artefact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
