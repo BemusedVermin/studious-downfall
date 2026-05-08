@@ -9,7 +9,6 @@ dist/
 build/
 
 docs/**
-!docs/**/*.pdf
 !docs/**/*.tex
 !docs/**/*.bib
 !docs/**/*.md
