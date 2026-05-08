@@ -115,20 +115,24 @@ jobs:
           args: -pdf -interaction=nonstopmode -halt-on-error -file-line-error
 
       - name: Stage build outputs
+        # Stage the log first so it makes it into the artefact even if the PDF
+        # check below fails; the comment job needs the log to report problems.
+        if: always()
         shell: bash
         run: |
-          set -euo pipefail
+          set -uo pipefail
           mkdir -p _staging
           base="$(basename "${{ matrix.paper.root }}" .tex)"
-          pdf="${{ matrix.paper.workdir }}/${base}.pdf"
           log="${{ matrix.paper.workdir }}/${base}.log"
+          pdf="${{ matrix.paper.workdir }}/${base}.pdf"
+          if [[ -f "$log" ]]; then
+            cp "$log" "_staging/${{ matrix.paper.slug }}.log"
+          fi
           if [[ ! -f "$pdf" ]]; then
             echo "::error::Expected PDF not produced: $pdf"
             exit 1
           fi
           cp "$pdf" "_staging/${{ matrix.paper.slug }}.pdf"
-          # Log may be absent if latexmk skipped a rebuild; include only if present.
-          [[ -f "$log" ]] && cp "$log" "_staging/${{ matrix.paper.slug }}.log" || true
 
       - name: Upload build artefacts
         # Always upload, even if the log check below fails, so the .log can be
@@ -147,7 +151,75 @@ jobs:
           base="$(basename "${{ matrix.paper.root }}" .tex)"
           log="${{ matrix.paper.workdir }}/${base}.log"
           src="${{ matrix.paper.workdir }}/${{ matrix.paper.root }}"
-          bash scripts/check-latex-log.sh "$log" "$src"
+          bash scripts/check-latex-log.sh "$log" "$src" --format=actions
+
+  comment:
+    # Aggregate every paper's log into a single sticky PR comment. Runs only on
+    # PR events; `if: always()` so the comment still posts when build legs fail
+    # (the whole point is reporting those failures).
+    needs: [discover, build]
+    if: always() && github.event_name == 'pull_request' && needs.discover.outputs.count != '0'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download paper artefacts
+        uses: actions/download-artifact@v4
+        with:
+          path: _artifacts
+          pattern: pdf-*
+          merge-multiple: true
+
+      - name: Render comment body
+        shell: bash
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          set -uo pipefail
+          short_sha="${SHA:0:7}"
+          {
+            echo "## Paper build report"
+            echo ""
+            echo "Built from \`${short_sha}\`."
+            echo ""
+
+            shopt -s nullglob
+            logs=( _artifacts/*.log )
+            if (( ${#logs[@]} == 0 )); then
+              echo "_No paper logs were uploaded — every build leg may have failed before producing a log._"
+            else
+              for log in "${logs[@]}"; do
+                slug=$(basename "$log" .log)
+                report=$(bash scripts/check-latex-log.sh "$log" "$slug" --format=markdown 2>&1 || true)
+                if echo "$report" | grep -qF "**Errors:**"; then
+                  icon=":x:"
+                elif echo "$report" | grep -qF "**Warnings:**"; then
+                  icon=":warning:"
+                else
+                  icon=":white_check_mark:"
+                fi
+                echo "### ${icon} \`${slug}\`"
+                echo ""
+                echo "${report}"
+                echo ""
+              done
+            fi
+
+            echo "<sub>Updated automatically by the <code>papers</code> workflow. Full logs are attached to this run as <code>pdf-*</code> artefacts.</sub>"
+          } > _comment.md
+
+          echo "----- comment preview -----"
+          cat _comment.md
+          echo "---------------------------"
+
+      - name: Post sticky PR comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: papers-workflow
+          path: _comment.md
 
   publish:
     needs: [discover, build]
