@@ -1,0 +1,51 @@
+name: Feature request
+description: Proposed new functionality, observer, helper, or built-in.
+title: "[feat] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for new functionality the scaffold should
+        expose. For optimising existing code marked with `# PERF[...]`,
+        use the **Performance work** template instead.
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should exist? One paragraph.
+    validations:
+      required: true
+
+  - type: input
+    id: paper-ref
+    attributes:
+      label: Paper reference
+      description: Section/line in `docs/emergent_systems.tex` that motivates this. Leave blank if not applicable.
+      placeholder: "§3.5 line 769 (Ω metric)"
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Files affected
+      description: Modules and tests that will change. Markdown links if you can.
+    validations:
+      required: true
+
+  - type: textarea
+    id: approach
+    attributes:
+      label: Sketch (optional)
+      description: Rough approach. Skip if you'd rather not commit yet.
+
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of done
+      description: |
+        What's the test or observable behaviour that means this is complete?
+        Cite the test name(s) you expect to add or the API contract that
+        should hold.
+    validations:
+      required: true

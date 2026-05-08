@@ -1,0 +1,13 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Paper questions
+    url: https://github.com/BemusedVermin/studious-downfall/blob/master/docs/emergent_systems.tex
+    about: |
+      For questions about the framework's mathematics, read the paper.
+      The library follows it; if the paper is unclear or has changed,
+      file a `paper-drift` issue instead.
+  - name: Implementation rationale
+    url: https://github.com/BemusedVermin/studious-downfall/blob/master/docs/IMPLEMENTATION_PLAN.md
+    about: |
+      Design decisions and rejected alternatives are documented here.
+      Read this before proposing a refactor of a load-bearing module.

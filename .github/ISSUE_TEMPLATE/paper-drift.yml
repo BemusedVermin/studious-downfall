@@ -1,0 +1,53 @@
+name: Paper drift
+description: The paper changed and code needs to follow.
+title: "[paper-drift] "
+labels: ["paper-drift"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The paper at `docs/emergent_systems.tex` is a work in progress.
+        Use this template when the paper's current text disagrees with
+        what's in the code (signature changes, renamed symbols, new
+        conjectures or open problems, etc.).
+
+        When the paper and the code disagree, the paper wins — the goal
+        of this issue is to bring the code back into agreement.
+
+  - type: input
+    id: section
+    attributes:
+      label: Paper section
+      description: Section number and line range in `docs/emergent_systems.tex`.
+      placeholder: "§3.4 lines 588-602"
+    validations:
+      required: true
+
+  - type: textarea
+    id: was-now
+    attributes:
+      label: Was → now
+      description: |
+        Paste the relevant excerpts. What did the paper say before, and
+        what does it say now? If you only have the current version, just
+        describe the disagreement with the code.
+    validations:
+      required: true
+
+  - type: textarea
+    id: code-impact
+    attributes:
+      label: Code that needs updating
+      description: |
+        Modules / Protocols / tests that diverge. Don't forget the
+        `# paper: <symbol>` sibling comments — they may need updating too.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of done
+      description: How will we know the code matches the paper again?
+    validations:
+      required: true

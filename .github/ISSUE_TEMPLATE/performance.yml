@@ -1,0 +1,55 @@
+name: Performance work (PERF tag)
+description: Optimise a hot path flagged with `# PERF[...]`.
+title: "[perf] "
+labels: ["performance"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for optimising code that's marked with a
+        `# PERF[<tag>]: ...` comment. Each PERF tag should map to one
+        issue. New functionality goes in **Feature request**.
+
+  - type: input
+    id: tag
+    attributes:
+      label: PERF tag
+      description: The bracketed identifier from the source comment.
+      placeholder: "v_t-python-loop"
+    validations:
+      required: true
+
+  - type: input
+    id: file
+    attributes:
+      label: File:line
+      description: Markdown link to the offending code.
+      placeholder: "[system.py:71](src/emergent_systems/system.py)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behaviour
+      description: What's slow, and why?
+    validations:
+      required: true
+
+  - type: textarea
+    id: target
+    attributes:
+      label: Target approach
+      description: Flat-array? `jax.lax.scan`? GPU port? Specify the destination.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of done
+      description: |
+        Benchmark numbers? `# PERF[...]` tag removed? A test that asserts
+        the function is traceable under jit?
+    validations:
+      required: true

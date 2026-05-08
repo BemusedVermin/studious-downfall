@@ -1,0 +1,40 @@
+name: Bug report
+description: Something is broken.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproducer
+      description: |
+        Smallest failing snippet. If it's a test failure, include the
+        exact `uv run pytest ...` invocation.
+      render: python
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: |
+        - Python version
+        - JAX version (run `uv pip show jax | head -2`)
+        - OS / accelerator
+      value: |
+        - Python:
+        - JAX:
+        - OS:
