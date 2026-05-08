@@ -72,9 +72,7 @@ def test_conformance_report_round_trips_dict():
     """Items dict is the artefact a paper's supplementary materials would include."""
     from typing import Literal
 
-    items: dict[str, Literal["pass", "fail", "missing"]] = {
-        f"item-{i}": "pass" for i in range(11)
-    }
+    items: dict[str, Literal["pass", "fail", "missing"]] = {f"item-{i}": "pass" for i in range(11)}
     report = ConformanceReport(items=items)
     assert report.is_conformant()
     assert len(report.items) == 11

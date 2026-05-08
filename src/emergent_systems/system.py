@@ -153,7 +153,9 @@ def build_population_variation_multiplex[State](
             if not isinstance(layer_population, WeightedSamples):
                 continue
             for particle_idx in range(layer_population.weights.shape[0]):
-                all_states.append(jax.tree.map(lambda leaf, i=particle_idx: leaf[i], layer_population.states))
+                all_states.append(
+                    jax.tree.map(lambda leaf, i=particle_idx: leaf[i], layer_population.states)
+                )
                 all_weights.append(alpha * layer_population.weights[particle_idx])
 
         if not all_states:
@@ -200,9 +202,7 @@ class System[State, DynamicsParam, Params, ObserverState]:
     """Paper: g, the measurable rule for hyperedge parameters (§3.4 line 588).
     Default behaviour (focal-entity-only) is implemented inline if this is `None`."""
 
-    iteration_order: tuple[SlotName, ...] = field(
-        default=("dynamics", "variation", "viability")
-    )
+    iteration_order: tuple[SlotName, ...] = field(default=("dynamics", "variation", "viability"))
     """Paper §3.1 default; deviations declared per §4 checklist item 8."""
 
     def __post_init__(self) -> None:

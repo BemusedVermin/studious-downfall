@@ -73,9 +73,7 @@ class VariationReport:
 class ViabilityReport:
     """Paper §4 checklist item 4 — name the formalism, not just its type."""
 
-    formalism_name: Literal[
-        "markov-blanket", "autopoietic", "raf", "mcc", "custom", "unknown"
-    ]
+    formalism_name: Literal["markov-blanket", "autopoietic", "raf", "mcc", "custom", "unknown"]
     predicate_description: str
     """Plain-English description of the predicate, e.g. 'GoL-glider preimage closure'."""
 
@@ -212,14 +210,14 @@ class SystemSpec:
         items["4-viability"] = (
             "pass"
             if self.viability is not None and self.viability.formalism_name != "unknown"
-            else "missing" if self.viability is None else "fail"
+            else "missing"
+            if self.viability is None
+            else "fail"
         )
         items["5-topology"] = "pass" if self.topology is not None else "missing"
         items["6-observer"] = "pass" if self.observer is not None else "missing"
         items["7-descriptor"] = "pass" if self.descriptor is not None else "missing"
-        items["8-iteration-order"] = (
-            "pass" if self.iteration_order is not None else "missing"
-        )
+        items["8-iteration-order"] = "pass" if self.iteration_order is not None else "missing"
         items["9-rng"] = "pass" if self.rng is not None else "missing"
         items["10-complexity"] = "pass" if self.complexity is not None else "missing"
         items["11-pseudocode"] = "pass" if self.pseudocode is not None else "missing"
@@ -263,7 +261,4 @@ def _infer_multiplex_layers(topology: object) -> tuple[tuple[str, float], ...]:
     """Pull `(layer_name, alpha)` out of a multiplex topology; empty for single-layer."""
     if not isinstance(topology, MultiplexTopology):
         return ()
-    return tuple(
-        (type(layer.topology).__name__, float(layer.alpha))
-        for layer in topology.layers
-    )
+    return tuple((type(layer.topology).__name__, float(layer.alpha)) for layer in topology.layers)

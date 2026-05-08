@@ -89,9 +89,7 @@ class IndependentChannelCoupling[StateA, StateB, ParamsA, ParamsB](
 
 
 @dataclass(frozen=True)
-class _ComposedDistribution[StateA, StateB, ParamsA, ParamsB](
-    Distribution[tuple[StateA, StateB]]
-):
+class _ComposedDistribution[StateA, StateB, ParamsA, ParamsB](Distribution[tuple[StateA, StateB]]):
     """The distribution emitted by a composed variation channel — paper: V_1 ⋄_ρ V_2.
 
     Sampling proceeds in three keyed steps: draw the coupled `(θ_a', θ_b')` from `ρ`, then

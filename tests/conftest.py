@@ -48,9 +48,7 @@ class BinaryFlipSubstrate(Substrate[Int[Array, ""], None]):
     dynamics_param_space: type[None] = type(None)
     default_dynamics_param: None = None
 
-    def dynamics(
-        self, key: PRNGKey, param: None, state: Int[Array, ""]
-    ) -> Int[Array, ""]:
+    def dynamics(self, key: PRNGKey, param: None, state: Int[Array, ""]) -> Int[Array, ""]:
         del key, param
         return 1 - state
 
@@ -65,18 +63,14 @@ class BinaryFlipSubstrate(Substrate[Int[Array, ""], None]):
 
 @dataclass(frozen=True)
 class IdentityVariation(Variation[Int[Array, ""], None]):
-    def __call__(
-        self, state: Int[Array, ""], params: None
-    ) -> Distribution[Int[Array, ""]]:
+    def __call__(self, state: Int[Array, ""], params: None) -> Distribution[Int[Array, ""]]:
         del params
         return PointMass(value=state)
 
 
 @dataclass(frozen=True)
 class IdentityViability(ViabilityFilter[Int[Array, ""]]):
-    def __call__(
-        self, population: Population[Int[Array, ""]]
-    ) -> Population[Int[Array, ""]]:
+    def __call__(self, population: Population[Int[Array, ""]]) -> Population[Int[Array, ""]]:
         return population
 
 

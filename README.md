@@ -1,5 +1,12 @@
 # emergent-systems
 
+[![CI](https://github.com/BemusedVermin/studious-downfall/actions/workflows/ci.yml/badge.svg)](https://github.com/BemusedVermin/studious-downfall/actions/workflows/ci.yml)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
+[![Powered by JAX](https://img.shields.io/badge/powered%20by-JAX-orange.svg)](https://github.com/google/jax)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 A typed JAX scaffold for the substrate-agnostic emergent-systems framework defined in
 [`docs/emergent_systems.tex`](docs/emergent_systems.tex).
 

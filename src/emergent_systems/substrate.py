@@ -140,9 +140,7 @@ class _ComposedSubstrate[StateA, StateB, ParamA, ParamB](
         key_a, key_b = jax.random.split(key, 2)
         return (self.a.initial_state(key_a), self.b.initial_state(key_b))
 
-    def initial_population(
-        self, key: PRNGKey
-    ) -> Population[tuple[StateA, StateB]]:
+    def initial_population(self, key: PRNGKey) -> Population[tuple[StateA, StateB]]:
         # The composed initial population is constructed from each component's. The paper's
         # free-composition definition uses the product measure μ_0^(1) ⊗ μ_0^(2); for two
         # WeightedSamples populations the natural realisation is to zip them. Mixed-mode

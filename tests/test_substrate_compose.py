@@ -27,9 +27,7 @@ from emergent_systems import (
 class IncrementBy(Substrate[Float[Array, ""], Float[Array, ""]]):
     """`Φ(x) = x + step`. The increment is the dynamics parameter."""
 
-    default_dynamics_param: Float[Array, ""] = field(
-        default_factory=lambda: jnp.asarray(1.0)
-    )
+    default_dynamics_param: Float[Array, ""] = field(default_factory=lambda: jnp.asarray(1.0))
     dynamics_param_space: type[Float[Array, ""]] = Array  # type: ignore[assignment]
 
     def dynamics(

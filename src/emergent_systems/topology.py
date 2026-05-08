@@ -103,6 +103,4 @@ class MultiplexTopology:
             raise ValueError("MultiplexTopology requires at least one layer.")
         total = jnp.sum(jnp.stack([layer.alpha for layer in self.layers]))
         if not bool(jnp.isclose(total, 1.0)):
-            raise ValueError(
-                f"MultiplexTopology layer weights must sum to 1, got {float(total)}."
-            )
+            raise ValueError(f"MultiplexTopology layer weights must sum to 1, got {float(total)}.")
