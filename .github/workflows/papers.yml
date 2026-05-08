@@ -114,25 +114,40 @@ jobs:
           # error locations in the runner log.
           args: -pdf -interaction=nonstopmode -halt-on-error -file-line-error
 
-      - name: Stage PDF
+      - name: Stage build outputs
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p _staging
-          src="${{ matrix.paper.workdir }}/$(basename "${{ matrix.paper.root }}" .tex).pdf"
-          if [[ ! -f "$src" ]]; then
-            echo "::error::Expected PDF not produced: $src"
+          base="$(basename "${{ matrix.paper.root }}" .tex)"
+          pdf="${{ matrix.paper.workdir }}/${base}.pdf"
+          log="${{ matrix.paper.workdir }}/${base}.log"
+          if [[ ! -f "$pdf" ]]; then
+            echo "::error::Expected PDF not produced: $pdf"
             exit 1
           fi
-          cp "$src" "_staging/${{ matrix.paper.slug }}.pdf"
+          cp "$pdf" "_staging/${{ matrix.paper.slug }}.pdf"
+          # Log may be absent if latexmk skipped a rebuild; include only if present.
+          [[ -f "$log" ]] && cp "$log" "_staging/${{ matrix.paper.slug }}.log" || true
 
-      - name: Upload PDF artefact
+      - name: Upload build artefacts
+        # Always upload, even if the log check below fails, so the .log can be
+        # inspected when warnings need offline review.
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pdf-${{ matrix.paper.slug }}
-          path: _staging/${{ matrix.paper.slug }}.pdf
+          path: _staging/${{ matrix.paper.slug }}.*
           retention-days: 14
           if-no-files-found: error
+
+      - name: Check LaTeX log for warnings/errors
+        shell: bash
+        run: |
+          base="$(basename "${{ matrix.paper.root }}" .tex)"
+          log="${{ matrix.paper.workdir }}/${base}.log"
+          src="${{ matrix.paper.workdir }}/${{ matrix.paper.root }}"
+          bash scripts/check-latex-log.sh "$log" "$src"
 
   publish:
     needs: [discover, build]
