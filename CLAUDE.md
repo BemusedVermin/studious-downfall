@@ -28,7 +28,7 @@ There is no separate build step — `pyproject.toml` uses hatchling; the package
 The paper defines a system as a typed 5-tuple `S = (X, V, F, T, O)` operating on a joint state space `Z = X × M+(X)` via the iteration rule `(x_{t+1}, μ_{t+1}) = (S̃_F ∘ Ṽ_T ∘ Φ̃)(x_t, μ_t)`. Each slot is a `@runtime_checkable Protocol` parameterised with PEP 695 generics:
 
 | Slot | Module | Paper | Protocol |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Substrate | [substrate.py](src/emergent_systems/substrate.py) | `X = (X, Φ, μ_0)` | `Substrate[State, DynamicsParam]` |
 | Variation | [variation.py](src/emergent_systems/variation.py) | `V : X × Θ → P(X)` | `Variation[State, Params]` |
 | Viability | [viability.py](src/emergent_systems/viability.py) | `F : M+(X) → M+(X)` | `ViabilityFilter[State]` |
@@ -80,6 +80,21 @@ A source-level test ([tests/test_typing.py](tests/test_typing.py)) forbids `@bea
 - **Φ-ID emergence** (paper §3.6 line 882) — TODO comment in [emergence.py](src/emergent_systems/emergence.py), out of v1.
 - **Ω open-endedness metric and FM-embedding observers** — observer-side; ship as user code patterns once examples exist.
 - **Concrete substrate implementations** — [examples/gol/](src/emergent_systems/examples/gol/), [lenia/](src/emergent_systems/examples/lenia/), [boids/](src/emergent_systems/examples/boids/), [coupled_lenia_stub/](src/emergent_systems/examples/coupled_lenia_stub/) are intentionally empty stubs with the slot-default summary in their `__init__.py`. The paper's worked composite example (§3.8) is the template for `coupled_lenia_stub`.
+
+## CI / reviewer
+
+Two GitHub Actions workflows:
+
+- `.github/workflows/ci.yml` — ruff lint + format check, pyright, pytest on every push/PR.
+- `.github/workflows/claude-review.yml` — delegates to the `everything-claude-code:python-reviewer` subagent on every non-draft PR. Posts as `github-actions[bot]` (we bypass the action's OIDC → GitHub App exchange because of [anthropics/claude-code-action#1206](https://github.com/anthropics/claude-code-action/issues/1206)). The reviewer applies a **severity ratchet**: round 1 blocks on CRITICAL/HIGH/MEDIUM, round 2+ blocks only on CRITICAL/HIGH so freshly-discovered nits don't loop forever.
+
+The reviewer posts via [scripts/post-pr-review.sh](scripts/post-pr-review.sh) (a one-shot wrapper around `POST /repos/{owner}/{repo}/pulls/{pr}/reviews`) — never via the REST reviews API directly, never via MCP comment-tools, never more than once per run. See [scripts/README.md](scripts/README.md) for payload shape.
+
+Required secrets (add via `Settings → Secrets and variables → Actions`):
+
+- `CLAUDE_CODE_OAUTH_TOKEN` — for the reviewer workflow.
+
+The pattern is adapted from `BemusedVermin/evolution-simulation`'s Rust reviewer; the rationale comments at the top of [claude-review.yml](.github/workflows/claude-review.yml) explain the trigger and authentication choices.
 
 ## ruff lint config caveats
 
