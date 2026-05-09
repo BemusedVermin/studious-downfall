@@ -1,4 +1,4 @@
-"""SystemSpec tests — paper §sec:description rendered as data.
+"""SystemSpec tests — the paper's "System Description" section rendered as data.
 
 The frame is descriptive, not gating: structural items (1-7) are exhibitable for any `System`
 by construction, and reproducibility metadata (8-11) is communication hygiene the implementer
@@ -8,6 +8,7 @@ fills in. There is no pass/fail.
 from __future__ import annotations
 
 from emergent_systems import (
+    REPRODUCIBILITY_FIELDS,
     ComplexityReport,
     DescriptorReport,
     EntityReport,
@@ -15,7 +16,6 @@ from emergent_systems import (
     SystemSpec,
     ViabilityReport,
 )
-from emergent_systems.spec import REPRODUCIBILITY_FIELDS
 
 
 def test_from_system_populates_structural_items(toy_system):

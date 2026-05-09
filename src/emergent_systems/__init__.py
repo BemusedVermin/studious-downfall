@@ -30,6 +30,7 @@ from emergent_systems.observer import JointState, StatefulObserver, WindowedTraj
 from emergent_systems.perf import PERF_FLAG, PerformanceWarning, flag_bottleneck
 from emergent_systems.population import ImplicitInSubstrate, Population, WeightedSamples
 from emergent_systems.spec import (
+    REPRODUCIBILITY_FIELDS,
     ComplexityReport,
     DescriptorReport,
     EntityReport,
@@ -135,8 +136,9 @@ __all__ = [
     "run",
     "build_population_variation",
     "build_population_variation_multiplex",
-    # System description — paper §sec:description.
+    # System description — paper's "System Description" section.
     "SystemSpec",
+    "REPRODUCIBILITY_FIELDS",
     "SubstrateReport",
     "EntityReport",
     "VariationReport",

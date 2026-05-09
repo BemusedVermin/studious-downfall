@@ -13,8 +13,9 @@ Three nontrivial pieces live here rather than on the per-slot modules:
 * `build_population_variation` — paper §3.4 lines 577-603 V_T construction. V doesn't know
   about T; T doesn't know about V; the construction belongs at the orchestration level.
 * The lifted operators Φ̃, Ṽ_T, S̃_F (paper §3.1 line 285-289).
-* The iteration-order interpreter — paper §sec:description structural item 7 explicitly
-  requires the order to be reportable as data, so we represent it as a tuple of slot names.
+* The iteration-order interpreter — the paper's System Description section (structural item
+  7) explicitly requires the order to be reportable as data, so we represent it as a tuple of
+  slot names.
 """
 
 from __future__ import annotations
@@ -186,7 +187,7 @@ class System[State, DynamicsParam, Params, ObserverState]:
     The five slots are independent: switching the viability formalism, the topology, or the
     observer family does not require touching the others. The four optional fields below make
     the V_T construction concrete (paper §3.4) and let the iteration order be declared as
-    data (paper §sec:description structural item 7).
+    data (System Description, structural item 7).
     """
 
     substrate: Substrate[State, DynamicsParam]
@@ -203,7 +204,7 @@ class System[State, DynamicsParam, Params, ObserverState]:
     Default behaviour (focal-entity-only) is implemented inline if this is `None`."""
 
     iteration_order: tuple[SlotName, ...] = field(default=("dynamics", "variation", "viability"))
-    """Paper §3.1 default; deviations declared per §sec:description structural item 7."""
+    """Paper §3.1 default; deviations declared per the System Description, structural item 7."""
 
     def __post_init__(self) -> None:
         for slot in self.iteration_order:

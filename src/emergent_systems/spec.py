@@ -5,7 +5,7 @@ which systems "conform." The 5-tuple `(X, V, F, T, O)` is a vocabulary in which 
 system is read; the items here are *what description looks like* in that vocabulary, not a
 checklist a system must pass.
 
-Two groups, matching paper §sec:description (System Description):
+Two groups, matching the paper's "System Description" section:
 
 * Structural items (1-7): substrate, entity, variation, viability, topology, observer,
   iteration order. These are exhibitable for any `System` by construction —
@@ -42,7 +42,7 @@ from emergent_systems.viability import (
 
 @dataclass(frozen=True)
 class SubstrateReport:
-    """Paper §sec:description structural item 1."""
+    """System Description, structural item 1."""
 
     state_space_description: str
     """Plain-English description of `X` — e.g. 'toroidal lattice [0,1]^{H×W}'."""
@@ -53,7 +53,7 @@ class SubstrateReport:
 
 @dataclass(frozen=True)
 class EntityReport:
-    """Paper §sec:description structural item 2."""
+    """System Description, structural item 2."""
 
     supporting_set_rule: str
     """How `S` is determined — e.g. 'connected components above mass threshold θ=0.1'."""
@@ -64,7 +64,7 @@ class EntityReport:
 
 @dataclass(frozen=True)
 class VariationReport:
-    """Paper §sec:description structural item 3."""
+    """System Description, structural item 3."""
 
     channels: tuple[str, ...]
     """Each channel — e.g. ('Gaussian-on-kernel-weights', 'prompt-token-resample')."""
@@ -75,7 +75,7 @@ class VariationReport:
 
 @dataclass(frozen=True)
 class ViabilityReport:
-    """Paper §sec:description structural item 4 — name the formalism, not just its type."""
+    """System Description, structural item 4 — name the formalism, not just its type."""
 
     formalism_name: Literal["markov-blanket", "autopoietic", "raf", "mcc", "custom", "unknown"]
     predicate_description: str
@@ -87,7 +87,7 @@ class ViabilityReport:
 
 @dataclass(frozen=True)
 class TopologyReport:
-    """Paper §sec:description structural item 5."""
+    """System Description, structural item 5."""
 
     family: str
     """Plain-English description — e.g. 'Moore neighbourhood' or 'k-NN, k=8'."""
@@ -98,7 +98,7 @@ class TopologyReport:
 
 @dataclass(frozen=True)
 class ObserverReport:
-    """Paper §sec:description structural item 6."""
+    """System Description, structural item 6."""
 
     family: Literal["density-distance", "fm-embedding", "information-theoretic", "custom"]
     window_length: int
@@ -110,7 +110,7 @@ class ObserverReport:
 
 @dataclass(frozen=True)
 class DescriptorReport:
-    """Paper §sec:description reproducibility item 8."""
+    """System Description, reproducibility item 8."""
 
     descriptor_space: str
     archive_update_rule: str
@@ -120,7 +120,7 @@ class DescriptorReport:
 
 @dataclass(frozen=True)
 class RNGReport:
-    """Paper §sec:description reproducibility item 9."""
+    """System Description, reproducibility item 9."""
 
     scheme: str
     """E.g. 'Philox 4x32-10 via jax.random.split'."""
@@ -131,11 +131,11 @@ class RNGReport:
 
 @dataclass(frozen=True)
 class ComplexityReport:
-    """Paper §sec:description reproducibility item 10."""
+    """System Description, reproducibility item 10."""
 
     per_tick_wall_clock_seconds: float | None
     theoretical_complexity: str
-    """E.g. 'O(|X|/P + N/P + log|X|)' per paper §sec:description 'Many-threaded complexity'."""
+    """E.g. 'O(|X|/P + N/P + log|X|)' per the paper's 'Many-threaded complexity' table."""
 
 
 # ---------------------------------------------------------------------------
@@ -150,7 +150,7 @@ REPRODUCIBILITY_FIELDS: tuple[str, ...] = ("descriptor", "rng", "complexity", "p
 
 @dataclass(frozen=True)
 class SystemSpec:
-    """A structured description of an emergent system — paper §sec:description.
+    """A structured description of an emergent system — paper's "System Description" section.
 
     Structural items (1-7) follow from the slot decomposition and are exhibitable for any
     `System` by construction: `SystemSpec.from_system(system)` populates them. Reproducibility
