@@ -74,3 +74,15 @@ paper:
 # Fails loudly if the slug doesn't exist.
 paper-result SLUG:
     latexmk -pdf -interaction=nonstopmode -outdir={{ DOC_DIR }}/papers/{{ SLUG }} {{ DOC_DIR }}/papers/{{ SLUG }}/paper.tex
+
+# Remove LaTeX build intermediates (`*.log`, `*.aux`, `*.bbl`, etc.) under docs/, leaving
+# sources (`*.tex`, `*.bib`, `*.md`) and final `*.pdf` outputs in place. Walks recursively so
+# both the scaffolding paper and per-result papers under docs/papers/<slug>/ are covered.
+[unix]
+clean-paper:
+    -find {{ DOC_DIR }} -type f \( -name "*.aux" -o -name "*.bbl" -o -name "*.blg" -o -name "*.fdb_latexmk" -o -name "*.fls" -o -name "*.log" -o -name "*.out" -o -name "*.toc" -o -name "*.nav" -o -name "*.snm" -o -name "*.vrb" -o -name "*.lof" -o -name "*.lot" -o -name "*.bcf" -o -name "*.synctex.gz" -o -name "*.run.xml" \) -delete
+
+# Remove LaTeX build intermediates (Windows variant).
+[windows]
+clean-paper:
+    -Get-ChildItem -Path {{ DOC_DIR }} -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -in '.aux','.bbl','.blg','.fdb_latexmk','.fls','.log','.out','.toc','.nav','.snm','.vrb','.lof','.lot','.bcf' -or $_.Name.EndsWith('.synctex.gz') -or $_.Name.EndsWith('.run.xml') } | Remove-Item -Force -ErrorAction SilentlyContinue
