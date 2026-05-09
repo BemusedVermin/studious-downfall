@@ -1,0 +1,97 @@
+% =============================================================================
+%  Per-result proof paper -- TEMPLATE
+%  Copy this directory to docs/papers/<id>_<slug>/, then fill in:
+%    - \title, \author
+%    - the Statement (verbatim from the scaffolding paper)
+%    - the Proof
+%    - the Discussion
+%  Build with: just paper-result <id>_<slug>
+% =============================================================================
+\documentclass[11pt]{article}
+
+% ---------- Encoding & fonts ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+
+% ---------- Math ----------
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+
+% ---------- Layout ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+
+% ---------- Hyperlinks ----------
+\usepackage[hidelinks]{hyperref}
+
+% ---------- Theorem environments ----------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% =============================================================================
+\title{TEMPLATE: Result on \texttt{<conjecture-or-open-problem-id>}}
+\author{Author Name\thanks{Affiliation. Email.}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+One paragraph: which conjecture or open problem this paper addresses, what is
+established (proved, disproved, partially resolved, reformulated), and the
+main idea of the argument.
+\end{abstract}
+
+% -----------------------------------------------------------------------------
+\section{Statement}
+
+Reproduce the conjecture or open problem \emph{verbatim} from the scaffolding
+paper~\cite{emergent_systems_2026}, with a citation to the relevant section.
+
+\begin{quote}
+\emph{[Verbatim statement here, e.g.\ ``C1 (closure-operator unification of
+viability): each of the four viability formalisms\dots''.]}
+\end{quote}
+
+\noindent (Scaffolding paper, \S5.1, statement~\texttt{<id>}.)
+
+% -----------------------------------------------------------------------------
+\section{Result}
+
+State the result of this paper as a single proposition or theorem, in the
+notation of the scaffolding paper. If the result is partial, say so explicitly
+and characterise the gap.
+
+\begin{theorem}[Main result]
+\textit{Statement of the result.}
+\end{theorem}
+
+% -----------------------------------------------------------------------------
+\section{Proof}
+
+\begin{proof}
+The proof.
+\end{proof}
+
+% -----------------------------------------------------------------------------
+\section{Discussion}
+
+What does this result mean for the framework? Does it close the conjecture, or
+does it reformulate it (in which case, link the new statement and update
+\texttt{RESULTS.md} with status \texttt{mutated}). What follow-up questions
+does it open?
+
+% =============================================================================
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
