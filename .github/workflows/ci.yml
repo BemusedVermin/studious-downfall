@@ -41,5 +41,16 @@ jobs:
       - name: Type-check (pyright)
         run: uv run pyright src tests
 
-      - name: Test (pytest)
-        run: uv run pytest
+      - name: Test (pytest with coverage)
+        run: uv run pytest --cov --cov-report=xml --cov-report=term --cov-fail-under=80
+
+      # `if: always()` so the coverage XML is uploaded even when the test step exits non-zero
+      # (failed tests or threshold breach), which is the case where the artifact is most useful
+      # for debugging.
+      - name: Upload coverage XML
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: warn

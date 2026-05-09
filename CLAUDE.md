@@ -17,8 +17,9 @@ The plan that drove the initial implementation is committed at [docs/IMPLEMENTAT
 Use [justfile](justfile) for everything. Common recipes:
 
 - `just install` — sync the dev environment (`uv sync --extra dev`).
-- `just check` — run lint + typecheck + tests (the full pre-commit gauntlet).
-- `just test` / `just test-one tests/test_emergence.py` — pytest on the suite or one node.
+- `just check` — run lint + typecheck + coverage-gated test (the full pre-commit gauntlet; mirrors CI).
+- `just test` / `just test-one tests/test_emergence.py` — pytest on the suite or one node (no coverage gate; faster iteration).
+- `just cov` — pytest with statement + branch coverage; fails if total coverage drops below 80%. The threshold is set on the CLI (`--cov-fail-under=80`) rather than read from `pyproject.toml` because pytest-cov's propagation of `fail_under` is version-sensitive. Same gate runs in CI.
 - `just lint` / `just fix` / `just fmt` — ruff.
 - `just typecheck` — pyright (basic mode).
 - `just paper` — rebuild the scaffolding-paper PDF (uses latexmk).
