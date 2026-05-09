@@ -9,6 +9,10 @@ dist/
 build/
 
 docs/**
+# Re-include subdirectories so file-extension negations below can match.
+# (Once a parent directory is ignored, gitignore cannot re-include its
+#  contents — this rule keeps the directory tree visible.)
+!docs/**/
 !docs/**/*.tex
 !docs/**/*.bib
 !docs/**/*.md
