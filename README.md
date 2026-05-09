@@ -50,6 +50,31 @@ uv sync
 uv run pytest
 ```
 
+## Inspecting runs
+
+Substrate-agnostic plotting helpers live in
+[`src/emergent_systems/visualization.py`](src/emergent_systems/visualization.py). They take a
+`RunResult` (and, for the topology helper, a topology + entity detector) and return a
+`matplotlib.figure.Figure`. Matplotlib is an **optional** dependency — install it with the
+`visualization` extra:
+
+```bash
+pip install 'emergent-systems[visualization]'
+```
+
+```python
+from emergent_systems import run
+from emergent_systems.visualization import plot_population_mass, plot_observer_trace
+
+result = run(system, n_ticks=200, key=key)
+plot_population_mass(result).savefig("mass.png")
+plot_observer_trace(result, observer_name="EI").savefig("ei.png")
+```
+
+The four helpers are `plot_population_mass`, `plot_observer_trace`,
+`plot_viability_filter_ratio`, and `plot_topology_degree`. Substrate-specific renderers
+(Lenia grid frames, Boids scatters) belong in per-example notebooks, not here.
+
 ## Performance bottlenecks
 
 The library flags hot paths likely to become bottlenecks in pure Python/JAX with the
