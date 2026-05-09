@@ -7,7 +7,7 @@ also carry an observer state `a_t ∈ A_O`:
     O_s : Z^w × A_O → ℝ^k × A_O.
 
 The window length `w` (paper §3.5) is part of the observer specification and is reported in
-the conformance checklist (§4 item 7).
+the system description (paper §sec:description structural item 6).
 
 `JointState` and `WindowedTrajectory` live in this module because the system orchestrator
 imports them from here; circular imports are avoided by keeping the dependency one-way

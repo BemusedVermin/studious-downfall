@@ -95,7 +95,7 @@ can be posed as an assessment problem for the resulting systems. The framework
 is illustrated with representative instances from cellular automata,
 continuous artificial-life fields, program-based evolution, multi-agent
 systems, and foundation-model-mediated search, followed by a worked composite
-example and implementation checklist. The paper also separates established
+example and a system-description schema. The paper also separates established
 definitions from conjectural unifications and states open problems whose
 resolution would determine the framework's scope. The result is a methodology
 for specifying, comparing, and implementing emergent-system models without
@@ -643,8 +643,8 @@ Conjecture~C1 (\S\ref{sec:c1}), with partial supporting evidence presented
 there. \textbf{Until C1 is settled, the four formalisms are not in general
 substitutable in code:} a simulator that swaps Markov-blanket viability for
 autopoietic closure must verify that the substitution preserves the
-predicates the rest of the system relies on. The implementation checklist
-of \S\ref{sec:checklist} therefore requires the viability formalism to be
+predicates the rest of the system relies on. The system-description schema
+of \S\ref{sec:description} therefore requires the viability formalism to be
 named explicitly, not merely as ``$F : \Mplus(X) \to \Mplus(X)$''.
 
 \topic{Hierarchical viability}
@@ -726,8 +726,8 @@ where $Z = X \times \Mplus(X)$ is the joint state space of
 of the output are interpreted as \emph{observed quantities} (novelty,
 complexity, learnability, value). Practical observers use finite $w$;
 $w=\infty$ recovers the long-trajectory limit. The window length $w$ is part
-of the observer specification and is reported in the implementation
-checklist (\S\ref{sec:checklist}).
+of the observer specification and is reported in the system description
+(\S\ref{sec:description}).
 
 Many observers used in novelty search and Quality-Diversity algorithms are
 stateful rather than purely functional. To accommodate these cases without
@@ -1032,11 +1032,11 @@ Window &
 The framework is permissive but a simulator author needs starting points.
 Table~\ref{tab:defaults} covers the four substrate families introduced in
 \S\ref{sec:substrates}; deviations should be reported in the
-implementation checklist (\S\ref{sec:checklist}).
+system description (\S\ref{sec:description}).
 
 These are starting points only; an author who departs from them must
-specify the alternative explicitly in the checklist of
-\S\ref{sec:checklist}.
+specify the alternative explicitly in the description of
+\S\ref{sec:description}.
 
 \topic{Worked Composite Example}\label{sec:worked}
 
@@ -1151,16 +1151,16 @@ The scaffold's non-prescriptiveness is now visible: every slot can be
 ablated independently --- replace $V_{\mathrm{LLM}}$ with random prompts,
 swap $F^{*}$ for Markov-blanket viability, collapse the multiplex $T$ to a
 complete graph, narrow $O$ to $O_{\mathrm{CLIP}}$ alone --- and the
-resulting system remains an instance of the same scaffold. Conformance
-(\S\ref{sec:checklist}) requires only that each ablation reports its
-choices in the same template.
+resulting system remains an instance of the same scaffold. Slot-wise
+comparison (\S\ref{sec:description}) requires only that each ablation
+reports its choices in the same template.
 
 \subsection{Implementation and Reproducibility}\label{sec:parallel}
 
 Implementation is part of the methodology because the framework is intended
 to be reproducible as a simulator scaffold, not only interpreted as a
 taxonomy. This subsection therefore records the algorithmic control flow,
-synchronization boundaries, complexity assumptions, and reporting checklist
+synchronization boundaries, complexity assumptions, and reporting schema
 needed to instantiate $\mathcal{S}$ in software. No source code is required;
 the pseudocode records control flow and synchronization points. The five-slot
 decomposition is preserved: each slot becomes its own kernel.
@@ -1292,9 +1292,16 @@ Each of the five slots becomes a separate kernel. Implementations are:
 
 This is the pragmatic payoff of the abstract slot decomposition.
 
-\topic{Implementation Checklist}\label{sec:checklist}
+\topic{System Description}\label{sec:description}
 
-A reproducible $\mathcal{S}$-implementation reports, for each slot:
+The framework decomposes any emergent system into the slot tuple
+$\mathcal{S}=(X,V,F,T,O)$. The items below are not a gate the system passes
+but a vocabulary in which the system is read: the structural items are
+exhibitable for any emergent system by construction, and the reproducibility
+metadata is what an implementer additionally records so others can re-run
+the simulator.
+
+\paragraph{Structural items (read off the slot decomposition).}
 \begin{enumerate}[leftmargin=2em,itemsep=2pt]
   \item Substrate $\X=(X,\Phi,\mu_0)$, including
     $\boxtimes_\kappa$-decomposition if composite.
@@ -1307,12 +1314,16 @@ A reproducible $\mathcal{S}$-implementation reports, for each slot:
     $(\alpha_\ell)$.
   \item Observer family, window length $w$, and state variables, if any
     (archive size, embedding model, reference distribution, etc.).
-  \item Descriptor space, archive update rule, saturation criterion, and
-    boundedness/open-endedness test used by the observer.
   \item Iteration order. Default:
     $\widetilde S_F \circ \widetilde V_T \circ \widetilde\Phi$. Any
     deviation (e.g.\ $\widetilde V_T \circ \widetilde S_F \circ
     \widetilde\Phi$ for asynchronous selection) is stated explicitly.
+\end{enumerate}
+
+\paragraph{Reproducibility metadata (specified by the implementer).}
+\begin{enumerate}[leftmargin=2em,itemsep=2pt,start=8]
+  \item Descriptor space, archive update rule, saturation criterion, and
+    boundedness/open-endedness test used by the observer.
   \item RNG provenance per kernel (counter-based scheme,
     $(\mathrm{seed},\,\mathrm{worker\,id},\,t)$ key triple).
   \item Per-tick wall-clock and theoretical complexity.
@@ -1320,9 +1331,14 @@ A reproducible $\mathcal{S}$-implementation reports, for each slot:
     update, observer-state update, stopping rule, and outputs.
 \end{enumerate}
 
+The structural items follow from the system being an emergent system at
+all; supplying them is description, not certification. The reproducibility
+metadata is additionally required for replication, but is not implied by
+being an emergent system.
+
 \paragraph{Minimal pseudocode}
-A conformant implementation supplies at least the following control-flow
-template, specialised to its chosen slots:
+A description-complete implementation supplies at least the following
+control-flow template, specialised to its chosen slots:
 \begin{enumerate}[leftmargin=2em,itemsep=2pt]
   \item Initialise $(x_0,\mu_0)$, topology state, observer state $a_0$, and
     RNG keys.
@@ -1338,17 +1354,16 @@ template, specialised to its chosen slots:
     reproducibility metadata.
 \end{enumerate}
 
-\paragraph{Conformance}
-Two implementations are \emph{conformant} with respect to the framework
-when they (i) agree on the typing of each slot
-(\S\ref{sec:framework}--\S\ref{sec:observer}); (ii) report all eleven items
-of the checklist with values, not just slot names; (iii) preserve the
-iteration order of item~8 or explicitly declare a variant; and (iv)
-specify the entity-detection rule consistently with
-Definition~\ref{def:entity}. Conformance does \emph{not} require choice of
+\paragraph{Comparing implementations}
+Two implementations admit slot-wise comparison when they (i) agree on the
+typing of each slot (\S\ref{sec:framework}--\S\ref{sec:observer}); (ii)
+record values for the structural items, not just slot names; (iii)
+preserve the iteration order of item~7 or explicitly declare a variant;
+and (iv) specify the entity-detection rule consistently with
+Definition~\ref{def:entity}. Comparison does \emph{not} require choice of
 the same fitness landscape, observer family, or coarse-graining $\Pi$;
-those are user-level choices. It does require that a comparison across two
-implementations be a comparison of choices, not of unstated defaults.
+those are user-level choices. It requires only that a comparison across
+two implementations be a comparison of choices, not of unstated defaults.
 
 \section{Results}\label{sec:results}
 

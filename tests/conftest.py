@@ -1,4 +1,4 @@
-"""Shared fixtures: a minimal toy system used by the pipeline and conformance tests.
+"""Shared fixtures: a minimal toy system used by the pipeline and system-spec tests.
 
 The toy is small but exercises every slot:
 

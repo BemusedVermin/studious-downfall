@@ -1,19 +1,25 @@
-"""The 11-item conformance checklist as data.
+"""Structured description of an emergent system.
 
-Paper §4 lines 1297-1321 define an 11-item checklist that a reproducible implementation must
-report. Line 1346 (item iii) makes conformance a typed property: 'two implementations are
-conformant when they agree on the typing of each slot, report all eleven items with values,
-preserve the iteration order, and specify the entity-detection rule consistently.'
+The framework's purpose is to elucidate the structure of any emergent system, not to gate
+which systems "conform." The 5-tuple `(X, V, F, T, O)` is a vocabulary in which any emergent
+system is read; the items here are *what description looks like* in that vocabulary, not a
+checklist a system must pass.
 
-This module turns the checklist into structured data. `SystemSpec.from_system(system)` extracts
-what can be introspected; the user fills in the rest (descriptor space, RNG provenance,
-complexity figures, pseudocode). `check_conformance()` returns a per-item pass/fail/missing
-report — the artefact suitable for pasting into a paper's supplementary materials.
+Two groups, matching paper §sec:description (System Description):
+
+* Structural items (1-7): substrate, entity, variation, viability, topology, observer,
+  iteration order. These are exhibitable for any `System` by construction —
+  `SystemSpec.from_system(system)` populates them via introspection.
+
+* Reproducibility metadata (8-11): descriptor space, RNG provenance, complexity figures,
+  pseudocode. These are not implied by being an emergent system; the implementer supplies
+  them so others can replicate the simulator. Until filled, those fields are `None`, and
+  `SystemSpec.missing_reproducibility_fields()` lists which remain.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Literal
 
 from emergent_systems.system import SlotName, System
@@ -25,20 +31,18 @@ from emergent_systems.viability import (
     RAFSetViability,
 )
 
-ConformanceStatus = Literal["pass", "fail", "missing"]
-
-
 # ---------------------------------------------------------------------------
 # Per-slot reports.
 #
 # Each is a small dataclass that a user fills in with concrete values. `from_system` populates
-# what it can introspect; the remainder defaults to `None` and is reported as "missing".
+# what it can introspect; the remainder defaults to `None` and is reported as "missing" in
+# `missing_reproducibility_fields`.
 # ---------------------------------------------------------------------------
 
 
 @dataclass(frozen=True)
 class SubstrateReport:
-    """Paper §4 checklist item 1."""
+    """Paper §sec:description structural item 1."""
 
     state_space_description: str
     """Plain-English description of `X` — e.g. 'toroidal lattice [0,1]^{H×W}'."""
@@ -49,7 +53,7 @@ class SubstrateReport:
 
 @dataclass(frozen=True)
 class EntityReport:
-    """Paper §4 checklist item 2."""
+    """Paper §sec:description structural item 2."""
 
     supporting_set_rule: str
     """How `S` is determined — e.g. 'connected components above mass threshold θ=0.1'."""
@@ -60,7 +64,7 @@ class EntityReport:
 
 @dataclass(frozen=True)
 class VariationReport:
-    """Paper §4 checklist item 3."""
+    """Paper §sec:description structural item 3."""
 
     channels: tuple[str, ...]
     """Each channel — e.g. ('Gaussian-on-kernel-weights', 'prompt-token-resample')."""
@@ -71,7 +75,7 @@ class VariationReport:
 
 @dataclass(frozen=True)
 class ViabilityReport:
-    """Paper §4 checklist item 4 — name the formalism, not just its type."""
+    """Paper §sec:description structural item 4 — name the formalism, not just its type."""
 
     formalism_name: Literal["markov-blanket", "autopoietic", "raf", "mcc", "custom", "unknown"]
     predicate_description: str
@@ -83,7 +87,7 @@ class ViabilityReport:
 
 @dataclass(frozen=True)
 class TopologyReport:
-    """Paper §4 checklist item 5."""
+    """Paper §sec:description structural item 5."""
 
     family: str
     """Plain-English description — e.g. 'Moore neighbourhood' or 'k-NN, k=8'."""
@@ -94,7 +98,7 @@ class TopologyReport:
 
 @dataclass(frozen=True)
 class ObserverReport:
-    """Paper §4 checklist item 6."""
+    """Paper §sec:description structural item 6."""
 
     family: Literal["density-distance", "fm-embedding", "information-theoretic", "custom"]
     window_length: int
@@ -106,7 +110,7 @@ class ObserverReport:
 
 @dataclass(frozen=True)
 class DescriptorReport:
-    """Paper §4 checklist item 7."""
+    """Paper §sec:description reproducibility item 8."""
 
     descriptor_space: str
     archive_update_rule: str
@@ -116,7 +120,7 @@ class DescriptorReport:
 
 @dataclass(frozen=True)
 class RNGReport:
-    """Paper §4 checklist item 9."""
+    """Paper §sec:description reproducibility item 9."""
 
     scheme: str
     """E.g. 'Philox 4x32-10 via jax.random.split'."""
@@ -127,21 +131,32 @@ class RNGReport:
 
 @dataclass(frozen=True)
 class ComplexityReport:
-    """Paper §4 checklist item 10."""
+    """Paper §sec:description reproducibility item 10."""
 
     per_tick_wall_clock_seconds: float | None
     theoretical_complexity: str
-    """E.g. 'O(|X|/P + N/P + log|X|)' per paper §4 'Many-threaded complexity'."""
+    """E.g. 'O(|X|/P + N/P + log|X|)' per paper §sec:description 'Many-threaded complexity'."""
 
 
 # ---------------------------------------------------------------------------
-# The aggregate spec and conformance report.
+# The aggregate description.
 # ---------------------------------------------------------------------------
+
+
+REPRODUCIBILITY_FIELDS: tuple[str, ...] = ("descriptor", "rng", "complexity", "pseudocode")
+"""Field names of `SystemSpec` that are reproducibility metadata, in paper-item order
+(items 8-11). Used by `missing_reproducibility_fields`."""
 
 
 @dataclass(frozen=True)
 class SystemSpec:
-    """A snapshot of the 11 conformance items — paper §4."""
+    """A structured description of an emergent system — paper §sec:description.
+
+    Structural items (1-7) follow from the slot decomposition and are exhibitable for any
+    `System` by construction: `SystemSpec.from_system(system)` populates them. Reproducibility
+    metadata (items 8-11) is communication hygiene the implementer supplies; those fields are
+    `None` until filled, and `missing_reproducibility_fields()` lists which remain.
+    """
 
     substrate: SubstrateReport | None = None
     entity: EntityReport | None = None
@@ -149,18 +164,19 @@ class SystemSpec:
     viability: ViabilityReport | None = None
     topology: TopologyReport | None = None
     observer: ObserverReport | None = None
-    descriptor: DescriptorReport | None = None
     iteration_order: tuple[SlotName, ...] | None = None
+    descriptor: DescriptorReport | None = None
     rng: RNGReport | None = None
     complexity: ComplexityReport | None = None
     pseudocode: str | None = None
 
     @classmethod
     def from_system(cls, system: System[Any, Any, Any, Any]) -> SystemSpec:
-        """Populate what can be introspected from a `System`. The rest stays `None`.
+        """Populate the structural items (1-7) by introspection. Reproducibility fields stay `None`.
 
-        The user is expected to copy the returned spec, fill in the remaining fields with
-        substrate-specific text, and pass the populated spec to `check_conformance`.
+        The user is expected to copy the returned spec and fill in the reproducibility fields
+        (descriptor, rng, complexity, pseudocode) with substrate-specific text before
+        publishing the description as part of a paper's supplementary materials.
         """
         viability_name = _infer_viability_name(system.viability)
         topology_layers = _infer_multiplex_layers(system.topology)
@@ -201,38 +217,15 @@ class SystemSpec:
             iteration_order=system.iteration_order,
         )
 
-    def check_conformance(self) -> ConformanceReport:
-        """Return per-item pass/fail/missing status — paper §4 line 1346."""
-        items: dict[str, ConformanceStatus] = {}
-        items["1-substrate"] = "pass" if self.substrate is not None else "missing"
-        items["2-entity"] = "pass" if self.entity is not None else "missing"
-        items["3-variation"] = "pass" if self.variation is not None else "missing"
-        items["4-viability"] = (
-            "pass"
-            if self.viability is not None and self.viability.formalism_name != "unknown"
-            else "missing"
-            if self.viability is None
-            else "fail"
-        )
-        items["5-topology"] = "pass" if self.topology is not None else "missing"
-        items["6-observer"] = "pass" if self.observer is not None else "missing"
-        items["7-descriptor"] = "pass" if self.descriptor is not None else "missing"
-        items["8-iteration-order"] = "pass" if self.iteration_order is not None else "missing"
-        items["9-rng"] = "pass" if self.rng is not None else "missing"
-        items["10-complexity"] = "pass" if self.complexity is not None else "missing"
-        items["11-pseudocode"] = "pass" if self.pseudocode is not None else "missing"
-        return ConformanceReport(items=items)
+    def missing_reproducibility_fields(self) -> tuple[str, ...]:
+        """Names of the reproducibility-metadata fields (items 8-11) that are still `None`.
 
-
-@dataclass(frozen=True)
-class ConformanceReport:
-    """Per-item pass/fail/missing status — paper §4 line 1346."""
-
-    items: dict[str, ConformanceStatus] = field(default_factory=dict)
-
-    def is_conformant(self) -> bool:
-        """True iff every item is `pass`."""
-        return all(status == "pass" for status in self.items.values())
+        Empty tuple means every reproducibility item has been filled in. This is communication
+        hygiene, not a conformance gate: a system can be a perfectly real emergent system and
+        still have unfilled reproducibility metadata — that just means it isn't ready to be
+        replicated by someone else yet.
+        """
+        return tuple(name for name in REPRODUCIBILITY_FIELDS if getattr(self, name) is None)
 
 
 # ---------------------------------------------------------------------------

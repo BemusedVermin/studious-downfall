@@ -31,7 +31,6 @@ from emergent_systems.perf import PERF_FLAG, PerformanceWarning, flag_bottleneck
 from emergent_systems.population import ImplicitInSubstrate, Population, WeightedSamples
 from emergent_systems.spec import (
     ComplexityReport,
-    ConformanceReport,
     DescriptorReport,
     EntityReport,
     ObserverReport,
@@ -136,9 +135,8 @@ __all__ = [
     "run",
     "build_population_variation",
     "build_population_variation_multiplex",
-    # Conformance — paper §4.
+    # System description — paper §sec:description.
     "SystemSpec",
-    "ConformanceReport",
     "SubstrateReport",
     "EntityReport",
     "VariationReport",
