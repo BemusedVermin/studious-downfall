@@ -19,6 +19,7 @@ Use [justfile](justfile) for everything. Common recipes:
 - `just install` — sync the dev environment (`uv sync --extra dev`).
 - `just check` — run lint + typecheck + tests (the full pre-commit gauntlet).
 - `just test` / `just test-one tests/test_emergence.py` — pytest on the suite or one node.
+- `just cov` — pytest with statement + branch coverage; fails if total coverage drops below the threshold in `[tool.coverage.report].fail_under` (currently 80%). Same gate runs in CI.
 - `just lint` / `just fix` / `just fmt` — ruff.
 - `just typecheck` — pyright (basic mode).
 - `just paper` — rebuild the scaffolding-paper PDF (uses latexmk).

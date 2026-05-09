@@ -24,6 +24,7 @@ visualization = [
 ]
 dev = [
     "pytest>=9.0",
+    "pytest-cov>=5.0",
     "ruff>=0.5",
     "pyright>=1.1.370",
     "matplotlib>=3.8",   # needed for visualization tests + pyright resolution of TYPE_CHECKING imports
@@ -59,3 +60,12 @@ reportMissingTypeStubs = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src/emergent_systems"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = false

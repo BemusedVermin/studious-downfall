@@ -22,6 +22,11 @@ test:
 test-one TARGET:
     uv run pytest {{ TARGET }} -v
 
+# Run the suite under coverage; fails if total coverage drops below the threshold
+# in [tool.coverage.report].fail_under (currently 80%). Writes coverage.xml for CI.
+cov:
+    uv run pytest --cov --cov-report=term-missing --cov-report=xml
+
 # Lint without modifying anything.
 lint:
     uv run ruff check src tests
@@ -44,13 +49,13 @@ check: lint typecheck test
 # Remove Python build/cache directories.
 [unix]
 clean-py:
-    -rm -rf .pytest_cache .ruff_cache .pyright dist build
+    -rm -rf .pytest_cache .ruff_cache .pyright dist build .coverage coverage.xml
     -find src tests -type d -name __pycache__ -exec rm -rf {} +
 
 # Remove Python build/cache directories.
 [windows]
 clean-py:
-    -Remove-Item -Recurse -Force -ErrorAction SilentlyContinue .pytest_cache, .ruff_cache, .pyright, dist, build
+    -Remove-Item -Recurse -Force -ErrorAction SilentlyContinue .pytest_cache, .ruff_cache, .pyright, dist, build, .coverage, coverage.xml
     -Get-ChildItem -Path src, tests -Filter __pycache__ -Recurse -Directory -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
 # ---- Papers -----------------------------------------------------------------
