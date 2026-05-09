@@ -55,7 +55,12 @@ uv run pytest
 Substrate-agnostic plotting helpers live in
 [`src/emergent_systems/visualization.py`](src/emergent_systems/visualization.py). They take a
 `RunResult` (and, for the topology helper, a topology + entity detector) and return a
-`matplotlib.figure.Figure`:
+`matplotlib.figure.Figure`. Matplotlib is an **optional** dependency — install it with the
+`visualization` extra:
+
+```bash
+pip install 'emergent-systems[visualization]'
+```
 
 ```python
 from emergent_systems import run

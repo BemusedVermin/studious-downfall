@@ -17,8 +17,11 @@ The four helpers each return a `matplotlib.figure.Figure`:
 * `plot_topology_degree`         — degree distribution of the interaction topology, sampled at
                                    each tick where entities are detected.
 
-Matplotlib is the only plotting dependency; this module imports it lazily so importing
-`emergent_systems` does not pay matplotlib's import cost.
+Matplotlib is an optional dependency (install with `pip install emergent-systems[visualization]`).
+This module imports matplotlib, JAX-numpy, and NumPy lazily inside each helper so that
+`import emergent_systems.visualization` succeeds in environments that have not paid matplotlib's
+import cost — and so JAX's first-import cost (XLA probe, can be 1–5 s) is not paid by users
+who import the module but never call a helper.
 """
 
 from __future__ import annotations
@@ -26,14 +29,12 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any
 
-import jax.numpy as jnp
-import numpy as np
-
 from emergent_systems.entity import EntityDetector
 from emergent_systems.system import RunResult
 from emergent_systems.topology import InteractionTopology
 
 if TYPE_CHECKING:
+    import numpy as np
     from matplotlib.figure import Figure
 
 
@@ -45,13 +46,25 @@ __all__ = [
 ]
 
 
+def _require_matplotlib() -> Any:
+    """Import `matplotlib.pyplot` with a friendly error if matplotlib is missing."""
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError as e:
+        raise ImportError(
+            "emergent_systems.visualization requires matplotlib. "
+            "Install with: pip install 'emergent-systems[visualization]'"
+        ) from e
+    return plt
+
+
 def _trajectory_masses(result: RunResult[Any]) -> list[float]:
     return [float(joint_state.population.total_mass) for joint_state in result.trajectory]
 
 
 def plot_population_mass(result: RunResult[Any]) -> Figure:
     """Plot total population mass `Σ μ` over the trajectory — paper: M+(X) total mass."""
-    import matplotlib.pyplot as plt
+    plt = _require_matplotlib()
 
     masses = _trajectory_masses(result)
     ticks = list(range(len(masses)))
@@ -74,12 +87,21 @@ def plot_observer_trace(
     Each component of the `Float[Array, "k"]` score becomes one line. `observer_name` is used as
     a title prefix; pass `None` to omit it.
     """
-    import matplotlib.pyplot as plt
+    import jax.numpy as jnp
+    import numpy as np
+
+    plt = _require_matplotlib()
 
     if not result.observer_scores:
         raise ValueError(
             "RunResult.observer_scores is empty; the run produced no observations "
             "(window length may exceed n_ticks)."
+        )
+
+    shapes = {tuple(s.shape) for s in result.observer_scores}
+    if len(shapes) > 1:
+        raise ValueError(
+            f"observer_scores have inconsistent shapes {shapes}; cannot stack into a single trace."
         )
 
     scores = jnp.stack(list(result.observer_scores))  # shape (T, k)
@@ -116,7 +138,7 @@ def plot_viability_filter_ratio(result: RunResult[Any]) -> Figure:
     plotted as `0.0` to keep the trace finite — a flat zero line indicates a collapsed
     population. The dashed reference line at `1.0` marks mass conservation.
     """
-    import matplotlib.pyplot as plt
+    plt = _require_matplotlib()
 
     masses = _trajectory_masses(result)
     if len(masses) < 2:
@@ -139,7 +161,7 @@ def plot_viability_filter_ratio(result: RunResult[Any]) -> Figure:
 
 def plot_topology_degree(
     result: RunResult[Any],
-    topology: InteractionTopology,
+    topology: InteractionTopology,  # paper: T_t
     detect_entities: EntityDetector[Any],
 ) -> Figure:
     """Plot per-entity hyperedge-incidence counts at each tick — paper: T_t degree distribution.
@@ -153,9 +175,13 @@ def plot_topology_degree(
     joint-state trajectory — the slot Protocols are needed to recover the time-varying
     hypergraph the paper denotes `T_t`.
     """
-    import matplotlib.pyplot as plt
+    import numpy as np
+
+    plt = _require_matplotlib()
 
     snapshots: list[tuple[int, np.ndarray]] = []
+    # PERF[viz-topology-scan]: O(T) detect_entities + topology.at calls; subsample
+    # ticks for large T rather than scanning every step.
     for tick, joint_state in enumerate(result.trajectory):
         entities: Sequence[Any] = detect_entities(joint_state.state, joint_state.population)
         if not entities:
@@ -180,7 +206,8 @@ def plot_topology_degree(
         ax.set_axis_off()
         return fig
 
-    max_degree = max(int(degrees.max()) for _, degrees in snapshots) if snapshots else 0
+    # `snapshots` is non-empty here (early return above guards the empty case).
+    max_degree = max(int(degrees.max()) for _, degrees in snapshots)
     bin_edges: list[float] = [i - 0.5 for i in range(max_degree + 2)]
     for tick, degrees in snapshots:
         ax.hist(degrees, bins=bin_edges, alpha=0.4, label=f"tick {tick}")

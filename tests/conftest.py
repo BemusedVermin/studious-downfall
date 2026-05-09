@@ -15,15 +15,22 @@ detect_entities and hyperedge_params can be `None`.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-from dataclasses import dataclass
-from typing import Any
+# Force a headless matplotlib backend before any test module imports pyplot. This must run
+# before pytest collects any test file, otherwise the first pyplot import wins and silently
+# leaves matplotlib on the GUI backend (which crashes on CI).
+import matplotlib
 
-import jax.numpy as jnp
-import pytest
-from jaxtyping import Array, Float, Int
+matplotlib.use("Agg")
 
-from emergent_systems import (
+from collections.abc import Sequence  # noqa: E402 — backend setup must precede stdlib imports
+from dataclasses import dataclass  # noqa: E402
+from typing import Any  # noqa: E402
+
+import jax.numpy as jnp  # noqa: E402
+import pytest  # noqa: E402
+from jaxtyping import Array, Float, Int  # noqa: E402
+
+from emergent_systems import (  # noqa: E402
     Distribution,
     Entity,
     Hypergraph,

@@ -12,10 +12,7 @@ topology actually has entities to enumerate.
 
 from __future__ import annotations
 
-import matplotlib
-
-matplotlib.use("Agg")  # noqa: E402 — headless backend must be set before pyplot import
-
+# The Agg backend is set in `tests/conftest.py` before pytest collects any test module.
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any

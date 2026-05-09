@@ -107,14 +107,17 @@ dependencies = [
     { name = "beartype" },
     { name = "jax" },
     { name = "jaxtyping" },
-    { name = "matplotlib" },
 ]
 
 [package.optional-dependencies]
 dev = [
+    { name = "matplotlib" },
     { name = "pyright" },
     { name = "pytest" },
     { name = "ruff" },
+]
+visualization = [
+    { name = "matplotlib" },
 ]
 
 [package.metadata]
@@ -122,12 +125,13 @@ requires-dist = [
     { name = "beartype", specifier = ">=0.18" },
     { name = "jax", specifier = ">=0.4.30" },
     { name = "jaxtyping", specifier = ">=0.2.34" },
-    { name = "matplotlib", specifier = ">=3.8" },
+    { name = "matplotlib", marker = "extra == 'dev'", specifier = ">=3.8" },
+    { name = "matplotlib", marker = "extra == 'visualization'", specifier = ">=3.8" },
     { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1.370" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.5" },
 ]
-provides-extras = ["dev"]
+provides-extras = ["visualization", "dev"]
 
 [[package]]
 name = "fonttools"

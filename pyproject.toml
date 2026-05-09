@@ -16,14 +16,17 @@ dependencies = [
     "jax>=0.4.30",
     "jaxtyping>=0.2.34",
     "beartype>=0.18",
-    "matplotlib>=3.8",
 ]
 
 [project.optional-dependencies]
+visualization = [
+    "matplotlib>=3.8",
+]
 dev = [
     "pytest>=9.0",
     "ruff>=0.5",
     "pyright>=1.1.370",
+    "matplotlib>=3.8",   # needed for visualization tests + pyright resolution of TYPE_CHECKING imports
 ]
 
 [tool.hatch.build.targets.wheel]
