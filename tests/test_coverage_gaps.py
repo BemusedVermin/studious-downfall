@@ -32,6 +32,7 @@ from emergent_systems import (
     StatefulObserver,
     Substrate,
     System,
+    SystemSpec,
     TickIndex,
     Variation,
     ViabilityFilter,
@@ -44,8 +45,6 @@ from emergent_systems import (
     verify_is_closure_operator,
     verify_persistence_estimate,
 )
-from emergent_systems.spec import _infer_viability_name
-from emergent_systems.system import _default_focal_entity_params
 
 # ---------------------------------------------------------------------------
 # verify_is_closure_operator — viability.py lines 129-143.
@@ -90,13 +89,18 @@ def test_closure_verifier_rejects_non_idempotent():
 
 
 def test_closure_verifier_rejects_non_monotonic():
-    elements = [frozenset({1}), frozenset({1, 2})]
+    # Three sample points so the closure is total, idempotent, and extensive on the sample
+    # but fails monotonicity: {1} ⊑ {1,2} yet closure({1})={1,2,3} ⊄ closure({1,2})={1,2}.
+    # Including {1,2,3} in `elements` lets the idempotence loop (which runs first) pass on the
+    # image of {1} so the verifier reaches the monotonicity check rather than short-circuiting
+    # on idempotence.
+    elements = [frozenset({1}), frozenset({1, 2}), frozenset({1, 2, 3})]
 
     def antitone(s: frozenset[int]) -> frozenset[int]:
-        # Both inputs map to a superset of themselves (passes extensivity + idempotence)
-        # but {1} ⊑ {1,2} while closure({1})={1,2,3} ⊄ closure({1,2})={1,2}.
         if s == frozenset({1}):
             return frozenset({1, 2, 3})
+        if s == frozenset({1, 2}):
+            return frozenset({1, 2})
         if s == frozenset({1, 2, 3}):
             return frozenset({1, 2, 3})
         return s
@@ -149,7 +153,8 @@ def test_verify_persistence_estimate_uses_user_estimator():
         c: Float[Array, "T"],
     ) -> Float[Array, ""]:
         del a, b
-        # First call (cmi_internal) sees a non-empty `c` (outside_now); second call sees zeros.
+        # First call receives `outside_now` of shape (T-tau,); second call receives an empty
+        # conditioning array of shape (0,) from the `[..., :0]` slice in verify_persistence_estimate.
         return jnp.asarray(1.0) if c.shape[-1] > 0 else jnp.asarray(0.0)
 
     history = jnp.zeros((10,))
@@ -215,6 +220,19 @@ class _PointVariation(Variation[Float[Array, ""], Float[Array, ""]]):
         params: Float[Array, ""],
     ) -> Distribution[Float[Array, ""]]:
         return PointMass(value=state + params)
+
+
+@dataclass(frozen=True)
+class _FocalEntityVariation(Variation[Float[Array, ""], Entity[Float[Array, ""], Any]]):
+    """Variation whose params are an Entity — accepts the focal-entity default from V_T."""
+
+    def __call__(
+        self,
+        state: Float[Array, ""],
+        params: Entity[Float[Array, ""], Any],
+    ) -> Distribution[Float[Array, ""]]:
+        feature = params.scale_projection(state)
+        return PointMass(value=state + jnp.asarray(feature))
 
 
 @dataclass(frozen=True)
@@ -419,15 +437,32 @@ def test_step_with_multiplex_topology_runs_mixture():
     assert jnp.allclose(after.population.weights, jnp.asarray([0.5, 0.5]))
 
 
-def test_default_focal_entity_params_returns_first_entity():
-    a = Entity(supporting_set=jnp.asarray([0]), scale_projection=lambda s: s)
-    b = Entity(supporting_set=jnp.asarray([1]), scale_projection=lambda s: s)
-    assert _default_focal_entity_params([a, b]) is a
+def test_step_uses_default_focal_entity_params_when_user_provides_none():
+    """Integration: a System with hyperedge_params=None falls back to the focal-entity rule.
 
-
-def test_default_focal_entity_params_rejects_empty():
-    with pytest.raises(ValueError, match="no entities"):
-        _default_focal_entity_params([])
+    Drives the `hyperedge_params or _default_focal_entity_params` path inside _apply_variation
+    via the public step() API rather than invoking the private helper directly.
+    """
+    system = System(
+        substrate=_ScalarSubstrateExplicitPop(),
+        variation=_FocalEntityVariation(),
+        viability=_IdentityViabilityFloat(),
+        topology=_SelfLoopTopology(),
+        observer=_ZeroValuedObserver(),
+        detect_entities=_OnePerEntityDetector(),
+        hyperedge_params=None,  # forces the default focal-entity rule
+        iteration_order=("variation",),
+    )
+    initial = JointState(
+        state=jnp.asarray(0.0),
+        population=WeightedSamples(
+            states=jnp.asarray([0.5, 1.5]),
+            weights=jnp.asarray([1.0, 1.0]),
+        ),
+    )
+    after = step(system, initial, jax.random.key(0), tick=0)
+    assert isinstance(after.population, WeightedSamples)
+    assert after.population.weights.shape == (2,)
 
 
 # ---------------------------------------------------------------------------
@@ -486,13 +521,23 @@ def test_multiplex_topology_rejects_non_unit_alpha_sum():
 
 
 # ---------------------------------------------------------------------------
-# spec.py — _infer_viability_name branches not hit elsewhere.
+# spec.py — exercises the viability-name introspection through the public API
+# (SystemSpec.from_system) rather than calling the private _infer_viability_name helper.
 # ---------------------------------------------------------------------------
 
 
-def test_infer_viability_name_recognises_custom_callable():
-    assert _infer_viability_name(_IdentityViabilityFloat()) == "custom"
-
-
-def test_infer_viability_name_returns_unknown_for_non_callable():
-    assert _infer_viability_name(object()) == "unknown"
+def test_systemspec_reports_custom_for_unrecognised_viability_callable():
+    """A user-supplied ViabilityFilter that doesn't match any of the four named formalisms is
+    reported as 'custom'. The 'unknown' branch isn't reachable through System construction
+    (the type system requires a callable viability), so it isn't asserted here.
+    """
+    system = System(
+        substrate=_ScalarSubstrateExplicitPop(),
+        variation=_PointVariation(),
+        viability=_IdentityViabilityFloat(),
+        topology=_NoHyperedgesTopology(),
+        observer=_ZeroValuedObserver(),
+    )
+    spec = SystemSpec.from_system(system)
+    assert spec.viability is not None
+    assert spec.viability.formalism_name == "custom"
