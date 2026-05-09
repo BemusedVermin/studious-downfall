@@ -61,7 +61,7 @@ def verify_boundedness(entity: Entity[Any, Any]) -> bool:
     """Check (E2): the supporting set has finite, nonzero size.
 
     Returns True iff `1 ≤ |S| < ∞`. Trivially satisfied by any finite array; left here as a
-    named predicate so the conformance check (`spec.py`) has something concrete to call.
+    named predicate so the system description (`spec.py`) has something concrete to call.
     """
     n = entity.supporting_set.shape[0]
     return 1 <= n < jnp.iinfo(jnp.int32).max

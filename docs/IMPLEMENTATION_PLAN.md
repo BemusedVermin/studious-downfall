@@ -275,4 +275,15 @@ def flag_bottleneck(name: str, reason: str, port_target: str = "C++/CUDA") -> No
 - [src/emergent_systems/system.py](src/emergent_systems/system.py) — orchestration, lifted operators, `lift_variation` free function, iteration-order interpreter.
 - [src/emergent_systems/distribution.py](src/emergent_systems/distribution.py) and [src/emergent_systems/population.py](src/emergent_systems/population.py) — the `P(X)` vs `M+(X)` split that the paper requires.
 - [src/emergent_systems/substrate.py](src/emergent_systems/substrate.py) — must expose `param_space` for `⊠_κ` to be checkable.
-- [src/emergent_systems/spec.py](src/emergent_systems/spec.py) — `ConformanceReport` is the framework's adoption surface.
+- [src/emergent_systems/spec.py](src/emergent_systems/spec.py) — `SystemSpec` is the framework's adoption surface (descriptive, not gating — see divergence note below).
+
+## Divergence from the v1 plan — 2026-05-09
+
+The v1 plan above (and the prose throughout this file) frames `spec.py` as a **conformance** mechanism: an 11-item checklist that papers must pass, with `ConformanceReport` returning `pass/fail/missing` per item. That framing has been retired. The framework's purpose is to **elucidate the structure of any emergent system**, not to certify which systems comply. Conformance is implied by being an emergent system; the slot decomposition is exhibitable by construction.
+
+What changed:
+
+- Paper §sec:checklist → §sec:description ("Implementation Checklist" → "System Description"). The 11 items are split into structural items 1–7 (read off the slot decomposition) and reproducibility metadata 8–11 (specified by the implementer). Iteration order moved from item 8 to item 7; descriptor moved from item 7 to item 8. Cross-references retargeted.
+- `spec.py`: `ConformanceReport`, `check_conformance`, `is_conformant`, and the `ConformanceStatus` literal are removed. The new method is `SystemSpec.missing_reproducibility_fields() -> tuple[str, ...]`.
+
+Treat the rest of this plan as a snapshot of the v1 design; the spec-as-gate framing in §`spec.py — the conformance checklist as data` and the surrounding test descriptions are superseded.

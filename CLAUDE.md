@@ -53,7 +53,7 @@ These are the choices that propagate across the codebase. Don't undo them withou
 1. **`P(X)` vs `M+(X)` is a deliberate split.** [distribution.py](src/emergent_systems/distribution.py) (`Distribution[State]`, codomain of V) is **separate** from [population.py](src/emergent_systems/population.py) (`Population[State]`, codomain of F). The paper's V_T formula `Σ_e w_e · V(...)` is a sum of measures, so V cannot be a bare sampler.
 2. **Two pushforward methods, not one.** `Population.pushforward_deterministic` vs `pushforward_stochastic` — the stochastic case requires a key and changes weight semantics. Conflating them breaks under jit.
 3. **`Substrate` exposes `dynamics_param_space` for `⊠_κ`.** Coupled composition (paper §3.3 line 401) re-parameterises each component's dynamics from the *other* component's state, so `Φ` must be parameterisable. Removing `dynamics_param_space` makes `compose_substrates_coupled` uncheckable.
-4. **Iteration order is data, not behaviour.** `System.iteration_order: tuple[Literal["dynamics", "variation", "viability"], ...]` — paper §4 conformance item 8 requires this.
+4. **Iteration order is data, not behaviour.** `System.iteration_order: tuple[Literal["dynamics", "variation", "viability"], ...]` — structural item 7 of the paper's "System Description" section requires this.
 5. **The four viability formalisms are NOT unified.** `MarkovBlanketViability`, `AutopoieticClosureViability`, `RAFSetViability`, `MinimalCriterionViability` are separate Protocols. Conjecture C1 (paper §5.1) is open; the library deliberately does not prejudge it. Do not introduce a `ClosureViability` superclass.
 6. **`H_max` is the default, not the only choice.** `effective_information(P, intervention_distribution=None)` — paper §3.6 line 893 calls the uniform intervention "conventional, not unique." Keep the parameter optional.
 7. **`ImplicitInSubstrate` short-circuits.** For substrate-as-population paradigms (Lenia, NCA, Flow-Lenia), V_T is the identity (paper §3.1 line 289). The orchestrator checks `isinstance(population, ImplicitInSubstrate)` and bypasses entity detection.
@@ -75,9 +75,13 @@ Hot paths likely to bottleneck in pure Python/JAX are tagged with `# PERF[<name>
 
 A source-level test ([tests/test_typing.py](tests/test_typing.py)) forbids `@beartype` and `@jaxtyped` decorators inside the package. This protects the perf claim: structural-typing checks on hot paths are a 10-100× silent slowdown. Runtime type checks (when needed) belong at factory boundaries (`System.__init__`, `compose_substrates_coupled`, etc.) only — never inside `step`, `run`, `vmap`, or `jit`.
 
-## Conformance / `SystemSpec`
+## System description / `SystemSpec`
 
-[spec.py](src/emergent_systems/spec.py) turns the paper's §4 11-item checklist into structured data. `SystemSpec.from_system(system)` introspects what it can; the user fills in the rest (descriptor space, RNG provenance, complexity figures, pseudocode). `SystemSpec.check_conformance()` returns a per-item `pass/fail/missing` report. This is the artefact a paper using the library should paste into supplementary materials.
+[spec.py](src/emergent_systems/spec.py) renders the paper's System Description schema as structured data. The frame is **descriptive, not gating**: the 5-tuple `(X, V, F, T, O)` is a vocabulary in which any emergent system is read, so the structural items (substrate, entity, variation, viability, topology, observer, iteration order) are exhibitable for any `System` by construction. `SystemSpec.from_system(system)` returns a populated description for those items.
+
+The reproducibility metadata (descriptor space, RNG provenance, complexity figures, pseudocode) is **not** implied by being an emergent system — it's communication hygiene the implementer supplies for replication. Those fields are `None` until filled, and `SystemSpec.missing_reproducibility_fields()` lists which remain.
+
+There is no `check_conformance` and no pass/fail. If you find yourself wanting to gatekeep what counts as conformant, re-read the paper: structural conformance is implied by the system being an emergent system at all.
 
 ## Where things deliberately don't go yet
 
