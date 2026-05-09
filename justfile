@@ -53,7 +53,17 @@ clean-py:
     -Remove-Item -Recurse -Force -ErrorAction SilentlyContinue .pytest_cache, .ruff_cache, .pyright, dist, build
     -Get-ChildItem -Path src, tests -Filter __pycache__ -Recurse -Directory -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
-# ---- Paper ------------------------------------------------------------------
+# ---- Papers -----------------------------------------------------------------
+# `paper`        builds the scaffolding (framework) paper at docs/{{ PAPER_NAME }}.tex.
+# `paper-result` builds one per-result paper at docs/papers/<slug>/paper.tex.
+# Each paper writes intermediate files and the final PDF into its own directory
+# so artefacts from different papers never collide.
 
+# Build the scaffolding (framework) paper.
 paper:
-    latexmk -c -pdf -interaction=nonstopmode -outdir={{ DOC_DIR }} {{ PAPER_NAME }}.tex
+    latexmk -pdf -interaction=nonstopmode -outdir={{ DOC_DIR }} {{ DOC_DIR }}/{{ PAPER_NAME }}.tex
+
+# Build a per-result paper, e.g. `just paper-result c1_closure_unification`.
+# Fails loudly if the slug doesn't exist.
+paper-result SLUG:
+    latexmk -pdf -interaction=nonstopmode -outdir={{ DOC_DIR }}/papers/{{ SLUG }} {{ DOC_DIR }}/papers/{{ SLUG }}/paper.tex
