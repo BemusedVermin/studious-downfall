@@ -81,6 +81,13 @@ The library flags hot paths likely to become bottlenecks in pure Python/JAX with
 `PERF` convention (see [`src/emergent_systems/perf.py`](src/emergent_systems/perf.py)). Comments
 of the form `# PERF[reason]: ...` mark candidates for a port to a faster language.
 
+## Results
+
+Status of every conjecture (C1–C3) and open problem (OP1–OP3) from the scaffolding
+paper §5.1 is tracked in [`RESULTS.md`](RESULTS.md). Per-result proof papers live
+under [`docs/papers/`](docs/papers/), one self-contained LaTeX project per
+result; copy [`docs/papers/_template/`](docs/papers/_template/) to start one.
+
 ## Status
 
 The framework's conjectures (C1–C3) and open problems (OP1–OP3) are deliberately **not** baked

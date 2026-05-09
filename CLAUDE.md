@@ -8,6 +8,8 @@ A typed JAX scaffold for the substrate-agnostic emergent-systems framework defin
 
 **The paper is a work in progress.** Re-read [docs/emergent_systems.tex](docs/emergent_systems.tex) at the start of any non-trivial change — definitions, conjectures, and section numbering can shift between sessions, and this CLAUDE.md may lag behind. When the paper and this file disagree, the paper wins; update CLAUDE.md to match.
 
+**Conjecture and open-problem status lives in [RESULTS.md](RESULTS.md).** When a conjecture's or open problem's status changes (e.g. a result paper lands under [docs/papers/](docs/papers/)), update `RESULTS.md` and link the result paper.
+
 The plan that drove the initial implementation is committed at [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md). Read it when in doubt about a design decision — it records the alternatives that were considered and rejected. The plan is a snapshot of the v1 design, not a live document; if you make a load-bearing decision that contradicts it, append a note to that file rather than silently diverging.
 
 ## Commands
@@ -19,7 +21,8 @@ Use [justfile](justfile) for everything. Common recipes:
 - `just test` / `just test-one tests/test_emergence.py` — pytest on the suite or one node.
 - `just lint` / `just fix` / `just fmt` — ruff.
 - `just typecheck` — pyright (basic mode).
-- `just paper` — rebuild the LaTeX PDF (uses latexmk).
+- `just paper` — rebuild the scaffolding-paper PDF (uses latexmk).
+- `just paper-result <slug>` — rebuild one per-result proof paper at `docs/papers/<slug>/`. See [docs/papers/README.md](docs/papers/README.md).
 
 There is no separate build step — `pyproject.toml` uses hatchling; the package is installed editable by `uv sync`.
 
