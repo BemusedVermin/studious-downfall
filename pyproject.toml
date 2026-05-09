@@ -16,6 +16,7 @@ dependencies = [
     "jax>=0.4.30",
     "jaxtyping>=0.2.34",
     "beartype>=0.18",
+    "matplotlib>=3.8",
 ]
 
 [project.optional-dependencies]
