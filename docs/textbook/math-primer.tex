@@ -1,0 +1,699 @@
+\chapter{Math primer}
+
+\section{What this primer is for}
+
+The book has used a handful of mathematical ideas that come from
+different parts of pure mathematics. None of them is essential to the
+big picture --- a reader who skipped every formula would still
+understand what the lens is doing --- but the precision they buy is
+real, and a reader who wants to write down their own system in the
+lens's vocabulary will want at least working command of them.
+
+The four topics:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Order theory}: posets, lattices, and closure
+    operators (used in Chapter~6).
+  \item \textbf{Measure theory}: measurable spaces, measures, and
+    Markov kernels (used throughout, especially Chapters~4 and~5).
+  \item \textbf{Information theory}: entropy, mutual information, KL
+    divergence, and effective information (used in Chapters~3, 7,
+    and~8).
+  \item \textbf{Category theory}: objects, morphisms, products, and
+    monoidal categories (used lightly in Chapter~5 for
+    $\boxtimes_\kappa$ and $\diamond_\rho$).
+\end{itemize}
+
+I will assume you have seen sets and functions, that you remember
+what a probability density looks like, and that you can be persuaded
+to read a definition slowly. I will not assume you have taken an
+analysis class, a topology class, an algebra class, or a logic class.
+Each section is self-contained.
+
+The primer is meant to be readable end to end, but you can also use
+it as a reference: skim until you hit the concept you need, read the
+section it lives in, return to the chapter that prompted you.
+
+\section{A short warm-up on sets and functions}
+
+A \emph{set} is a collection of distinguishable objects. Examples:
+$\{1, 2, 3\}$, the set of all real numbers $\mathbb{R}$, the set of
+all $H \times W$ binary grids $\{0,1\}^{H\times W}$.
+
+A \emph{function} $f : A \to B$ assigns to each element of $A$
+exactly one element of $B$. We will use functions to describe
+dynamics ($\Phi : X \to X$ maps a state to a next state), to describe
+projections ($\pi : \prod_{p \in S} X_p \to Y$ maps a configuration
+to a feature vector), and to describe maps between mathematical
+structures (a closure operator is a function $2^P \to 2^P$).
+
+The \emph{power set} of $A$, written $2^A$ or $\mathcal{P}(A)$, is
+the set of all subsets of $A$. If $A = \{1, 2, 3\}$, then $2^A$ has
+eight elements: the empty set, three singletons, three pairs, and
+the full set. The power set will appear in order theory (the
+canonical poset is $(2^A, \subseteq)$) and in measure theory (a
+$\sigma$-algebra is a subset of the power set).
+
+We will write $\mathbb{N}$ for the natural numbers $\{0, 1, 2,
+\ldots\}$, $\mathbb{R}$ for the real numbers, and $\mathbb{R}_{\geq
+0}$ for the non-negative reals.
+
+That is the toolkit. The rest of this primer builds on it.
+
+\section{Order theory}
+
+Order theory is the study of relations that compare things. The book
+uses it in Chapter~6 to talk about \emph{closure operators}, which
+is how three of the four viability formalisms (autopoietic closure,
+RAF, and arguably Markov-blanket) can be phrased.
+
+\subsection*{Partially ordered sets (posets)}
+
+A \emph{partial order} on a set $P$ is a binary relation $\sqsubseteq$
+that is:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Reflexive}: $A \sqsubseteq A$ for every $A \in P$.
+    Every element is comparable to itself.
+  \item \textbf{Anti-symmetric}: if $A \sqsubseteq B$ and $B
+    \sqsubseteq A$, then $A = B$. The order distinguishes distinct
+    elements.
+  \item \textbf{Transitive}: if $A \sqsubseteq B$ and $B \sqsubseteq
+    C$, then $A \sqsubseteq C$.
+\end{itemize}
+
+A set $P$ with a partial order $\sqsubseteq$ is called a
+\emph{partially ordered set} or \emph{poset}.
+
+\paragraph{Canonical example: the power set.} For any set $X$, the
+power set $2^X$ with the inclusion relation $\subseteq$ is a poset:
+every set is a subset of itself; if $A \subseteq B$ and $B \subseteq
+A$ then they are equal; subset-ness is transitive.
+
+\paragraph{What ``partial'' means.} Some pairs of elements may not be
+comparable. In $2^{\{1,2,3\}}$, the set $\{1\}$ is not a subset of
+$\{2, 3\}$ and vice versa --- they are incomparable. A \emph{total}
+order is one where every pair is comparable; the real numbers under
+$\leq$ are totally ordered, but the power set of $\{1,2,3\}$ is not.
+
+\paragraph{Other examples.} The natural numbers under divisibility:
+$a \mid b$ iff $a$ divides $b$. Strings under prefix-of: $s
+\sqsubseteq t$ iff $s$ is a prefix of $t$. Functions $\mathbb{R}
+\to \mathbb{R}$ under pointwise order: $f \leq g$ iff $f(x) \leq
+g(x)$ for all $x$.
+
+\subsection*{Lattices, briefly}
+
+Some posets have additional structure. A \emph{lattice} is a poset
+in which every pair of elements has a least upper bound (their
+\emph{join}, written $A \vee B$) and a greatest lower bound (their
+\emph{meet}, written $A \wedge B$).
+
+The power set $(2^X, \subseteq)$ is a lattice: $A \vee B = A \cup B$
+(union is the least upper bound), $A \wedge B = A \cap B$
+(intersection is the greatest lower bound). The natural numbers
+under divisibility form a lattice: $a \vee b = \mathrm{lcm}(a, b)$,
+$a \wedge b = \mathrm{gcd}(a, b)$.
+
+The book uses lattices implicitly. Most of the time, ``the lattice
+of subsets'' or ``the lattice of supporting sets'' just means the
+power set with $\subseteq$. The fact that meets and joins exist is
+what lets us talk about ``the smallest closed set containing $A$,''
+which is the next concept.
+
+\subsection*{Closure operators}
+
+A \emph{closure operator} on a poset $(P, \sqsubseteq)$ is a function
+$c : P \to P$ satisfying:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Extensivity}: $A \sqsubseteq c(A)$ for all $A$. The
+    closure of an element is at least as big as the element.
+  \item \textbf{Monotonicity}: if $A \sqsubseteq B$, then $c(A)
+    \sqsubseteq c(B)$. Closure respects the order.
+  \item \textbf{Idempotence}: $c(c(A)) = c(A)$. Closing twice is the
+    same as closing once.
+\end{itemize}
+
+An element $A$ is \emph{closed} (under $c$) if $A = c(A)$.
+
+\paragraph{Intuition.} A closure operator takes a candidate set and
+``adds everything that follows.'' The result is the smallest closed
+set that contains the input. If you put more in, you get more out
+(monotonicity). If you close something already closed, nothing
+changes (idempotence).
+
+\paragraph{Examples that show up in the book.}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{The convex hull.} On subsets of $\mathbb{R}^n$, the
+    convex hull operator $c(A) = \mathrm{conv}(A)$ is a closure
+    operator. The closed sets are exactly the convex sets.
+  \item \textbf{Closure under a relation.} Given any binary relation
+    $R$ on $X$, the operator ``add everything reachable by repeated
+    application of $R$'' is a closure. The closed sets are the
+    $R$-closed sets.
+  \item \textbf{Autopoietic closure (Chapter~6).} On subsets of GoL
+    cells, the operator ``add every cell whose next-state depends on
+    the current set'' is a closure on the reaction-set lattice. The
+    closed sets are the autopoietic units --- gliders, blocks, and
+    related patterns.
+  \item \textbf{RAF closure (Chapter~6).} On subsets of a chemical
+    reaction network, the operator ``add every reaction whose
+    reactants are present and whose catalyst is present'' is a
+    closure. The closed sets are the RAFs.
+\end{itemize}
+
+\subsection*{Why closure operators matter for the book}
+
+Conjecture~C1 in the framework says that each of the four viability
+formalisms corresponds to a closure operator on some poset of
+supporting sets. If true, viability would have a single abstract
+form ($S$ is viable iff $S = c(S)$ for the formalism's $c$) and the
+four formalisms would be choices of $c$.
+
+The book takes the conjecture seriously without assuming it. The
+language of closure operators is what makes the conjecture even
+sayable.
+
+\section{Measure theory}
+
+Measure theory is the framework that lets us assign \emph{sizes} to
+subsets of a space in a consistent way. The book uses it everywhere
+the substrate state space appears: the substrate's $X$ is a
+measurable space, the initial measure $\mu_0$ is a measure, the
+population measure $\mu_t$ is a measure, and the variation operator
+$V$ produces probability measures.
+
+A reader's working model: ``measure'' is ``a generalisation of
+volume.'' That model is enough for most of the book. The technical
+content of measure theory is what makes the generalisation rigorous.
+
+\subsection*{Sigma-algebras and measurable spaces}
+
+The first surprise of measure theory is that you cannot always
+assign sizes to \emph{every} subset of a space. Some subsets are too
+weird --- the technical term is non-measurable --- and the only
+sensible response is to refuse to give them a size at all.
+
+A \emph{$\sigma$-algebra} on a set $X$ is a collection $\Sigma$ of
+subsets of $X$ that:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item contains the empty set,
+  \item is closed under complement (if $A \in \Sigma$ then $X
+    \setminus A \in \Sigma$),
+  \item is closed under countable union (if $A_1, A_2, \ldots \in
+    \Sigma$, then $\bigcup_i A_i \in \Sigma$).
+\end{itemize}
+
+A set $A \in \Sigma$ is called \emph{measurable}. A pair $(X,
+\Sigma)$ of a set and a $\sigma$-algebra is called a \emph{measurable
+space}.
+
+\paragraph{Don't panic.} For every space the book cares about, there
+is a standard $\sigma$-algebra and you do not need to think about it
+explicitly:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item For finite $X$ (a GoL grid of fixed size, an Avida program
+    space of fixed instruction count), use the power set $\Sigma =
+    2^X$. Every subset is measurable.
+  \item For $\mathbb{R}^n$, use the Borel $\sigma$-algebra ---
+    informally, the smallest $\sigma$-algebra that contains every
+    open ball. Every subset you can describe constructively is in
+    it.
+  \item For Lenia's $[0,1]^L$ (a product of $|L|$ copies of $[0,1]$),
+    use the product Borel $\sigma$-algebra.
+\end{itemize}
+
+The book's only use of the $\sigma$-algebra is to make ``measurable
+function'' a precise notion: $f : X \to Y$ is measurable if the
+preimage of every measurable subset of $Y$ is a measurable subset of
+$X$. In practice, every function written down using continuous
+operations is measurable. The notion is there to exclude
+pathological cases.
+
+\subsection*{Measures}
+
+A \emph{measure} on a measurable space $(X, \Sigma)$ is a function
+$\mu : \Sigma \to [0, \infty]$ such that:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $\mu(\emptyset) = 0$ (the empty set has zero size).
+  \item $\mu$ is \emph{countably additive}: for any disjoint
+    sequence $A_1, A_2, \ldots$ of measurable sets, $\mu(\bigcup_i
+    A_i) = \sum_i \mu(A_i)$.
+\end{itemize}
+
+The number $\mu(A)$ is the \emph{size} of $A$. Different measures
+encode different notions of size.
+
+\paragraph{Familiar measures.}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item On $\mathbb{R}^n$, \emph{Lebesgue measure} is the
+    generalisation of length / area / volume. A unit ball in
+    $\mathbb{R}^3$ has Lebesgue measure $\frac{4}{3}\pi$.
+  \item \emph{Counting measure} on a finite or countable set:
+    $\mu(A) = |A|$.
+  \item \emph{Dirac measure} $\delta_x$ at a point $x \in X$:
+    $\delta_x(A) = 1$ if $x \in A$, else $0$.
+  \item \emph{Probability measures}: measures with $\mu(X) = 1$. The
+    standard probabilistic distributions are all probability
+    measures (a Gaussian on $\mathbb{R}$, the Bernoulli on
+    $\{0,1\}$, etc.).
+\end{itemize}
+
+\paragraph{The two spaces of measures the book uses.}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $\mathcal{P}(X)$: probability measures on $X$. The codomain
+    of variation operators: $V : X \times \Theta \to \mathcal{P}(X)$.
+    A probability measure represents a distribution over next
+    states.
+  \item $\mathcal{M}_+(X)$: finite positive measures on $X$. These
+    are like probability measures but the total mass can be less
+    than one. The codomain of viability filters: $F : \mathcal{M}_+(X)
+    \to \mathcal{M}_+(X)$. The total mass can shrink (extinction is
+    allowed) without leaving the space.
+\end{itemize}
+
+\paragraph{Why $\mathcal{P}(X)$ vs $\mathcal{M}_+(X)$ matters.} The
+distinction is not bookkeeping. Variation produces normalised
+distributions (the total probability of generating \emph{some}
+variant is one). Viability can reduce the population. Conflating the
+two would mean that viability could not extinguish a population,
+which breaks the framework's commitment to allow extinction.
+
+\subsection*{Pushforward}
+
+If $\mu$ is a measure on $X$ and $f : X \to Y$ is a measurable
+function, the \emph{pushforward} $f_* \mu$ is a measure on $Y$
+defined by
+\[
+  (f_*\mu)(B) \;=\; \mu(f^{-1}(B)),
+\]
+i.e.\ the size of a subset $B \subseteq Y$ under $f_*\mu$ is the
+size of its preimage in $X$ under $\mu$. The intuition: $f$ moves
+mass from $X$ to $Y$; pushforward asks how much mass lands in each
+subset of $Y$.
+
+The book uses pushforward in two places. The lifted substrate
+operator $\widetilde\Phi(x, \mu) = (\Phi(x), \Phi_* \mu)$ uses
+pushforward to move the population measure along the substrate
+dynamics. And the entity scale projection $\pi$ pushes forward the
+substrate measure on a supporting set to a measure on the feature
+space.
+
+\subsection*{Markov kernels}
+
+A \emph{Markov kernel} from $X$ to $Y$ is a measurable map
+\[
+  K : X \to \mathcal{P}(Y).
+\]
+Equivalently, $K$ takes each $x \in X$ to a probability
+distribution $K(x) \in \mathcal{P}(Y)$. Sample from $K(x)$ to get a
+value in $Y$.
+
+Markov kernels are the standard mathematical object for representing
+\emph{stochastic transitions}: from the current state $x$, you
+sample the next state from the distribution $K(x)$.
+
+\paragraph{Variation is a Markov kernel.} The book's variation
+operator $V : X \times \Theta \to \mathcal{P}(X)$ is a Markov kernel
+from $X \times \Theta$ to $X$. Deterministic variation is the
+special case where $V(x, \theta)$ is a Dirac measure: all the
+probability mass is on a single point.
+
+\paragraph{Substrate dynamics is a Markov kernel.} A stochastic
+substrate dynamics $\Phi : X \to \mathcal{P}(X)$ is a Markov kernel.
+A deterministic dynamics $\Phi : X \to X$ is the special case where
+the codomain is the set of Dirac measures.
+
+\paragraph{Markov chains are iterated Markov kernels.} A
+discrete-time Markov chain on a finite state space $X$ is determined
+by a Markov kernel $P : X \to \mathcal{P}(X)$. We saw this in
+Chapter~8 when computing effective information: the transition
+matrix $P_{ij}$ is the value $P(i)(\{j\})$, i.e.\ the probability of
+transitioning from $i$ to $j$.
+
+\section{Information theory}
+
+Information theory is the mathematical framework Claude Shannon
+introduced in 1948 for measuring information. The book uses it in
+Chapter~3 to set up causal emergence, in Chapter~7 to describe
+information-theoretic observers, and in Chapter~8 to write down
+effective information explicitly.
+
+The fundamental object is \emph{entropy}, a number that captures
+how spread out a probability distribution is.
+
+\subsection*{Entropy}
+
+Let $X$ be a random variable taking values in a finite set
+$\mathcal{X}$ with probability $p(x) = \Pr[X = x]$. The
+\emph{Shannon entropy} of $X$ is
+\[
+  \mathbf{H}(X) \;=\; -\sum_{x \in \mathcal{X}} p(x) \log_2 p(x),
+\]
+with the convention $0 \log 0 = 0$.
+
+Properties:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $\mathbf{H}(X) \geq 0$. Entropy is non-negative.
+  \item $\mathbf{H}(X) = 0$ iff $X$ is deterministic (puts all mass
+    on one point).
+  \item $\mathbf{H}(X) \leq \log_2 |\mathcal{X}|$, with equality iff
+    $X$ is uniform over $\mathcal{X}$.
+  \item Entropy is measured in \emph{bits} when the logarithm is
+    base 2, and in \emph{nats} when natural log is used. The book
+    uses bits.
+\end{itemize}
+
+\paragraph{Intuition.} Entropy measures uncertainty. A fair coin
+has $\mathbf{H} = 1$ bit: one bit of uncertainty. A two-headed coin
+has $\mathbf{H} = 0$: no uncertainty. A fair die has $\mathbf{H} =
+\log_2 6 \approx 2.58$ bits.
+
+\paragraph{The $-p \log p$ shape.} The expression $-p \log p$ peaks
+at $p = 1/e$ and tends to zero as $p \to 0$ or $p \to 1$. Summing
+this over all values of a distribution gives entropy: high when many
+values are about-equally-likely, low when one value dominates.
+
+\subsection*{Joint and conditional entropy}
+
+For two random variables $X, Y$ with joint distribution $p(x, y)$,
+the \emph{joint entropy} is
+\[
+  \mathbf{H}(X, Y) \;=\; -\sum_{x, y} p(x, y) \log_2 p(x, y).
+\]
+The \emph{conditional entropy} of $Y$ given $X$ is
+\[
+  \mathbf{H}(Y \mid X) \;=\; \mathbf{H}(X, Y) - \mathbf{H}(X),
+\]
+the additional uncertainty in $Y$ once $X$ is known.
+
+\subsection*{Mutual information}
+
+The \emph{mutual information} between $X$ and $Y$ is
+\[
+  I(X; Y) \;=\; \mathbf{H}(X) + \mathbf{H}(Y) - \mathbf{H}(X, Y)
+  \;=\; \mathbf{H}(Y) - \mathbf{H}(Y \mid X).
+\]
+Equivalently:
+\[
+  I(X; Y) \;=\; \sum_{x, y} p(x, y) \log_2 \frac{p(x, y)}{p(x)
+  p(y)}.
+\]
+Properties:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $I(X; Y) \geq 0$, with equality iff $X$ and $Y$ are
+    independent.
+  \item $I(X; Y) = I(Y; X)$ (symmetric).
+  \item $I(X; Y) \leq \min\{\mathbf{H}(X), \mathbf{H}(Y)\}$, with
+    equality iff one of $X, Y$ is a deterministic function of the
+    other.
+\end{itemize}
+
+\paragraph{Intuition.} Mutual information is how much knowing one
+variable tells you about the other. If $X$ and $Y$ are independent,
+knowing $X$ tells you nothing about $Y$ and $I(X; Y) = 0$. If $Y =
+f(X)$ deterministically, knowing $X$ tells you $Y$ exactly and $I(X;
+Y) = \mathbf{H}(Y)$.
+
+\paragraph{Where the book uses it.} The entity definition in
+Chapter~4 uses conditional mutual information to express
+informational closure: most of the predictive information about an
+entity's future state should be inside its supporting set rather
+than outside. The formula in the paper is
+\[
+  I(\pi(\mathbf{x}_S^{t+\tau});\,
+  \pi(\mathbf{x}_S^{t}) \mid \mathbf{x}_{\bar S}^{t})
+  \;\geq\; I(\pi(\mathbf{x}_S^{t+\tau});\, \mathbf{x}_S^{t})
+  - \varepsilon,
+\]
+which reads: the information that the supporting set's past carries
+about its future (conditional on the outside) is large compared to
+the information the inside carries unconditionally. In plain
+language: the entity is informationally insulated from its
+surroundings.
+
+\subsection*{KL divergence}
+
+The \emph{Kullback--Leibler divergence} between two distributions
+$p$ and $q$ on the same space is
+\[
+  D_{\mathrm{KL}}(p \,\|\, q) \;=\; \sum_x p(x) \log_2 \frac{p(x)}{
+  q(x)},
+\]
+again with $0 \log 0 = 0$ and a divergence of $\infty$ if $p$ puts
+mass anywhere $q$ does not.
+
+Properties:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $D_{\mathrm{KL}}(p \,\|\, q) \geq 0$ (Gibbs's inequality),
+    with equality iff $p = q$.
+  \item $D_{\mathrm{KL}}$ is \emph{not} symmetric in general:
+    $D_{\mathrm{KL}}(p \,\|\, q) \neq D_{\mathrm{KL}}(q \,\|\, p)$.
+    It is therefore not a distance in the metric sense.
+  \item $I(X; Y) = D_{\mathrm{KL}}(p(x,y) \,\|\, p(x) p(y))$. Mutual
+    information is the KL divergence between the joint distribution
+    and the product of marginals.
+\end{itemize}
+
+\paragraph{Intuition.} $D_{\mathrm{KL}}(p \,\|\, q)$ is how much
+information you lose if you use the wrong distribution $q$ to encode
+data from $p$. Smaller is better; zero means $q$ matches $p$.
+
+\subsection*{Effective information}
+
+We can now write the effective information formula from Chapter~8
+explicitly. Let $M = (X, P)$ be a discrete-time Markov chain on a
+finite state space $X$ of size $n$, with transition matrix $P$.
+Define the \emph{marginal effect distribution} $\bar P_\cdot =
+\frac{1}{n} \sum_{i=1}^n P_{i, \cdot}$ --- the row average of $P$.
+
+The \emph{effective information} of $M$ under uniform intervention
+is
+\[
+  \mathrm{EI}(M) \;=\; \frac{1}{n} \sum_{i=1}^n D_{\mathrm{KL}}(P_{
+  i, \cdot} \,\|\, \bar P_\cdot).
+\]
+Equivalently,
+\[
+  \mathrm{EI}(M) \;=\; \mathbf{H}(\bar P_\cdot) - \frac{1}{n}
+  \sum_i \mathbf{H}(P_{i, \cdot}).
+\]
+
+\paragraph{Reading the formula.} The first form says: take each
+row's deviation from the average row (in KL divergence), and
+average. The second form says: take the entropy of the average row,
+minus the average row entropy. Both are equal.
+
+\paragraph{Two extreme cases.}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item All rows are identical. Then $\bar P_\cdot = P_{i, \cdot}$
+    for every $i$, so $D_{\mathrm{KL}}(P_{i, \cdot} \,\|\, \bar
+    P_\cdot) = 0$ and $\mathrm{EI} = 0$. The chain has no causal
+    power: every starting state goes to the same distribution of
+    next states.
+  \item Each row is a Dirac on a different next state, and all next
+    states are distinct. Then each row has entropy $0$ (deterministic)
+    and the average row is uniform over $n$ values (entropy $\log_2
+    n$). So $\mathrm{EI} = \log_2 n - 0 = \log_2 n$, the maximum.
+\end{itemize}
+
+A system has high effective information when interventions matter
+--- when different starting states reliably lead to different and
+distinguishable outcomes.
+
+\section{Category theory}
+
+Category theory is the most abstract of the four topics, and the
+book uses it most lightly. It enters in Chapter~5 to justify the
+substrate-composition operator $\boxtimes_\kappa$ and the
+variation-channel composition operator $\diamond_\rho$ as
+``symmetric monoidal'' constructions. You can read the whole book
+without learning what those words mean. This section gives the
+working vocabulary so that you can recognise the references when
+you see them.
+
+\subsection*{Categories}
+
+A \emph{category} $\mathcal{C}$ consists of:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item A collection of \emph{objects} (think: sets, spaces,
+    substrates).
+  \item For each pair of objects $A, B$, a collection of
+    \emph{morphisms} $A \to B$ (think: functions, maps,
+    transformations).
+  \item For each object $A$, an \emph{identity morphism} $\mathrm{id
+    }_A : A \to A$.
+  \item A \emph{composition operation} $\circ$: given $f : A \to B$
+    and $g : B \to C$, you get $g \circ f : A \to C$.
+\end{itemize}
+
+Subject to two axioms: composition is associative ($h \circ (g
+\circ f) = (h \circ g) \circ f$) and identities behave as expected
+($f \circ \mathrm{id}_A = f = \mathrm{id}_B \circ f$).
+
+\paragraph{Canonical examples.}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $\mathbf{Set}$: objects are sets, morphisms are functions,
+    composition is the usual composition of functions.
+  \item $\mathbf{Meas}$: objects are measurable spaces, morphisms
+    are measurable functions.
+  \item $\mathbf{Top}$: objects are topological spaces, morphisms
+    are continuous functions.
+\end{itemize}
+
+A category is a vocabulary for talking about \emph{things plus
+relationships between things}, abstracting away from what the things
+are made of. The same theorems can apply to sets, spaces, groups,
+substrates --- whatever fits the schema.
+
+\subsection*{Products}
+
+A \emph{product} of two objects $A$ and $B$ in a category is an
+object $A \times B$ together with two projection morphisms
+\[
+  \pi_A : A \times B \to A, \quad \pi_B : A \times B \to B,
+\]
+such that for any other object $C$ with morphisms $f : C \to A$ and
+$g : C \to B$, there is a unique morphism $\langle f, g\rangle : C
+\to A \times B$ making the obvious diagram commute.
+
+\paragraph{Why this is interesting.} In $\mathbf{Set}$, products
+are just Cartesian products. In $\mathbf{Top}$, products carry the
+product topology. In $\mathbf{Meas}$, products carry the product
+$\sigma$-algebra. The categorical definition unifies them: ``the
+right product'' is whatever satisfies this universal property in
+the category at hand.
+
+The substrate composition $\mathbf{X}_1 \boxtimes \mathbf{X}_2$ in
+Chapter~5 is the categorical product in a category of substrates
+with substrate-preserving morphisms.
+
+\subsection*{Monoidal categories}
+
+A \emph{monoidal category} is a category equipped with a binary
+operation $\otimes$ on objects (and morphisms) that behaves like
+multiplication: there is a unit object, the operation is
+associative up to isomorphism, and these properties satisfy
+coherence axioms.
+
+A monoidal category is \emph{symmetric} if there is a natural
+isomorphism $A \otimes B \cong B \otimes A$.
+
+\paragraph{Why this matters for the book.} The substrate
+composition operator $\boxtimes$ in its free form (no coupling) is
+a symmetric monoidal product on the category of substrates. The
+coupled form $\boxtimes_\kappa$ is a symmetric monoidal product on
+the category of substrates equipped with coupling data. The
+variation channel composition $\diamond_\rho$ has the same
+structure on the category of variation channels.
+
+The payoff: associativity up to canonical isomorphism. You can write
+$(\mathbf{X}_1 \boxtimes_{\kappa_{12}} \mathbf{X}_2)
+\boxtimes_{\kappa_{23}} \mathbf{X}_3$ or $\mathbf{X}_1
+\boxtimes_{\kappa_{12}} (\mathbf{X}_2 \boxtimes_{\kappa_{23}}
+\mathbf{X}_3)$ and the two are canonically the same composite. You
+do not need to choose a parenthesisation when building
+biological-atmospheric-cultural composites.
+
+\subsection*{Operads and wiring diagrams}
+
+A more advanced construction: \emph{operads of wiring diagrams} are
+categorical structures that formalise ``boxes with wires plugged
+into each other.'' They are the natural home for systems built by
+coupling components, and they are the framework's formal foundation
+for the substrate and variation composition operators.
+
+The book does not require you to understand operads. The reference
+in Chapter~5 is for completeness: if you know the operad-of-wiring-
+diagrams literature, the framework's compositions are operad maps
+in that sense. If you do not, no harm done.
+
+\subsection*{Functors and natural transformations, briefly}
+
+Two more pieces of categorical vocabulary that occasionally appear
+in the artificial-life literature:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item A \emph{functor} $F : \mathcal{C} \to \mathcal{D}$ is a map
+    between categories that takes objects to objects, morphisms to
+    morphisms, and preserves composition and identities. Functors
+    are ``structure-respecting maps between categories.''
+  \item A \emph{natural transformation} $\eta : F \Rightarrow G$
+    between two functors is a family of morphisms $\eta_A : F(A)
+    \to G(A)$, one for each object, that respect morphisms in the
+    obvious sense.
+\end{itemize}
+
+These rarely show up explicitly in the book. They are how
+categorical formulations express ``a uniform way of relating one
+construction to another.''
+
+\section{Putting it together}
+
+We have surveyed four mathematical regions. They are connected to
+the book like this:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Order theory} $\Rightarrow$ closure operators
+    $\Rightarrow$ viability formalisms in Chapter~6 $\Rightarrow$
+    Conjecture~C1.
+  \item \textbf{Measure theory} $\Rightarrow$ measurable spaces and
+    measures $\Rightarrow$ substrate state spaces, population
+    measures, Markov kernels $\Rightarrow$ the lens's signatures
+    throughout.
+  \item \textbf{Information theory} $\Rightarrow$ entropy, mutual
+    information, KL divergence $\Rightarrow$ entity informational
+    closure (Chapter~4), effective information and causal emergence
+    (Chapters~3, 8).
+  \item \textbf{Category theory} $\Rightarrow$ monoidal categories
+    $\Rightarrow$ $\boxtimes_\kappa$ and $\diamond_\rho$
+    compositions (Chapter~5).
+\end{itemize}
+
+You do not need to internalise everything in this primer to use the
+book. A reader who can write a probability density and read a
+function signature can read the lens fluently after this primer
+with occasional reference back to specific sections.
+
+What the primer is for is the moment when a chapter writes down
+something like $V : X \times \Theta \to \mathcal{P}(X)$ or
+$\mathrm{EI}(M^\Pi) - \mathrm{EI}(M)$ or ``the closure operator on
+the lattice of supporting sets,'' and you want to know what those
+symbols are doing. Flip back here. The full machinery is light, but
+it is precise, and the precision is what makes the lens work.
+
+\section*{Further reading}
+
+For information theory: Cover \& Thomas, \textit{Elements of
+Information Theory}, is the standard textbook and is accessible to
+a reader with calculus.
+
+For measure theory: Pollard's \textit{User's Guide to Measure
+Theoretic Probability} is short and conceptual. Folland's
+\textit{Real Analysis} is the standard reference and is harder.
+
+For order theory and lattices: Davey \& Priestley,
+\textit{Introduction to Lattices and Order}, is the standard.
+Closure operators are covered in the first few chapters.
+
+For category theory: Spivak's \textit{Category Theory for the
+Sciences} is accessible for applied readers. Awodey's
+\textit{Category Theory} is more advanced.
+
+For Hoel-style causal emergence: the source papers by Hoel,
+Tononi, and Albantakis, and follow-up work by Klein and Hoel and
+by Comolatti and Hoel, contain the formalism and the principal
+applications.

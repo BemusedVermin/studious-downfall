@@ -1,0 +1,133 @@
+\chapter{Preface}
+
+\section*{Who this book is for}
+
+You want to make your own artificial life. Maybe you watched a Lenia
+animation and wondered how it works, or saw a Boids flock and wondered
+what changes if you alter the rules, or read about Tierra and wondered
+whether you could build something that does what it did but does not
+stop.
+
+You can read a probability density without flinching, you have seen at
+least one dynamical system in motion, and you have written enough
+Python to follow a code listing. That is the technical baseline; you
+do not need anything beyond it. The rest is curiosity.
+
+This book offers you a vocabulary --- five words: \emph{substrate},
+\emph{variation}, \emph{viability}, \emph{topology}, \emph{observer}
+--- and shows you how to use them to read, design, and compare systems.
+The vocabulary will not write your simulator for you. It will tell you
+what choices you are making when you write one, and what choices the
+people whose work you are reading have made. That turns out to be the
+harder part.
+
+\section*{What this book is not}
+
+This is not a survey of every artificial-life system. There are
+excellent surveys --- Bedau and Cleland's \textit{The Nature of Life},
+Langton's \textit{Artificial Life} proceedings, and Aguilar et al.'s
+recent reviews --- and we will point you toward them. We mention only
+the systems that illuminate something specific about the vocabulary.
+
+This is also not a philosophy-of-life book, though one chapter does
+take philosophy of life seriously. The five-slot vocabulary is
+descriptive: it lets you read what people mean by \emph{life},
+\emph{emergence}, and \emph{novelty} without forcing you to take sides.
+Several philosophical frames will reappear later as concrete technical
+formalisms, and we will point that out, but the book does not tell you
+which is right.
+
+Finally, this is not a manual for building one particular
+artificial-life system. There is a code companion --- a typed JAX
+scaffold --- that goes alongside it, and the worked examples in each
+chapter are runnable. But the book is after a way of reading and
+designing systems, not a recipe for any one of them.
+
+\section*{The central thesis}
+
+Artificial-life systems can be read as a five-tuple: a \emph{substrate}
+of states, a \emph{variation} operator that generates new candidates, a
+\emph{viability} filter that decides what persists, an
+\emph{interaction topology} governing who-affects-whom, and an
+\emph{observer} that measures what we can actually see. We will call
+this the five-slot lens.
+
+The lens is descriptive, not prescriptive. It does not pronounce on
+what counts as alive, what counts as emergent, or what counts as novel.
+It gives you a structured place to write each candidate answer, so you
+can compare frames that would otherwise pass each other in the night.
+
+This stance --- \emph{vocabulary, not theory} --- is the choice that
+organises everything else in the book. We will not pretend the four
+formalisms of viability collapse into one (there is an open conjecture
+about whether they do). We will not pretend effective information has
+crowned itself the definition of emergence (it is a useful measure
+under a stated convention). We will not pretend $\Omega$ solves
+open-endedness (it is one proposal with stated weaknesses).
+
+\section*{A map of what is coming}
+
+The book has three movements.
+
+\textbf{Phenomena and puzzles (Chapters 1--3).} Chapter 1 tours a
+handful of artificial-life systems --- Game of Life, Boids, Lenia,
+Tierra, evolutionary computation --- without committing to a vocabulary
+for them. Chapter 2 takes the philosophy of life seriously: Aristotle
+through Schr\"odinger through Friston, with the contemporary frames we
+will meet again later. Chapter 3 surveys what people mean by
+\emph{emergence} and \emph{novelty}, and where the words conflict.
+
+\textbf{The vocabulary (Chapters 4--7).} Chapter 4 introduces the
+five-slot lens and re-reads the systems from Chapter 1 in it. Chapters
+5--7 develop each slot --- substrate and variation, then viability
+(with the four formalisms), then topology and observers --- with the
+running example of Lenia carried through.
+
+\textbf{Composition, measurement, and frontiers (Chapters 8--9).}
+Chapter 8 shows how to build bigger systems out of smaller ones (the
+coupled-Lenia worked example) and how to measure emergence and novelty
+quantitatively. Chapter 9 surveys what is still open: conjectures,
+frames the lens has not yet absorbed, and the lens applied beyond
+engineered systems.
+
+A math primer at the back of the book introduces the four pieces of
+formal machinery the chapters lean on: order theory, measure theory,
+information theory, and a light dose of category theory. The primer
+is self-contained and meant to be readable cold; flip to it when a
+chapter writes down a symbol you would like to read more slowly.
+
+A reader who wants the formal definitions before the motivation can
+start at Chapter 4 and reach back to Chapters 1--3 as needed. A
+reader who wants the math foundations first can start at the primer.
+The book is written for linear reading, but you will not be punished
+for jumping.
+
+\section*{Conventions}
+
+\textit{Notation.} The five slots take the symbols $X$ (substrate),
+$V$ (variation), $F$ (viability), $T$ (topology), $O$ (observer). State
+spaces are typeset in plain capitals; distributions over states are
+written $\mathcal{P}(X)$, and signed measures are written
+$\mathcal{M}_{+}(X)$. When a Greek letter appears in the formal
+literature --- $\Phi$ for substrate dynamics, $\mu$ for the initial
+measure, $\kappa$ for substrate coupling, $\rho$ for variation-channel
+composition, $\Omega$ for open-endedness --- we use it, with the
+plain-English name on first appearance.
+
+\textit{Code companion.} Each chapter points to a notebook in the JAX
+scaffold that accompanies the book. The scaffold is typed,
+jit-friendly, and small; it does not ship concrete systems, only the
+harness. Running the notebooks is optional but recommended for at
+least one system per chapter.
+
+\textit{End-of-chapter prompts.} Rather than formal exercise sets, each
+chapter ends with a handful of ``to think about'' prompts --- a mix of
+conceptual, computational, and open-ended. They are the closest thing
+to homework the book contains.
+
+\textit{Citations.} Inline and selective rather than exhaustive. The
+``further reading'' at the back is curated and annotated.
+
+\section*{Thanks}
+
+[Placeholder.]

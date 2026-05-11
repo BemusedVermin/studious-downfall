@@ -75,6 +75,10 @@ paper:
 paper-result SLUG:
     latexmk -pdf -interaction=nonstopmode -outdir={{ DOC_DIR }}/papers/{{ SLUG }} {{ DOC_DIR }}/papers/{{ SLUG }}/paper.tex
 
+# Build the textbook (`book` class; master file at docs/textbook/book.tex).
+textbook:
+    latexmk -pdf -interaction=nonstopmode -outdir={{ DOC_DIR }}/textbook {{ DOC_DIR }}/textbook/book.tex
+
 # Remove LaTeX build intermediates (`*.log`, `*.aux`, `*.bbl`, etc.) under docs/, leaving
 # sources (`*.tex`, `*.bib`, `*.md`) and final `*.pdf` outputs in place. Walks recursively so
 # both the scaffolding paper and per-result papers under docs/papers/<slug>/ are covered.
