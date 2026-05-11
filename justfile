@@ -66,18 +66,21 @@ clean-py:
 # Each paper writes intermediate files and the final PDF into its own directory
 # so artefacts from different papers never collide.
 
-# Build the scaffolding (framework) paper.
+# Build the scaffolding (framework) paper, then clean intermediates (PDF survives).
 paper:
     latexmk -pdf -interaction=nonstopmode -outdir={{ DOC_DIR }} {{ DOC_DIR }}/{{ PAPER_NAME }}.tex
+    latexmk -c -outdir={{ DOC_DIR }} {{ DOC_DIR }}/{{ PAPER_NAME }}.tex
 
 # Build a per-result paper, e.g. `just paper-result c1_closure_unification`.
 # Fails loudly if the slug doesn't exist.
 paper-result SLUG:
     latexmk -pdf -interaction=nonstopmode -outdir={{ DOC_DIR }}/papers/{{ SLUG }} {{ DOC_DIR }}/papers/{{ SLUG }}/paper.tex
+    latexmk -c -outdir={{ DOC_DIR }}/papers/{{ SLUG }} {{ DOC_DIR }}/papers/{{ SLUG }}/paper.tex
 
 # Build the textbook (`book` class; master file at docs/textbook/book.tex).
 textbook:
     latexmk -pdf -interaction=nonstopmode -outdir={{ DOC_DIR }}/textbook {{ DOC_DIR }}/textbook/book.tex
+    latexmk -c -outdir={{ DOC_DIR }}/textbook {{ DOC_DIR }}/textbook/book.tex
 
 # Remove LaTeX build intermediates (`*.log`, `*.aux`, `*.bbl`, etc.) under docs/, leaving
 # sources (`*.tex`, `*.bib`, `*.md`) and final `*.pdf` outputs in place. Walks recursively so
