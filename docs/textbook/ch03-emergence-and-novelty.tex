@@ -1,0 +1,350 @@
+\chapter{Emergence and novelty}
+
+\section{Two words that need disentangling}
+
+The Game of Life produces gliders. The flock of Boids has a shape. The
+Tierra ecology grows parasites. Each of these is sometimes called
+\emph{emergent}, and each is sometimes called \emph{novel}. The two words
+are not synonyms, and the literature does not always agree on the
+difference. This chapter is about what they each mean, where they are
+made precise, and which of the precise versions the lens will commit to.
+
+We will not pretend the disagreements collapse. Emergence and novelty are
+both contested terms, with several technically respectable definitions
+each, and parts of the field are arguing about which one is right. The
+book takes a clear position --- Hoel-style causal emergence for emergence,
+observer-relative divergence for novelty --- and explains the alternatives
+in enough detail that you can read papers that adopt them and know what
+you are reading.
+
+\section{Weak emergence: in-principle-derivable, in-practice-surprising}
+
+The mildest version of emergence is what Mark Bedau called \emph{weak
+emergence}. A property of a system is weakly emergent if, given the
+rules, you cannot in practice predict the property from the rules without
+running the system. In principle you could; in practice you could not.
+The gliders of the Game of Life are weakly emergent in this sense: the
+rule for cell updates does not mention gliders, and there is no shortcut
+that lets you derive ``gliders exist'' from the rule, even though
+gliders exist whenever you let the rule run on the right initial
+conditions.
+
+This is a defensible definition. It pins down a real phenomenon ---
+patterns that are computationally irreducible to their generating rule
+--- and it does so without committing to any metaphysics. Weak emergence
+does not assert that the gliders are anything more than gliders. It
+asserts only that they are not derivable in advance.
+
+The two reservations: weak emergence does not, by itself, give you a
+quantitative criterion (how weakly emergent is something?), and it
+inherits a notion of ``in-practice unpredictable'' that depends on the
+computational resources of the predictor. A pattern that is weakly
+emergent for a person with pencil and paper may be entirely transparent
+to a supercomputer. The intuition is real but the formalism is
+soft.
+
+\section{Strong emergence: the controversial one}
+
+\emph{Strong emergence} asserts more: that a property of a system is not
+even \emph{in principle} derivable from the properties of the parts.
+Strong emergence has been claimed for consciousness, for life, and for a
+handful of other big-ticket properties. It is philosophically contentious
+and largely outside the scope of artificial life --- the systems we build
+are computational, and their behaviour is derivable from the rules even
+if computing the derivation is expensive.
+
+For the book, strong emergence is a vocabulary item rather than a working
+definition. We will mention it twice more: once in the context of
+philosophical questions about whether artificial-life creatures can be
+``really alive,'' and once in the context of arguments that some systems
+exhibit properties their substrate alone cannot account for. Neither
+discussion will hinge on whether strong emergence exists.
+
+\section{Supervenience: the boring but useful relation}
+
+Supervenience is the formal companion to talk about emergence. A property
+$A$ supervenes on a property $B$ if there cannot be a difference in $A$
+without a difference in $B$. The shape of a flock supervenes on the
+positions of its members: there cannot be two flocks with the same set
+of positions but different shapes. The gliders of the Game of Life
+supervene on the cell states: there cannot be two GoL grids with the
+same cell states but different glider populations.
+
+Supervenience is too weak to be a definition of emergence (anything
+supervenes on its parts), but it is strong enough to be useful: it lets
+us talk about a higher-scale property without committing to its existence
+as anything beyond a re-description of the lower scale. The lens uses
+supervenience implicitly: the scale projection $\pi$ takes a
+configuration of substrate sites and produces a feature (centroid, mass,
+descriptor). The feature supervenes on the sites. That is what makes the
+feature a feature \emph{of the configuration} and not an independent
+fact.
+
+\section{Causal emergence: the version the book will use}
+
+The definition of emergence the book commits to is due to Erik Hoel and
+collaborators, and it is built on a quantity called \emph{effective
+information}. The idea is unusual enough to deserve a careful
+walk-through.
+
+\subsection*{Effective information, in three sentences}
+
+Take a system that is a finite-state Markov chain. Imagine intervening on
+its current state uniformly at random --- equally likely to start the
+system in any state --- and ask how much information that intervention
+gives you about its next state. The amount of information you get is the
+effective information.
+
+That is the definition. The rest is unpacking what the words mean. Two
+things matter:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Determinism.} If the transition rule is very deterministic
+    --- the next state is nearly a function of the current state --- the
+    intervention is informative, because intervening tells you almost
+    exactly what comes next.
+  \item \textbf{Non-degeneracy.} If different starting states tend to
+    flow to different next states (rather than all collapsing to the
+    same attractor), the intervention is also informative, because
+    different interventions give you different futures.
+\end{itemize}
+
+A maximally effective-informational system is both deterministic and
+non-degenerate: each input maps cleanly to its own output. A maximally
+ineffective system is either pure noise (next state independent of
+current) or maximally collapsing (all roads lead to the same place). The
+exact formula appears in the math primer at the back of the book; for
+now, take effective information as a number that measures how
+informative interventions are.
+
+\subsection*{Causal emergence as a difference}
+
+Now imagine you have a coarse-graining of the system: a way of grouping
+states into macro-states. The Game of Life has many candidate
+coarse-grainings: ``how many live cells are there'', ``where is the
+centroid of the live region'', ``is there a glider present.'' Each
+coarse-graining gives you a new Markov chain --- the macro chain --- by
+averaging the micro-transitions inside each macro-state.
+
+The Hoel definition: \emph{a system is causally emergent at a
+coarse-graining $\Pi$ if the macro chain has higher effective
+information than the micro chain.} That is the whole of it. Causal
+emergence is the proposition that some choice of macroscale carries more
+predictive information per intervention than the microscale you started
+with.
+
+The intuition is sharper than the formula. The Game of Life at the cell
+level is fairly chaotic; many initial states lead to similar
+configurations after enough steps. But if you look at it at the
+glider-level --- ``how many gliders are travelling north-east, with what
+phase'' --- the dynamics are very deterministic. Effective information
+\emph{goes up} when you switch to the glider description. That increase
+is what Hoel and collaborators call causal emergence.
+
+\subsection*{Why this definition rather than another}
+
+Three properties:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Quantitative.} You get a number, not a yes/no.
+  \item \textbf{Intrinsic.} The number is computed from the transition
+    matrix; no observer's preferences enter.
+  \item \textbf{Coarse-graining-explicit.} The definition forces you to
+    name the macroscale you are testing. Two researchers who disagree
+    about whether a system is emergent can be made to disagree about
+    \emph{which coarse-graining}, which is a more productive
+    disagreement.
+\end{itemize}
+
+The book takes effective information as the default definition of
+emergence. We will not pretend the choice is uncontroversial. The
+intervention distribution (uniform over states) is a convention rather
+than a derivation, and results are sensitive to it. The supremum-over-
+coarse-grainings is uncomputable for large state spaces. $\Phi$-ID --- an
+alternative framework from Rosas, Mediano, and collaborators --- replaces
+partitions with arbitrary supervenient features, and asks whether the
+macro-feature has \emph{unique} predictive information about the future
+that no microscopic component has. $\Phi$-ID is feature-agnostic and
+methodologically more demanding; the book does not develop it in detail.
+
+For working purposes, treat causal emergence as the technical version
+of ``a higher-scale description is more predictive than the lower-scale
+description it summarises.'' That is what the gliders give you in the
+Game of Life. It is also, plausibly, what the flock gives you in Boids
+and what the parasite ecology gives you in Tierra. Whether these
+intuitions can be made formal is, in each case, open: see OP1 in
+Chapter~9.
+
+\section{Computational irreducibility: a different vocabulary for the same place}
+
+Stephen Wolfram's contribution to the discussion is the phrase
+\emph{computational irreducibility}: some systems' future behaviour
+cannot be computed without simulating them step by step. The connection
+to weak emergence is direct. A weakly emergent property is one that
+requires you to run the simulation. Computational irreducibility is the
+property of the system that forces you to.
+
+Wolfram's classification of cellular automata into four classes ---
+quiescent, periodic, chaotic, complex --- is a regime-of-behaviour
+taxonomy. Class IV (complex) is the ``edge of chaos'' regime where
+non-trivial structures persist and interact. The Game of Life is Class
+IV. Lenia parameter sets that produce creatures are Class IV.
+
+The lens does not adopt Wolfram's vocabulary as primary, but the
+classification is useful for one purpose: it points at the kinds of
+substrates where the book's emergence question is most interesting. A
+Class I CA (quiescent) has no emergence in any sense. A Class III CA
+(chaotic) has too much. The cases worth studying live in the middle.
+
+\section{Novelty, novelty search, and the trouble with the word}
+
+Switch tracks. \emph{Novelty} is the second contested word. In the
+loosest sense, novelty is the production of something that did not
+exist before. The Game of Life produces novelty trivially --- every new
+configuration is one that did not exist last tick. Nobody calls that
+novelty in the artificial-life sense. The interesting kind of novelty is
+\emph{something that did not exist before and is qualitatively
+different}, and the qualitatively-different part is where the
+definitions diverge.
+
+\subsection*{Novelty search}
+
+Joel Lehman and Kenneth Stanley's \emph{novelty search} made the slogan
+precise inside an evolutionary algorithm. The fitness function rewards
+behavioural distance from an archive of previously-seen behaviours
+rather than progress toward an objective. The archive grows as new
+behaviours appear. The result, in their experiments, was that novelty
+search could outperform objective-driven search on hard deceptive
+problems --- precisely because following the objective tends to get
+stuck on local optima, and a novelty-driven walk does not.
+
+The technical content of novelty search is a divergence measure: how far
+is a new behaviour from its $k$ nearest neighbours in the archive?
+Behaviours with high divergence get to survive and reproduce; behaviours
+that crowd into an already-populated part of behaviour space get culled.
+Novelty is observer-relative in the strict sense: it depends on the
+descriptor space the observer chose, and on the archive.
+
+Recent analysis has clarified that novelty search is best read at the
+level of archive coverage and saturation. The slogan ``objectiveless
+evolution'' overstates the case --- novelty search \emph{does} have an
+objective, in the form of archive coverage --- but the underlying point
+survives: rewarding diversity rather than improvement can find things
+that improvement-following misses.
+
+\subsection*{Quality-Diversity}
+
+Novelty search was the start of a family. The Quality-Diversity (QD)
+algorithms --- MAP-Elites being the canonical instance --- maintain a
+repertoire of solutions that are simultaneously diverse and
+high-performing on some objective. Recent QD work on Lenia explicitly
+uses this approach to discover diverse self-organising patterns. The
+observer keeps a behaviour grid and stores the best-performing genome in
+each cell.
+
+QD's relationship to novelty search is straightforward: novelty search
+optimises only for coverage, QD optimises for coverage \emph{and}
+quality. In the lens, both are observer-state choices --- archive,
+descriptor map, update rule.
+
+\subsection*{Open-endedness}
+
+\emph{Open-endedness} is the larger question that novelty search
+gestures at: not just \emph{will the system produce new things}, but
+\emph{will it keep doing so, indefinitely}. This is the property natural
+evolution seems to have and that artificial systems mostly do not.
+Tierra produced novelty for hours and then stopped. POET co-evolves
+environments and agents to push them both toward harder problems and
+has produced longer runs of novelty, but ``indefinite'' remains an
+aspiration rather than a demonstrated fact.
+
+Several technical definitions of open-endedness compete:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Hughes--Dennis learnable novelty} --- the rate of
+    \emph{learnable} new skills is bounded away from zero in the long
+    run.
+  \item \textbf{The $\Omega$ metric} --- a residence-time--based measure
+    of how long the system stays in any given region of descriptor
+    space. Open-endedness shows up as long-tailed residence
+    distributions.
+  \item \textbf{Tria-style adjacent-possible} --- the rate of new-class
+    arrivals follows Heaps' law $\sim t^\beta$ with $\beta<1$, generated
+    by P\'olya-urn-with-triggering dynamics where finding new things
+    makes more new things findable.
+\end{itemize}
+
+These are not the same. Each picks a different aspect of
+``indefinitely-novel.'' The book does not pick one. The observer slot is
+where they live, and the system description should record which observer
+was used.
+
+\subsection*{Bounded versus unbounded novelty}
+
+A useful distinction: a system can produce novelty without producing
+unbounded novelty. Hazen and Wong's work on mineral evolution is an
+example. Minerals on Earth evolve --- the set of mineral species grows
+over geological time, functional information increases --- but the
+process is bounded by the chemistry of the planet. There are only so
+many ways to combine the elements. The bounded case is interesting in
+its own right: it shows what domain-bounded novelty looks like, and it
+sharpens the question of whether unbounded novelty (genuine
+open-endedness) is a real possibility or an aspirational ideal.
+
+The book's stance: the bounded case is where most artificial-life
+systems live, and is worth taking seriously. Unbounded novelty is an
+open frontier (Chapter~9).
+
+\section{Putting the words to work}
+
+We have surveyed two clouds of meaning. Emergence: from supervenience
+through weak emergence through computational irreducibility to causal
+emergence to $\Phi$-ID. Novelty: from raw difference through novelty
+search through Quality-Diversity to open-endedness in its several
+technical senses. The vocabulary is large and not entirely consistent.
+
+The book's commitments, restated:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Emergence} = Hoel-style causal emergence: a positive
+    difference in effective information between a macroscale and a
+    microscale. The book will sometimes use the word weakly to mean
+    ``something macroscopic and unexpected happened,'' but when we want
+    to be precise we mean causal emergence with a stated coarse-graining.
+  \item \textbf{Novelty} = observer-relative divergence: the score
+    assigned by an observer to a part of the trajectory that has not
+    been seen before in the observer's representation.
+  \item \textbf{Open-endedness} = a property of trajectories under a
+    specified observer: novelty (in the divergence sense) is not
+    eventually saturated. The book treats this as observer-relative by
+    default; the question of substrate-intrinsic open-endedness is
+    open.
+\end{itemize}
+
+These commitments slot into the five-slot lens cleanly. Emergence is
+about $M(\mathcal{S})$, the Markov chain induced by the joint update
+rule. Novelty is about $O$, the observer. Open-endedness is about the
+long-time behaviour of $O$. Chapter~4 builds the lens; Chapter~8 returns
+to emergence and novelty quantitatively, with the formulas spelled out.
+
+\section*{To think about}
+
+\begin{enumerate}
+  \item Find a system you would describe as ``emergent.'' Write down two
+    distinct candidate coarse-grainings of it. Which one would you bet
+    has the higher effective information? Why?
+  \item Novelty search is sometimes described as ``objectiveless.'' The
+    book has argued it is not. What \emph{is} the objective?
+  \item Tierra ran for several hours and then its novelty rate dropped
+    to near zero. Pick one of the three open-endedness frames in this
+    chapter and describe what changed in Tierra at the point of
+    saturation.
+  \item Strong emergence is contested in philosophy. Suppose you were
+    asked to argue that a Lenia creature is strongly emergent. What
+    would your strongest argument be? What would the most natural
+    rebuttal be?
+  \item Computational irreducibility is a property of the rule; causal
+    emergence is a property of the system at a coarse-graining. Are
+    they related, in the sense that one implies the other? If yes, in
+    which direction?
+\end{enumerate}

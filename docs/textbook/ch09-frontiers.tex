@@ -1,0 +1,275 @@
+\chapter{Frontiers}
+
+\section{What this chapter is}
+
+The book has been building a vocabulary. By Chapter~8 the vocabulary
+was complete: a five-slot lens for reading any artificial-life system,
+a worked composite example showing how the slots compose, a
+measurement framework for emergence and novelty. This chapter is about
+the questions the vocabulary does not yet answer.
+
+Some of these are technical conjectures the framework has stated and
+deferred. Some are open problems that would require new mathematics.
+Some are domains where the lens has not yet been seriously applied.
+And some are questions that are not really technical at all: questions
+about what artificial-life research is for, and where it should go.
+
+The chapter is organised around the conjectures and open problems
+already named in the paper (and tracked in \texttt{RESULTS.md}). After
+those, a few looser thoughts about where the lens might travel.
+
+\section{C1: closure-operator unification of viability}
+
+We met this in Chapter~6. The four viability formalisms ---
+Markov-blanket, autopoietic closure, RAF set, and Minimal Criterion
+Coevolution --- all share the rough shape of ``a supporting set is
+viable iff it is closed under some relation.'' C1 conjectures that
+each instantiates a closure operator on a poset of supporting sets,
+and that the four formalisms are the same notion seen four ways.
+
+The status: two cases (autopoietic closure, RAF) are essentially
+proved. The Markov-blanket case is genuinely open --- the statistical
+decomposition into internal/blanket/external states is not obviously
+a closure operator. The MCC case is the hardest --- MCC is a
+predicate, not a closure, and the reformulation work has not been
+done.
+
+A proof of C1 would unify the four formalisms abstractly. A
+counterexample --- say, a system that passes a Markov-blanket
+viability test but whose supporting set is provably not closed under
+any natural closure on its substrate --- would reveal that
+``viability'' is genuinely heterogeneous in the same way ``life'' is
+heterogeneous across biological taxa.
+
+The book deliberately ships the four formalisms as separate
+protocols in the Python scaffold. This is not laziness; it is
+sceptical optimism. If C1 is later proved, the scaffold can be
+refactored without changing user code. If it is refuted, the
+scaffold has lost nothing.
+
+\section{C2: hierarchical viability composition}
+
+Viability formalisms apply at one level. Real systems are nested:
+cells in organisms, ants in colonies, individuals in cultures. C2
+conjectures that each viability formalism lifts to hierarchical
+entities such that $F^*$-validity at the composite level implies
+$F$-validity of each component.
+
+The status: Beer's autopoietic gliders compose correctly under
+simple unions. RAFs do not in general --- the union of two RAFs is
+not necessarily a RAF without their joint catalyses. This is a
+partial counterexample for one direction of C2.
+
+A productive next step is empirical: identify a Lenia-based system
+where hierarchical autopoietic closure is non-trivial (colonies of
+creatures whose collective closure is more than the closure of
+individuals), and check whether the composite-level closure conditions
+hold by simulation. The technical apparatus exists; the
+implementation does not.
+
+\section{C3: observer-relative novelty as divergence}
+
+Chapter~7 introduced three observer families: density-distance,
+foundation-model embedding, and information-theoretic. C3 conjectures
+that all three are instances of a single divergence-functional schema
+$O[\mu] = D(\mu \,\|\, \mu_{\mathrm{ref}})$ with context-dependent
+reference $\mu_{\mathrm{ref}}$.
+
+The status: plausible by inspection, unproven in generality.
+Density-distance fits by construction. FM-embedding fits if you let
+$\mu_{\mathrm{ref}}$ be the archive's embedding distribution.
+Information-theoretic fits if you let $\mu_{\mathrm{ref}}$ be the
+appropriate factored distribution.
+
+C3 is the most likely to be true and the least consequential if it
+is. Even if proved, the three families remain distinct in practice
+(different reference distributions, different computational profiles,
+different reproducibility requirements). The proof would clean up the
+classification but not change much else.
+
+\section{OP1: causal emergence of scaffolded systems}
+
+This is the framework's biggest open problem. The Hoel definition of
+causal emergence applies to any Markov chain; the framework's $M(
+\mathcal{S})$ is a particular kind of Markov chain. OP1 asks: for
+which choices of substrate, variation, viability, topology, and
+observer does $\sup_\Pi \mathrm{CE}(M(\mathcal{S}), \Pi) > 0$?
+
+The question has three sub-questions:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \emph{Are Flow-Lenia substrates with Markov-blanket viability
+    causally emergent?} Plausibly yes, but unproved.
+  \item \emph{Are differentiable-logic CAs implementing Conway's Game
+    of Life causally emergent?} Israeli and Goldenfeld showed Class
+    III/IV ECAs admit non-trivial coarse-grainings; does the GoL
+    follow?
+  \item \emph{Is POET / Enhanced POET causally emergent at the
+    environment-agent level?} The dynamics is complex; is there a
+    coarse-graining at which environment-agent dynamics achieve
+    higher EI than the joint microscale?
+\end{itemize}
+
+OP1 is concrete and tractable in pieces. Pick a small candidate
+system, build the Markov chain, search for high-EI coarse-grainings.
+Whether the framework's apparatus genuinely produces causal emergence
+for any of its representative cases is the most important empirical
+question the book can pose.
+
+\section{OP2: FEP-as-lens scope}
+
+The free energy principle is treated in the framework as a
+descriptive lens (Chapter~2) rather than a derivation. OP2 asks:
+characterise precisely the substrate--dynamics pairs for which the
+FEP is informative as a parameterisation of viability and observer
+slots.
+
+This is partly a technical question (when does sparse coupling
+imply genuine Markov-blanket structure?) and partly a methodological
+question (what is the FEP \emph{adding} when it applies?). Both halves
+are open.
+
+A useful sub-problem: for the Flow-Lenia + LLM system of Chapter~8,
+is the Markov-blanket viability filter $F_{\mathrm{MB}}$ a
+\emph{strictly stronger} predicate than the autopoietic closure
+filter $F_{\mathrm{AC}}$? If yes, $F_{\mathrm{MB}}$ excludes some
+viable systems; the FEP is informative about which ones. If no, the
+two formalisms are interchangeable for this case and the FEP is
+descriptively redundant. The book conjectures the answer depends on
+the system; OP2 asks for the characterisation.
+
+\section{OP3: interaction-topology expressiveness}
+
+Chapter~7 introduced the multiplex with $\diamond_\rho$ coupling as
+the working answer to multi-regime interactions. OP3 asks whether
+this formalism is universal: can every ``natural'' multi-coupling
+ALife system be expressed as a multiplex with countably many layers?
+
+A categorical formulation would express OP3 in terms of the operad of
+wiring diagrams. The conjecture, in that language: the category of
+multiplex topologies with $\diamond_\rho$ coupling is equivalent to
+the category of wiring-diagram-presented interaction patterns.
+
+OP3 is more abstract than the others. Its payoff would be a single
+formal universe in which all interaction-topology choices are
+expressible, which would make cross-system comparison of topology
+choices easier. Its downside is that the abstraction may not be
+illuminating in practice; topology choices in artificial-life
+systems are often constrained by computational practicality, not by
+expressive limits.
+
+\section{The slots beyond engineered systems}
+
+The lens was built for artificial-life systems. Most of the
+philosophical heritage in Chapter~2 came from biology and the
+cognitive sciences. A natural question: does the lens travel back?
+
+Some places where the lens might be useful in non-engineered domains:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Cellular biology.} Cells admit a clean substrate
+    (intracellular state), variation (mutation, gene expression
+    noise), viability (autopoietic closure, RAF chemistry), topology
+    (signalling networks), and observer (experimental measurements).
+    The lens does not improve on biological models, but it might
+    organise the conceptual structure differently.
+  \item \textbf{Cultural evolution.} The substrate is the population
+    of cultural items (memes, practices, technologies); variation is
+    cultural transmission with copying error; viability is
+    transmission success; topology is the social graph; the observer
+    is the historian or anthropologist. The framework has a natural
+    structure here, though the empirical work has barely begun.
+  \item \textbf{Economic systems.} Substrate: firms, individuals,
+    capital stock. Variation: innovation, hiring, investment.
+    Viability: market survival. Topology: trade networks. Observer:
+    GDP, employment statistics, productivity indices. The lens has
+    been applied piecewise; the integrated reading does not yet
+    exist.
+  \item \textbf{Ecological dynamics.} Substrate: spatial-explicit
+    ecology. Variation: mutation and immigration. Viability: fitness
+    in habitat. Topology: dispersal kernel. Observer: species
+    richness, beta diversity, food-web indices.
+\end{itemize}
+
+The framework is intentionally substrate-agnostic. Whether it
+illuminates these domains, or merely re-notates them, is empirical.
+
+\section{The bigger questions}
+
+Beyond the technical conjectures, three larger questions linger.
+
+\paragraph{What would a successful artificial-life system look like?}
+The field has been at this for fifty years. There is no consensus
+benchmark. ``Open-endedness'' is the closest thing to a target, and
+even there the definitions disagree. The book has taken the cautious
+position that the lens is a vocabulary, not a benchmark; success is
+the ability to read and compare systems, not the production of a
+single canonical run. Whether that position is good enough depends on
+what one wants the field to be.
+
+\paragraph{What is the right relationship between artificial life
+and machine learning?} The two fields share variation operators
+(genetic algorithms, evolution strategies) and substrates (neural
+networks, LLMs) but have very different goals. Machine learning wants
+solutions; artificial life wants novelty. The two have rarely been in
+the same conversation. Foundation-model-mediated search (Chapter~7's
+FM-embedding observers) is the first widely-adopted technique that
+sits in both worlds. Whether this is a passing trend or the start of a
+deeper integration is unclear.
+
+\paragraph{Is open-endedness a real possibility?} Natural evolution
+appears open-ended. Every artificial system we have built has
+saturated. The conventional explanation is that our systems are too
+small, too simple, or too narrowly observed. The unconventional
+explanation is that open-endedness requires something we have not
+identified --- a kind of variation, a kind of viability, a kind of
+observer --- that the lens does not yet name. The book does not pick
+between these, but a reader interested in shaping the next decade of
+artificial-life research should pick.
+
+\section{What to do next}
+
+A few concrete starting points for a reader who wants to use the
+lens.
+
+\paragraph{Read a paper and write down its slots.} Pick a recent
+artificial-life paper. Identify the substrate, the variation
+operator, the viability filter, the interaction topology, and the
+observer. Note which slots are reported clearly and which are
+hidden. Note which conjectures the paper implicitly assumes (C1, C2,
+C3 are common).
+
+\paragraph{Run a small ablation.} Pick a system you can implement on
+a laptop. Lenia + a simple novelty observer is enough. Implement it
+in the lens's typed form. Vary one slot. Observe what changes.
+
+\paragraph{Try to settle a piece of an open problem.} OP1 is the most
+tractable. Pick a small system. Build its Markov chain. Search for
+high-EI coarse-grainings. Even a negative result is useful: it
+constrains the kinds of systems that can be causally emergent.
+
+\paragraph{Apply the lens to a non-engineered system.} Cellular
+biology, cultural evolution, or ecology. Write down the slots.
+Compare with the engineered systems we have studied. Note what is
+the same and what is different.
+
+\section*{To think about}
+
+\begin{enumerate}
+  \item Pick one of C1, C2, C3 and sketch what a proof would look
+    like. Sketch what a counterexample would look like. Which seems
+    more likely?
+  \item OP1 is the largest open problem in the framework. What
+    specific candidate system would you bet on for the first
+    affirmative answer? Why?
+  \item The lens travels well to cellular biology, cultural
+    evolution, and ecology by the book's claim. Pick a fourth
+    non-engineered domain. Sketch the slot decomposition.
+  \item Open-endedness is a moving target. Suppose you had a system
+    that, by some operationalisation, was open-ended for a thousand
+    years. What further evidence would you want before believing the
+    result was real?
+  \item Suppose the lens is wrong --- the five slots are not the
+    right decomposition. What is the most natural alternative? What
+    does it lose?
+\end{enumerate}

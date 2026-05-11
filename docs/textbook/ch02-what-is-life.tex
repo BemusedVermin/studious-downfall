@@ -1,0 +1,342 @@
+\chapter{What is life?}
+
+\section{Why the philosophy chapter is here at all}
+
+A book about artificial life that ducks the question \emph{what is life}
+will get away with it for a while and then trip. Sooner or later you will
+write down a viability filter or an observer and somebody will ask why
+\emph{that} one and not another, and you will have to either appeal to a
+prior commitment about what matters or pretend the choice was arbitrary.
+This chapter equips you with the prior commitments. It surveys the frames
+that have shaped the field --- Aristotle, the mechanists, Schr\"odinger,
+the autopoieticists, the active-inference theorists, and the
+information-theoretic individualists --- and shows where each of them lives
+inside the five-slot lens introduced in Chapter~4.
+
+The chapter is not a defence of any one frame. Several of the frames are
+mutually incompatible at the level of metaphysics, and the book will not
+ask you to pick one. The point is to make the choice \emph{visible}: when
+you read a paper that talks about ``the agent'' or ``the organism,'' you
+should be able to spot which frame the author is borrowing from, and you
+should be able to say, in the vocabulary of the lens, what slot the frame
+is doing work in.
+
+If this chapter feels like a history of ideas in twenty pages, that is
+deliberate. The deep technical work begins in Chapter~4. What we are doing
+here is laying the conceptual ground for it.
+
+\section{Aristotle: life as form}
+
+Aristotle's account of life is older than the word \emph{biology} and still
+hard to dismiss. He observed that living things --- plants, animals,
+people --- differ from rocks not by being made of different stuff but by
+being organised in a particular way. A corpse and a person are made of the
+same materials in the same arrangement, momentarily, and yet only one of
+them is alive. What distinguishes them, Aristotle argued, is the
+\emph{form} that organises the matter: the soul (\textit{psych\^e}), which
+in his usage is not a ghost but a principle of self-organising activity.
+
+The Aristotelian living thing has four causes --- material, efficient,
+formal, and final. The material cause is what it is made of. The efficient
+cause is what made it. The formal cause is what it is configured as. The
+final cause is what it is for. Plants have nutritive souls (they grow and
+reproduce). Animals add sensitive souls (they perceive and move). Humans
+add rational souls. The hierarchy was tidy. None of it survived the
+scientific revolution intact, but two pieces did: the idea that life is a
+matter of \emph{organisation} rather than substance, and the idea that
+some living systems are organised around a \emph{purpose} that the parts
+serve.
+
+For our purposes, Aristotle's lasting contribution is the move he makes in
+the first place: separating what something is made of from what it does.
+In the language of the five-slot lens, this maps almost directly onto the
+separation between substrate (what the system is made of) and the
+operators that act on it (variation, viability, topology, observer). A
+Lenia blob is made of a real-valued field on a lattice. The fact that we
+can talk about it as a \emph{creature} --- something that grows, persists,
+divides --- is not a fact about the lattice. It is a fact about the form
+imposed on the lattice by the update rule and the persistent pattern that
+the rule admits.
+
+What Aristotle does not give us is a way of telling whether a particular
+arrangement of matter counts as alive. That problem will be with us for
+the rest of the book.
+
+\section{The mechanists: life as a kind of machine}
+
+The mechanist tradition, beginning with Descartes in the seventeenth
+century and culminating in nineteenth-century physiology, made the
+opposite move. Where Aristotle distinguished living things from non-living
+by an extra organising principle, the mechanists asserted that there was
+no extra principle. Living things were machines. Complicated ones, with
+parts that interacted in subtle ways, but machines all the same. Descartes
+famously argued that animals were automata; he was less brave about
+extending the claim to humans, but his contemporaries were less hesitant.
+
+The mechanist programme paid off scientifically. Harvey's account of
+circulation, the discovery of the cell, the chemistry of metabolism, the
+identification of DNA --- each of these found a mechanism in a place where
+earlier writers had been content with a principle. The success of the
+programme is the reason the question \emph{what is life} can still feel
+slightly embarrassing. We know a great deal about how living things work.
+What more is there to ask?
+
+The thing the mechanists left on the table, and that the artificial-life
+community returned to, is the question of which organisations of mechanism
+are alive in the first place. Descartes did not propose a criterion for
+distinguishing a clockwork from a clockwork-that-is-alive. The criterion
+he gestured at --- complexity --- did not survive contact with twentieth
+century cellular biology, which discovered that the cell is staggeringly
+more complex than the most elaborate machine of the mechanist period and
+yet, from the mechanist's perspective, just another machine.
+
+The lens we will build does not need to settle the metaphysics. It will
+treat the substrate as a machine in the mechanist sense (a measurable
+space with a measurable update rule), and ask separately, through the
+viability and observer slots, what kinds of organisations on the machine
+we are willing to call alive.
+
+\section{Schr\"odinger: life as what resists dissipation}
+
+In 1944 Erwin Schr\"odinger, then in exile in Dublin, gave a series of
+lectures at Trinity College titled \textit{What is Life?}. He was not a
+biologist. He came to the question from physics, and his physics-flavoured
+answer turned out to be unusually productive.
+
+Schr\"odinger's puzzle was the second law of thermodynamics. Closed systems
+trend toward equilibrium; living things appear to do the opposite. A
+mouse is a far-from-equilibrium structure that maintains itself for years.
+How is this consistent with the second law? Schr\"odinger's answer was
+that organisms are not closed --- they pump entropy out into the
+environment. ``[Life] feeds upon negative entropy,'' he wrote, by which he
+meant that organisms maintain their internal order by exporting disorder
+to the outside.
+
+The phrase is rough but the idea is exact. A living thing is a structure
+through which energy flows in a way that maintains a far-from-equilibrium
+configuration. Stop the flow, and the configuration relaxes. The metaphor
+of life-as-flame catches this: a flame is a self-sustaining configuration
+of combustion, complete with apparent boundaries (the silhouette of the
+flame) and apparent agency (the way it ``reaches'' for fuel). It is not
+alive, but the structural similarity is informative.
+
+Schr\"odinger also speculated about a ``code-script'' in the chromosome ---
+years before the discovery of DNA --- that would carry the information
+needed to specify the organism's form. He thought of it as an
+``aperiodic crystal'': structured enough to encode something, not periodic
+enough to repeat. He was right in the spirit if not the letter; molecular
+biology would make the picture concrete a decade later.
+
+Schr\"odinger's main contribution to our vocabulary is the idea that life
+is a \emph{persistence} phenomenon. A living thing is something that
+keeps being itself, against a thermodynamic drift toward not being
+itself. In the five-slot lens, this maps onto the viability slot --- the
+filter that decides which configurations persist and which fade --- and
+we will return to it in Chapter~6.
+
+\section{Autopoiesis: life as self-production}
+
+Schr\"odinger told us that living things resist dissipation. He did not
+tell us \emph{how}. The Chilean biologists Humberto Maturana and Francisco
+Varela, working in the 1970s, proposed an answer: a living system is one
+whose components produce, and are produced by, each other. They called
+this structure \emph{autopoiesis} --- self-production.
+
+An autopoietic system has a network of processes (chemical, in the
+biological case) such that:
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item each process in the network is produced by other processes in the
+    network;
+  \item the network as a whole produces the boundary that separates it
+    from its environment;
+  \item that boundary is what makes the network identifiable as a unit.
+\end{itemize}
+
+A cell is the canonical example. The cell membrane is produced by the
+chemistry of the cell; the chemistry of the cell is what the membrane
+sustains; and the membrane is what makes the cell a discrete thing rather
+than a smear of organic chemistry. Take any one of these away and the
+cell is no longer recognisable as a cell.
+
+Autopoiesis is a closure condition. The set of processes is closed under
+the relation of mutual production --- nothing inside the set requires
+anything outside the set for its production. This formal feature will
+matter in Chapter~6: it is one of the four ways of being precise about
+\emph{which configurations persist}. The Maturana--Varela framework was
+articulated in biological language, but Randall Beer has shown in a long
+series of papers that gliders in Conway's Game of Life satisfy a
+non-trivial autopoietic closure condition --- they are, in a precise
+sense, autopoietic units of the GoL ``reaction network.'' That is one of
+the reasons the Game of Life keeps coming up in artificial-life
+arguments.
+
+The autopoietic frame is not the only formalisation of life-as-closure.
+The RAF set theory of Kauffman, Hordijk, and Steel gives another: a set
+of reactions in a chemical network is reflexively autocatalytic and
+food-generated (a RAF set) if every reaction in it is catalysed by
+something in it (or in a food set), and every reactant is producible
+from the food set inside the RAF. RAFs and autopoiesis are not the same
+notion, but they share the shape: the system is closed under a relevant
+relation. Whether they are \emph{secretly} the same notion, in the sense
+that all of the viability-as-closure proposals collapse to a common
+closure operator, is an open conjecture (C1 in the paper; see
+\texttt{RESULTS.md}). The book takes the conjecture seriously and does
+not assume it.
+
+\section{Active inference: life as resisting surprise}
+
+Karl Friston's free energy principle (FEP) is the most ambitious modern
+candidate for a unifying theory of life and cognition. Its claim, in
+slogan form: any system that persists over time must act so as to minimise
+the long-run surprise of its sensory inputs. Equivalently, it must behave
+as if it were a Bayesian inference engine, continually updating its
+beliefs about the world and acting to keep its actual sensory states
+consistent with what its model predicts.
+
+The technical apparatus is dense. We will summarise rather than derive.
+Friston starts from a Markov blanket --- a statistical decomposition of a
+system into internal states, sensory states, active states, and external
+states, such that internal and external states are conditionally
+independent given the blanket (sensory + active) --- and shows that, under
+certain conditions, the internal states can be interpreted as
+parameterising a generative model whose free energy they minimise. A
+thermostat does this trivially. A bacterium does it less trivially. A
+human, in Friston's telling, does it most non-trivially of all.
+
+The FEP has been received with both enthusiasm and skepticism. The
+enthusiasm is for its breadth: it offers a single mathematical principle
+that ostensibly accounts for action, perception, learning, and
+homeostasis. The skepticism is for the same reason. Aguilera, Biehl, and
+collaborators have argued that the Markov blanket decomposition is harder
+to find in real systems than the slogans suggest, and that the bridge
+from sparse coupling to genuine blanket structure requires conditions
+that are usually not checked. Friston's reply sharpens but does not
+resolve the dispute. The book takes the FEP as a \emph{descriptive lens}
+in the same spirit as the rest of the framework: when a system admits a
+Markov blanket decomposition that is preserved under its dynamics, you
+may parameterise its internal dynamics as free-energy minimisation. When
+it does not, you may not. The question of when it does is open.
+
+In the lens, the FEP sits across two slots. The Markov blanket condition
+is a viability formalism (one of the four in Chapter~6). The
+free-energy-minimising interpretation of internal-state dynamics is
+substrate-side: it parameterises $\Phi$ for systems where it applies. The
+FEP does not occupy its own slot. It occupies particular configurations
+of the slots already in the lens.
+
+\section{Information-theoretic individuality: life as predictive closure}
+
+The newest entry in this chapter is information-theoretic individuality.
+Krakauer, Bertschinger, Olbrich, Flack, and collaborators have proposed
+that an individual --- the part of a system that we call ``a thing'' ---
+is characterised by a kind of \emph{informational closure}. Roughly: the
+future behaviour of an individual can be predicted from its own past
+better than from the past of the world outside it.
+
+The formalisation runs through mutual information. Let $S$ be a candidate
+``inside'' (a set of substrate sites). Let $\bar S$ be the complement
+(the outside). Roughly, $S$ counts as an individual if the information
+that the past of $S$ carries about its own future is large compared to
+the additional information the outside carries, conditional on the
+inside. (If the phrase \emph{mutual information} is new, the math primer
+at the back of the book is the gentle introduction; don't worry about
+the precise formula yet.)
+
+There are several variants. The book uses one in Chapter~4's discussion
+of entities. The variants share a structural commitment: \emph{the inside
+of a thing is informationally distinguishable from its outside}. This is
+not the same as the autopoietic closure --- a system can be
+informationally closed without being self-producing, and vice versa ---
+but the two are related, and how related is something the framework
+leaves open.
+
+For the lens, this frame supplies the entity definition. An entity, in
+the paper's sense, is a supporting set $S$ (the sites that hold it) plus
+a scale projection $\pi$ (the description we are committing to). The
+informational closure condition is what makes $S$ count as an entity in
+the first place. We will unpack this in Chapter~4 once the lens is on the
+table.
+
+\section{Where the frames land in the lens}
+
+Five frames, five chapters of intellectual history, and we have been
+careful not to take a side. The reason will be visible if you tabulate
+where each frame does its work:
+
+\begin{center}
+\begin{tabular}{@{}p{0.30\textwidth}p{0.61\textwidth}@{}}
+\hline
+\textbf{Frame} & \textbf{What slot(s) it speaks to} \\
+\hline
+Aristotle (form over matter) &
+  Separation of substrate from operators; entity scale projection. \\
+Mechanism (life is machinery) &
+  Substrate dynamics. \\
+Schr\"odinger (life as persistence) &
+  Viability filter. \\
+Autopoiesis (life as self-production) &
+  Viability (autopoietic-closure variant). \\
+RAF (catalytic closure) &
+  Viability (RAF variant). \\
+Active inference / FEP &
+  Viability (Markov-blanket variant); substrate dynamics
+  (free-energy parameterisation). \\
+Info-theoretic individuality &
+  Entity definition (supporting set $S$ and projection $\pi$). \\
+\hline
+\end{tabular}
+\end{center}
+
+Notice that the philosophical frames do not collide. They sit in
+different parts of the same structure. The mechanist's machine is the
+substrate; the autopoieticist's closure is one of several viability
+filters; the active-inference theorist's free-energy minimisation
+parameterises the substrate dynamics; the information-theoretic
+individualist supplies the entity definition. The lens does not arbitrate
+between them, because they are not really fighting --- they are
+describing different parts of the same animal.
+
+That is the trick the rest of the book runs. The slots are a place to
+put each candidate answer to ``what is life?'' so that we can see them
+side by side, choose among them when we have to, and identify what each
+one is committing us to.
+
+\section{Two warnings before we leave the philosophy chapter}
+
+\textit{Warning 1: the slots are not magic.} The fact that a frame ``fits
+in the lens'' does not mean the frame is correct. The free energy
+principle, for example, fits cleanly into the viability slot --- and yet
+the empirical question of whether real organisms admit the Markov
+blanket structure the principle requires is unsettled. The lens lets you
+write down a frame's commitment; it does not certify the commitment.
+
+\textit{Warning 2: artificial life does not need a settled
+metaphysics.} You can build Lenia, Boids, Tierra, or POET without
+choosing between Aristotle and Friston. The lens is intentionally
+descriptive, and you will spend most of the book in this mode: reading
+systems, comparing them, writing them down. The deep questions of what
+life \emph{is} will remain in the background. The slots make it possible
+to do useful work while those questions are unresolved.
+
+\section*{To think about}
+
+\begin{enumerate}
+  \item Pick a system you know well (your operating system's process
+    scheduler, an ant colony, a bacterial culture). Which of the frames
+    in this chapter would you reach for to describe it? Which slot does
+    that frame occupy?
+  \item Schr\"odinger's ``life feeds on negative entropy'' is sometimes
+    presented as if it solved the puzzle of life. Why is it not a
+    solution, but a constraint?
+  \item Autopoiesis and RAF are both closure conditions on a network of
+    processes. Find one biological example where the autopoietic closure
+    is non-trivial but the RAF closure is trivial, and one where the
+    reverse holds.
+  \item The free energy principle is sometimes stated as a tautology
+    (``anything that persists must do this'') and sometimes as an
+    empirical claim (``brains do this''). Which version does the lens
+    accommodate?
+  \item Pick a Lenia creature. Write down, in plain prose, what its
+    autopoietic boundary would be. Where does the creature stop and the
+    field begin?
+\end{enumerate}

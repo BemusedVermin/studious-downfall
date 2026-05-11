@@ -1,0 +1,54 @@
+% =============================================================================
+%  Reading Emergent Systems --- a textbook companion to the scaffolding paper.
+%
+%  Build with: just textbook
+%  (or: latexmk -pdf -outdir=docs/textbook docs/textbook/book.tex)
+% =============================================================================
+\documentclass[11pt]{book}
+
+% ---------- Encoding & fonts ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+
+% ---------- Math ----------
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+
+% ---------- Layout ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+
+% ---------- Hyperlinks ----------
+\usepackage[hidelinks]{hyperref}
+
+% =============================================================================
+% TODO: pick a final title before publishing.
+\title{Reading Emergent Systems}
+\author{Liam McGuire}
+\date{}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+\tableofcontents
+
+\input{preface}
+
+\mainmatter
+\input{ch01-what-is-artificial-life}
+\input{ch02-what-is-life}
+\input{ch03-emergence-and-novelty}
+\input{ch04-five-slot-lens}
+\input{ch05-substrate-and-variation}
+\input{ch06-viability}
+\input{ch07-topology-and-observers}
+\input{ch08-composition-and-measurement}
+\input{ch09-frontiers}
+
+\appendix
+\input{math-primer}
+
+\backmatter
+
+\end{document}

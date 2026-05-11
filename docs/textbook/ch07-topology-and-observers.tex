@@ -1,0 +1,417 @@
+\chapter{Topology and observers}
+
+\section{Two slots that travel together}
+
+This chapter does two slots: interaction topology and observer.
+Together they handle the questions \emph{who interacts with whom}
+and \emph{what we can actually see}. Topology and observers are not
+formally connected --- a system can have a complex topology and a
+trivial observer, or vice versa --- but they share a methodological
+pattern: each is a structure layered on top of the substrate that the
+simulator author must specify, and each is the place where most of the
+implicit assumptions of a simulation live.
+
+We will start with topology and finish with observers. The chapter
+closes the four-chapter walk through the slots; Chapter~8 wires
+everything together for the worked composite example.
+
+\section{Interaction topology vs substrate topology}
+
+The first thing to get right is the distinction between two things
+that sound like the same word.
+
+\subsection*{Substrate topology}
+
+The \emph{substrate topology} is the intrinsic geometry of the
+substrate state space $X$. For a lattice substrate, it is the lattice
+$L$. For a particle substrate in $\mathbb{R}^d$, it is the manifold
+$\mathbb{R}^d$. For a graph substrate, it is the graph that hosts the
+function values. The substrate topology is whatever geometry the
+dynamics $\Phi$ already presupposes; in the lens, the substrate
+topology does \emph{not} appear in the substrate tuple $(X, \Phi,
+\mu_0)$. It is implicit in $X$ and $\Phi$.
+
+\subsection*{Interaction topology}
+
+The \emph{interaction topology} $T$ is a different beast: it is a
+(possibly weighted, possibly directed, possibly time-varying)
+(hyper)graph on the \emph{entities} living on the substrate. It says
+who can influence whom this tick. Where the substrate topology is
+fixed by the choice of substrate, the interaction topology is a
+modelling choice on top of the substrate.
+
+In some simple cases the two coincide. A homogeneous lattice CA where
+each entity is a single cell, and each cell interacts with its Moore
+neighbours, has interaction topology that is identical to the
+substrate lattice. This is the limiting case. For most systems of
+interest, the two come apart:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item A Lenia field has lattice substrate topology, but the
+    interaction topology on Lenia \emph{creatures} (entities of
+    interest) is the graph of which creatures spatially overlap.
+  \item A Boids swarm has manifold substrate topology
+    ($\mathbb{R}^d$), but the interaction topology on boids is a
+    $k$-NN graph that changes every tick.
+  \item A donor-game LLM-agent population has trivial substrate
+    topology, but the interaction topology is a random pairing graph
+    of donors and recipients sampled per tick.
+  \item A stigmergic ant simulation has lattice substrate topology
+    (the floor) but the interaction topology between ants is
+    \emph{indirect}: ants influence each other by leaving and reading
+    pheromone trails. There is no direct ant-to-ant edge.
+\end{itemize}
+
+The lens keeps the two notions separate because they are independent
+modelling axes. A change to the substrate (switching from a square to
+a hexagonal lattice) is not the same kind of change as a change to
+the interaction topology (switching from 4-neighbour to 8-neighbour
+interaction). The first changes what the substrate \emph{is}; the
+second changes what the entities \emph{do} on the substrate.
+
+\section{Defining the interaction topology}
+
+Formally, an \emph{interaction topology} is a measurable family
+\[
+  T = (T_t)_{t \in \mathbb{N}}
+\]
+where each $T_t$ is a hypergraph on the entity set $\mathcal{E}_t$,
+together with edge weights in some semiring $R$ (typically
+$\mathbb{R}_{\geq 0}$ or $\{0,1\}$). Hyperedges are subsets of entities
+that interact jointly; pair hyperedges recover ordinary graphs.
+
+Why hypergraphs rather than graphs? Because some interactions are
+genuinely $k$-ary, not just pairwise. Three-way mate choice in a
+parental investment model, the catalysis triplet in a RAF, the
+3-clique recombination in some evolutionary algorithms. The
+hypergraph generality costs nothing and accommodates those cases.
+
+\subsection*{Common topologies}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Lattice neighbourhood}: Moore ($8$-cell square),
+    von~Neumann ($4$-cell square), hexagonal, or higher. Standard for
+    CA-like substrates.
+  \item \textbf{Range-based on $\mathbb{R}^d$}: $k$-nearest-neighbour
+    (each entity edges to its $k$ closest neighbours), or
+    $\varepsilon$-ball (each entity edges to everything within radius
+    $\varepsilon$). Standard for particle substrates.
+  \item \textbf{Static social graph}: a fixed graph on agents.
+    Standard for cultural-evolution models with a population
+    structure that does not change.
+  \item \textbf{Dynamic pairing graph}: each tick samples a fresh
+    matching, e.g.\ random donor--recipient pairings. Used in
+    LLM-agent donor-game systems.
+  \item \textbf{Stigmergic / indirect topology}: there is no direct
+    edge between entities; interactions pass through the substrate.
+    An ant trail is the canonical case. Formally the topology is
+    trivial; the interaction is mediated by $\Phi$ writing to and
+    reading from the substrate.
+\end{itemize}
+
+\subsection*{What the weights mean}
+
+Edge weights $w_e$ in the topology are passed to the topology-mediated
+population variation kernel
+\[
+  V_T(\mu; x) = \sum_{e \in E(T_t)} w_e\, V(\mathrm{state}(e),
+  \theta_e)
+\]
+that we met in Chapter~5. Weights are non-negative and typically have
+units of ``mass'' --- they tell you how much each hyperedge
+contributes to the resulting population. A weight of zero means the
+edge is dormant for this tick. A larger weight means the edge
+contributes more offspring.
+
+\section{Multi-regime topologies: the multiplex}
+
+Real systems often have several coupling regimes coexisting. A colony
+of social insects has within-colony chemical signalling and
+between-colony pheromone trails. An LLM-agent simulation has
+within-cluster gossip and between-cluster broadcast. A Lenia + LLM
+hybrid has spatial-overlap interactions among Lenia creatures plus
+naming interactions between LLM agents and creatures.
+
+The lens accommodates these by allowing the interaction topology to
+be a \emph{layered multiplex}:
+\[
+  T_t = \bigsqcup_\ell T_t^{(\ell)},
+\]
+a disjoint union of layer-specific (hyper)graphs, each with its own
+weights, plus an overall layer-weight distribution $(\alpha_\ell)$
+satisfying $\sum_\ell \alpha_\ell = 1$.
+
+The mass-conservation constraint matters. The population variation
+under a multiplex topology becomes a mixture:
+\[
+  V_T(\mu; x) = \sum_\ell \alpha_\ell\, V_{T^{(\ell)}}^{(\ell)}(\mu;
+  x),
+\]
+when the channels are independent. (When they are coupled through
+$\diamond_\rho$, the construction generalises as in Chapter~5.) The
+weights $(\alpha_\ell)$ control how much each layer contributes to the
+total interaction load per tick. Without the conservation constraint,
+adding a new layer would secretly increase the total amount of
+variation, which would change the system's behaviour for reasons that
+have nothing to do with the new coupling.
+
+\subsection*{Multiplex example: Lenia + LLM}
+
+Three layers:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $T_t^{(1)}$: spatial-overlap on the Lenia lattice for Lenia
+    creatures. Hyperedges = pairs of creatures whose supports
+    intersect within radius $r$.
+  \item $T_t^{(2)}$: uniformly random pairing of LLM judges and
+    namers. Each tick, sample a matching.
+  \item $T_t^{(3)}$: bipartite stigmergic layer connecting each LLM
+    agent to the Lenia creatures it has named.
+\end{itemize}
+
+Weights: $\alpha_1$ controls how much Lenia-Lenia interaction
+contributes, $\alpha_2$ for LLM-LLM, $\alpha_3$ for LLM-Lenia. Tuning
+these is part of the modelling choice; the lens makes them visible
+rather than hiding them in the simulator code.
+
+\section{An open question: how expressive is the multiplex?}
+
+The framework conjectures (paper OP3; see \texttt{RESULTS.md}) that
+the multiplex-with-$\diamond_\rho$ formalism is universal: every
+``natural'' multi-coupling-regime ALife system can be expressed as a
+multiplex with countably many layers. The categorical formulation
+would frame this via the operad of wiring diagrams.
+
+OP3 is open. The book takes the multiplex as the working answer and
+flags the universality question for the frontiers chapter.
+
+\section{Observers, defined slowly}
+
+The observer slot is the measurement apparatus. We saw the typing in
+Chapter~4. Here is the longer treatment.
+
+\subsection*{Stateless observers}
+
+A stateless observer is a function
+\[
+  O : Z^w \to \mathbb{R}^k,
+\]
+where $Z = X \times \mathcal{M}_+(X)$ is the joint state space, $w \in
+\mathbb{N} \cup \{\infty\}$ is the window length, and $\mathbb{R}^k$
+holds the output. Stateless observers do not remember anything between
+calls; each call evaluates a window of trajectory in isolation.
+
+Examples:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item Mean population fitness over the last $w$ ticks.
+  \item Number of distinct attractors visited in the last $w$ ticks
+    (against a fixed equivalence relation).
+  \item KL divergence between the current distribution and a fixed
+    reference distribution.
+\end{itemize}
+
+Stateless observers are the easiest case to analyse. They are also,
+in practice, the least useful: most of the interesting measurements
+in artificial-life are observer-state-dependent.
+
+\subsection*{Stateful observers}
+
+A stateful observer carries an internal state $a_t \in A_O$ across
+ticks:
+\[
+  O_s : Z^w \times A_O \to \mathbb{R}^k \times A_O.
+\]
+Each call consumes a window of trajectory and the current observer
+state, produces a score vector and an updated observer state.
+
+This is the form most actually-used observers take. The state $a_t$
+might contain:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item An \textbf{archive} of previously seen behaviours (novelty
+    search, Quality-Diversity).
+  \item A \textbf{behaviour grid} indexing the best-performer in each
+    cell (MAP-Elites).
+  \item A \textbf{descriptor map} from substrate states to feature
+    vectors.
+  \item A \textbf{learned embedding model} that updates over time
+    (some QD-with-learnt-descriptor schemes).
+  \item A \textbf{reference distribution} that the observer compares
+    against, possibly updated by exponential moving average.
+  \item A \textbf{saturation criterion}: a rule for declaring that no
+    new behaviour has been seen for some number of ticks and the run
+    can stop.
+\end{itemize}
+
+The state lives entirely on the observer side. It is not part of the
+substrate, not part of the population measure, not part of the
+iteration rule. It is the observer's private memory of what it has
+seen.
+
+\subsection*{Read-only by default}
+
+A subtle point: the observer does not, by default, feed back into the
+iteration. The substrate dynamics, variation, viability, and topology
+all run without knowing what the observer is computing. The observer
+reads.
+
+There are cases where you want feedback. Novelty search re-shapes the
+variation operator using observer-state information: $V$ is biased
+toward behaviours far from the current archive. The lens accommodates
+this through the $\rho$-coupling apparatus of Chapter~5: the
+observer's archive plays the role of an additional channel, and
+$\rho_O : A_O \to \Theta$ supplies a re-parameterisation of $V$ on
+first-occurrence events. The signatures of $V$ and $O_s$ remain
+unchanged; the coupling is named explicitly.
+
+\section{Three observer families}
+
+We have promised three families. Here they are.
+
+\subsection*{Density-distance observers}
+
+Score a window of trajectory by a divergence between the trajectory's
+empirical distribution and a reference distribution:
+\[
+  O[\mu_{[t-w,t]}] = D(\mu_{[t-w,t]} \,\|\, \mu_{\mathrm{ref}}).
+\]
+The reference $\mu_{\mathrm{ref}}$ can be a uniform distribution (for
+``how spread out is the trajectory''), an archive of past behaviours
+(for novelty search), or a domain-specific target distribution.
+
+Common choices of $D$: KL divergence, Wasserstein distance, $k$-NN
+distance to an archive.
+
+This family is the one novelty search lives in. The lens makes the
+common structure explicit: any divergence + any reference gives you a
+density-distance observer.
+
+\subsection*{Foundation-model embedding observers}
+
+Embed substrate states (or trajectories) with a foundation model and
+score in embedding space. ASAL embeds Lenia frames with CLIP and uses
+cosine novelty against an archive of embeddings. OMNI-EPIC uses similar
+embedding-space novelty for environment-population search.
+
+These observers have an additional moving part --- the embedding
+model --- which is part of the observer state. Tracking which
+embedding model produced which scores matters for reproducibility.
+
+\subsection*{Information-theoretic observers}
+
+Score a window of trajectory by an information-theoretic quantity:
+mutual information between current and future state, transfer
+entropy from one part of the substrate to another, integrated
+information, or --- at the macroscale --- the effective information
+we used to define causal emergence in Chapter~3.
+
+These observers are the most demanding computationally: they require
+estimating distributions over the substrate state space. They are
+also the most rigorous: they have a clear meaning that does not
+depend on a learned model or an arbitrary descriptor space.
+
+\section{Open conjecture: are the three families one?}
+
+Conjecture~C3 (see \texttt{RESULTS.md}): \emph{the three observer
+families are all instances of a single divergence-functional schema}
+\[
+  O[\mu] = D(\mu \,\|\, \mu_{\mathrm{ref}})
+\]
+\emph{for a context-dependent reference $\mu_{\mathrm{ref}}$.}
+
+Density-distance observers fit by construction. Foundation-model
+observers fit if you let $\mu_{\mathrm{ref}}$ be the archive's
+embedding distribution. Information-theoretic observers fit if you
+let $\mu_{\mathrm{ref}}$ be the appropriate factored distribution
+(e.g.\ the product of marginals for mutual information).
+
+C3 is plausible by inspection but unproven in generality. The lens
+takes the three families as separate; if C3 is proved, the families
+unify.
+
+\section{Window length, archive size, and saturation}
+
+Three observer-side parameters that recur in every implementation.
+
+\paragraph{Window length $w$.} How many ticks of trajectory the
+observer consumes per evaluation. Short windows respond quickly to
+transient behaviour; long windows are robust to noise. The lens
+treats $w$ as part of the observer specification --- a system with
+the same observer family but a different window is a different
+system. The system description should record $w$.
+
+\paragraph{Archive size $A$.} For density-distance and FM-embedding
+observers, the archive size is the cap on how many past behaviours
+are stored. Larger archives are more expressive but more expensive
+per evaluation (every new behaviour is compared against the archive).
+Pruning strategies (random removal, density-based removal,
+behavioural-distance-based removal) matter.
+
+\paragraph{Saturation.} A trajectory is said to have saturated if no
+new behaviour has been added to the archive for some number of ticks.
+Saturation is the practical sign that a system has run out of
+novelty; it does not necessarily mean the system has ``stopped'' in
+any substrate-dynamics sense.
+
+\section{Worked example: the Lenia + LLM observer}
+
+For the Lenia + LLM hybrid we have been building up, a natural
+observer is the pair
+\[
+  O = (O_\Omega,\, O_{\mathrm{CLIP}})
+\]
+with a shared window $w = W$:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $O_\Omega$ is the residence-time $\Omega$ metric on the time
+    series of distinct Lenia attractors observed in the window.
+    Information-theoretic family.
+  \item $O_{\mathrm{CLIP}}$ is the mean cosine novelty of CLIP
+    embeddings of (frame, name) pairs against an archive of size
+    $A$. FM-embedding family.
+\end{itemize}
+
+The observer reports a two-dimensional score vector each tick. The
+observer state contains the attractor history (for $O_\Omega$) and the
+CLIP archive (for $O_{\mathrm{CLIP}}$). Neither feeds back into the
+iteration by default; the system runs forward regardless of what the
+observer sees.
+
+\section{What we have now}
+
+After four chapters, the lens is fully built. To recap:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item The substrate $\mathbf{X} = (X, \Phi, \mu_0)$ holds the
+    material and its native dynamics. Composes via $\boxtimes_\kappa$.
+  \item Variation $V : X \times \Theta \to \mathcal{P}(X)$ proposes
+    candidates. Composes via $\diamond_\rho$.
+  \item Viability $F : \mathcal{M}_+(X) \to \mathcal{M}_+(X)$ filters.
+    Four formalisms; closure-operator unification is open.
+  \item Topology $T = (T_t)_{t \geq 0}$ describes who-affects-whom.
+    Multi-regime via multiplex; universality of multiplex is open.
+  \item Observer $O_s$ measures. Three families; unification is open.
+\end{itemize}
+
+The next chapter brings them together for the worked composite
+example and the quantitative measurement of emergence and novelty.
+
+\section*{To think about}
+
+\begin{enumerate}
+  \item Pick a system where the substrate topology and the
+    interaction topology come apart most dramatically. What does that
+    decoupling enable?
+  \item The multiplex formalism requires the layer weights
+    $(\alpha_\ell)$ to sum to one. What goes wrong if they do not?
+  \item Novelty search uses observer feedback to bias variation. The
+    lens handles this with $\rho$-coupling. Sketch how an MCC system
+    (Chapter~6) would similarly couple observer state to variation,
+    if at all.
+  \item C3 conjectures that the three observer families unify under
+    divergence-from-reference. What would a counterexample look like?
+  \item Saturation is the practical signal that a system has run out
+    of novelty. Is saturation always a property of the observer
+    rather than the substrate?
+\end{enumerate}
