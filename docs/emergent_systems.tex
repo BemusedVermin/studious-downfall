@@ -73,7 +73,7 @@
 \newcommand{\X}{\mathbf{X}}
 
 % =============================================================================
-\title{A Unified Mathematical Framework for Substrate-Agnostic Emergent Systems}
+\title{A Mathematical Theory of Life as the Categorical Structure of Substrate-Agnostic Emergent Systems Observed by an Independent Observer}
 \author{Liam~McGuire%
 \thanks{Liam McGuire is an unaffiliated researcher. Address:
 Seattle, Washington, United States. Email: liammcg44@gmail.com.}}
@@ -82,58 +82,103 @@ Seattle, Washington, United States. Email: liammcg44@gmail.com.}}
 \maketitle
 
 \begin{abstract}
-Research on emergent systems spans artificial life, open-ended evolution,
-multi-agent reinforcement learning, cultural evolution, active inference, and
-causal-emergence theory. These literatures often study related phenomena using
-incompatible mathematical objects, which makes comparison across substrates and
-evaluation regimes difficult. This paper proposes a substrate-agnostic
-mathematical framework organized around five typed components: substrate,
-variation, viability, interaction topology, and observer--evaluator. The
-framework specifies how these components compose, how entities can be defined
-through support sets and scale projections, and how Hoel-style causal emergence
-can be posed as an assessment problem for the resulting systems. The framework
-is illustrated with representative instances from cellular automata,
-continuous artificial-life fields, program-based evolution, multi-agent
-systems, and foundation-model-mediated search, followed by a worked composite
-example and a system-description schema. The paper also separates established
-definitions from conjectural unifications and states open problems whose
-resolution would determine the framework's scope. The result is a methodology
-for specifying, comparing, and implementing emergent-system models without
-assuming a single substrate, fitness landscape, or observer.
+This paper proposes a substrate-agnostic mathematical theory of life as the
+categorical structure of certain emergent stochastic systems observed by an
+independent observer. A system is a 4-tuple
+$\mathcal{S} = (\mathbf{X}, V, F, T)$ --- substrate, variation, viability
+filter, interaction topology --- and an observer is a category-theoretic
+functor $O : \mathbf{Sys} \to \mathbf{Obs}$ applied to the system's
+trajectory. The ambient category $\mathbf{Sys}$ is committed to the symmetric
+monoidal category of algebras over the operad of wiring diagrams, with values
+in a Markov category of measurable spaces. A system--observer pair is
+\emph{alive} iff it satisfies three intrinsic conditions: non-trivial macro
+causal structure (Hoel-style causal emergence positive), entity persistence
+across a window, and a search-hierarchy depth at level one or higher with
+discriminative capacity at each level. The full vitality profile
+$(k, \boldsymbol{\sigma})$ --- depth $k$ plus a level-indexed self-reference
+vector $\boldsymbol{\sigma}$ --- is reported as an attribute of each member.
+The framework states four central conjectures: sufficiency (some 4-tuple
+system is alive), necessity (every life-producing pair decomposes as a
+4-tuple system in the operadic ambient), characterisation (the two are
+equivalent), and level emergence (the structural mechanism by which
+hierarchies arise dynamically). Composition is two-axis: vertical via the
+recursive level structure, and horizontal via the substrate-composition
+operator $\boxtimes_\kappa$. The framework is intended as a theory that
+\emph{predicts} life across substrates --- biological, programmatic, and
+cultural alike --- not as a vocabulary that re-describes existing
+artificial-life systems.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Artificial life, causal emergence, open-ended evolution, substrate-agnostic
-systems, viability.
+Artificial life, categorical biology, causal emergence, level emergence,
+operad of wiring diagrams, substrate-agnostic systems, vitality profile.
 \end{IEEEkeywords}
 
 \section{Introduction}
 
-Emergent-system research has produced a broad range of models, including
-cellular automata, continuous artificial-life substrates, digital organisms,
-multi-agent learning systems, cultural-evolution models, and active-inference
-architectures. Although these systems differ substantially in implementation
-and interpretation, many of them can be described in terms of five recurring
-roles: a substrate, a variation process, a viability criterion, an interaction
-topology, and an observer or evaluator. This paper gives those roles a common
-mathematical typing and studies the resulting composition rules.
+What is life, mathematically? This paper takes the question seriously and
+proposes a precise answer that does not depend on what substance the life
+is made of. The answer it commits to is roughly this: life is the
+categorical structure of a particular kind of mathematical object --- a
+recursively built, stochastic, compositional system whose internal dynamics
+admit a precise numerical classification, and which is \emph{recognised as
+alive} by an external observer.
 
-The proposed framework is intentionally non-prescriptive. It specifies the
-kinds of objects that occupy each role and the ways in which the roles compose,
-but it does not impose a particular fitness landscape, topology, observer,
-or theory of agency. Its purpose is therefore comparative and constructive:
-comparative because it provides a common vocabulary for existing traditions,
-and constructive because it identifies reusable modules for building composite
-systems.
+Concretely, a system is a 4-tuple $\mathcal{S} = (\mathbf{X}, V, F, T)$
+consisting of a substrate $\mathbf{X}$, a variation operator $V$, a
+viability filter $F$, and an interaction topology $T$, iterating on a joint
+state space $Z = X \times \Mplus(X)$ via
+$(x_{t+1}, \mu_{t+1}) = (\widetilde S_F \circ \widetilde V_T \circ
+\widetilde\Phi)(x_t, \mu_t)$. An observer is a category-theoretic functor
+$O : \mathbf{Sys} \to \mathbf{Obs}$, external to the system, that watches
+the trajectory and produces an observation record. The category $\mathbf{Sys}$
+is committed to the symmetric monoidal category of $\mathcal{O}_W$-algebras
+in a Markov category $\mathbf{Stoch}$, where $\mathcal{O}_W$ is the operad
+of wiring diagrams of Vagner, Spivak \& Lerman~\cite{vagner2015algebras}.
+A system--observer pair is in the category of alive things
+$\mathbf{LifeCat}$ when its trajectory exhibits non-trivial macro causal
+structure (Hoel-style causal emergence positive), entity persistence, and
+a search hierarchy of depth at least one. The vitality profile
+$(k, \boldsymbol{\sigma})$ --- depth $k$ plus level-indexed self-reference
+$\boldsymbol{\sigma}$ --- is reported as a structural attribute.
+
+The proposed framework is \textbf{predictive, not descriptive}. It treats
+life as a substrate-agnostic structural fact about a system, and biological
+life as one specific realisation. The framework predicts that the same
+categorical structure underlies programmatic life (e.g.\ self-replicating
+programs subject to mutation and selection, as in Tierra), hybrid
+biological--computational life (e.g.\ cells coupled to foundation-model
+observers), cultural and linguistic life (the structural depth of which
+exceeds individual biology in the framework's metric), and substrate-novel
+life-forms not yet observed. The framework's commitments are stated as
+four top-level conjectures: \textbf{S1} (sufficiency), \textbf{N1}
+(necessity), \textbf{CAT1} (characterisation), and \textbf{LE} (level
+emergence). All four are unproven; the framework's first concrete result
+target is \textbf{L1}, a sufficiency witness on Game of Life under
+Markov-blanket viability.
 
 The main contributions are as follows. First, the paper defines a
-substrate-agnostic emergent system as a typed tuple with an explicit iteration
-rule. Second, it introduces composition operators for heterogeneous substrates
-and coupled variation channels. Third, it proposes an information-theoretic
-entity definition that separates physical support from scale of description.
-Fourth, it positions viability, observer-relative novelty, and causal emergence
-as related but distinct assessment problems. Finally, it records the principal
-conjectures and open problems rather than presenting them as settled results.
+substrate-agnostic emergent system as a typed 4-tuple with an external
+observer functor and an explicit iteration rule. Second, it commits to the
+operad of wiring diagrams as the ambient category for $\mathbf{Sys}$, with
+an interpretive lift to a sheaf topos for biology-style locality. Third,
+it defines the vitality profile $(k, \boldsymbol{\sigma})$ recursively and
+reports it as the structural measurement that determines $\mathbf{LifeCat}$
+membership. Fourth, it states the four top-level conjectures and the
+mechanism (LE's four conditions) by which hierarchies of life emerge
+dynamically. Fifth, it gives compositional structure in two axes: vertical
+via the recursive level structure, and horizontal via $\boxtimes_\kappa$,
+with worked examples spanning biological, programmatic, and cultural
+substrates.
+
+The paper deliberately avoids the descriptive vocabulary that earlier
+substrate-agnostic frameworks have offered. The reader who wants a survey
+of artificial-life methodologies, slot-by-slot, will find the running
+examples informative but will not find the framework limiting itself to
+description. Where the framework's commitments and the descriptive habits
+of artificial-life research disagree, the framework's commitments take
+precedence; the goal is a theory of life that predicts and excludes, not a
+vocabulary that re-notates.
 
 \section{Background and Related Work}\label{sec:background}
 
@@ -265,15 +310,15 @@ a map $c : 2^P \to 2^P$ satisfying (i) extensivity $A \subseteq c(A)$,
 (ii) monotonicity $A \subseteq B \Rightarrow c(A) \subseteq c(B)$, and
 (iii) idempotence $c(c(A)) = c(A)$. A set $A$ is \emph{closed} iff $A = c(A)$.
 
-\subsection{Proposed System Definition}\label{sec:framework}
+\subsection{System Definition}\label{sec:framework}
 
-A \textbf{substrate-agnostic emergent system} is a tuple
+A \textbf{substrate-agnostic emergent system} is a 4-tuple
 \[
-  \mathcal{S} \;=\; \big( \X, \, V, \, F, \, T, \, O \big),
+  \mathcal{S} \;=\; \big( \X, \, V, \, F, \, T \big),
 \]
 where the substrate $\X = (X,\Phi,\mu_0)$ provides the state space $X$
-(\S\ref{sec:substrates}), and $V,F,T,O$ are the variation, viability,
-interaction-topology, and observer operators respectively. The system evolves on the
+(\S\ref{sec:substrates}), and $V,F,T$ are the variation, viability, and
+interaction-topology operators respectively. The system evolves on the
 \emph{joint state space}
 \[
   Z \;:=\; X \times \Mplus(X),
@@ -296,21 +341,35 @@ $t \mapsto t+1$ is
   (x_{t+1}, \mu_{t+1}) \;=\;
   \big(\widetilde S_{F} \circ \widetilde V_{T} \circ \widetilde\Phi\big)(x_t, \mu_t).
 \]
-The observer $O$ acts on trajectories $(x_t,\mu_t)_{t\geq 0}$ rather than on
-single ticks. The slots are formalised in \S\ref{sec:substrates} and
-\S\S\ref{sec:variation}--\ref{sec:observer}; entities in
-\S\ref{sec:entities}; and emergence in \S\ref{sec:emergence}. The choice of
-iteration order is itself a modelling commitment; alternative orderings are
-discussed in \S\ref{sec:scope}.
+
+The observer is \emph{not} a component of $\mathcal{S}$. An observer is an
+external category-theoretic functor $O : \mathbf{Sys} \to \mathbf{Obs}$ that
+acts on the system's trajectory rather than on single ticks; it is
+formalised in \S\ref{sec:observer}. This independence is structural: an
+observer is something that watches the system without being part of the
+system's tick rule. The framework's central thesis depends on this
+externality --- $\mathbf{LifeCat}$ membership is reported by an independent
+observer applied to a 4-tuple system, not by a system that contains its own
+observer.
+
+The slots are formalised in \S\ref{sec:substrates} and
+\S\S\ref{sec:variation}--\ref{sec:topology}; entities in
+\S\ref{sec:entities}; emergence in \S\ref{sec:emergence}; the observer
+functor in \S\ref{sec:observer}; the ambient category in
+\S\ref{sec:ambient}; the recursive level structure in
+\S\ref{sec:recursive-levels}; the vitality profile in
+\S\ref{sec:vitality}. The choice of iteration order is itself a modelling
+commitment; alternative orderings are discussed in \S\ref{sec:scope}.
 
 In less compressed terms, $\mathcal{S}$ is the recipe for a simulation. The
 substrate is the material being simulated: a lattice of cells, a continuous
 field, a swarm of particles, a population of programs, or a coupled product of
 such materials. Variation proposes changes to the population living on that
 material; viability decides which proposed entities remain; topology says who
-can affect whom; and the observer records what the resulting trajectory looks
-like. The mathematics below fixes the types of those choices so that two
-systems can be compared without quietly changing the meaning of a slot.
+can affect whom. An external observer records what the resulting trajectory
+looks like. The mathematics below fixes the types of these choices so that
+two systems can be compared --- structurally and quantitatively --- without
+the meaning of a slot quietly changing.
 
 \begin{figure}[t]
 \centering
@@ -339,22 +398,23 @@ systems can be compared without quietly changing the meaning of a slot.
 \node[op, below=0.55cm of substrate] (phi) {$\widetilde{\Phi}$\\dynamics};
 \node[op, right=0.18cm of phi] (var) {$\widetilde V_T$\\variation};
 \node[op, right=0.18cm of var] (viab) {$\widetilde S_F$\\viability};
-\node[slot, below=0.55cm of var] (observer) {Observer--evaluator\\$O((x_t,\mu_t)_{t\geq 0})$};
+\node[slot, below=0.55cm of var, draw=gray, dashed] (observer) {External observer functor\\$O : \mathbf{Sys} \to \mathbf{Obs}$};
 \node[align=center, above=0.1cm of var] (state) {Joint state\\$Z=X\times\Mplus(X)$};
 
 \draw[arrow] (substrate) -- (phi);
 \draw[arrow] (topology) -- (var);
 \draw[arrow] (phi) -- (var);
 \draw[arrow] (var) -- (viab);
-\draw[arrow] (viab) |- (observer);
-\draw[arrow] (observer.west) -| node[pos=0.25,left,align=center] {assessment\\not tick update} (phi.south);
+\draw[arrow, dashed] (viab) |- (observer);
 \draw[arrow] (state) -- (var);
 \end{tikzpicture}
-\caption{The five-slot model. The substrate supplies state and dynamics;
-interaction topology mediates variation; viability filters the resulting
-population measure; and the observer--evaluator assesses trajectories rather
-than altering the default tick update.}
-\label{fig:five-slot}
+\caption{The 4-tuple system $\mathcal{S}=(\X,V,F,T)$ with its external
+observer functor (drawn dashed because it is outside the system). The
+substrate supplies state and dynamics; interaction topology mediates
+variation; viability filters the resulting population measure. The
+observer $O : \mathbf{Sys} \to \mathbf{Obs}$ acts on trajectories,
+external to the tick rule.}
+\label{fig:four-slot}
 \end{figure}
 
 \begin{implnote}[Computational implication]
@@ -363,6 +423,163 @@ swapped without rewriting the others. In \S\ref{sec:parallel} we argue that
 this same modularity supports a natural GPU mapping in which each slot
 becomes a parallel kernel.
 \end{implnote}
+
+\subsection{The ambient category $\mathbf{Sys}$}\label{sec:ambient}
+
+The framework commits to a specific ambient category for systems:
+$\mathbf{Sys}$ is the \textbf{symmetric monoidal category of
+$\mathcal{O}_W$-algebras valued in $\mathbf{Stoch}$}, where $\mathcal{O}_W$
+is the operad of wiring diagrams of Vagner, Spivak \&
+Lerman~\cite{vagner2015algebras} (with extensions to time-indexed systems
+via Schultz \& Spivak~\cite{schultz2020sheaves}) and $\mathbf{Stoch}$ is a
+Markov category of measurable spaces and Markov kernels in the sense of
+Fritz~\cite{fritz2020synthetic}. Objects of $\mathbf{Sys}$ are
+$\mathcal{O}_W$-algebras $A : \mathcal{O}_W \to \mathbf{Stoch}$; morphisms
+are $\mathcal{O}_W$-algebra natural transformations; the monoidal product
+is inherited from $\mathcal{O}_W$ and coincides with the substrate
+composition operator $\boxtimes_\kappa$ of \S\ref{sec:substrates} (the
+associativity-up-to-canonical-isomorphism of $\boxtimes_\kappa$ becomes
+the SMC structure of $\mathbf{Sys}$).
+
+This choice has three load-bearing properties for the rest of the
+framework. First, the typing of the slots and their composition is
+operadic-native: $V_T$ construction (\S\ref{sec:vt}) is precisely an
+$\mathcal{O}_W$-algebra action. Second, Yau's finite-presentation
+theorem~\cite{yau2018operads} for $\mathcal{O}_W$ (eight generators,
+twenty-eight relations for the directed case) reduces decomposition
+arguments to checking a finite list of cases --- the load-bearing finite
+check for the necessity conjecture \textbf{N1}
+(\S\ref{sec:conjectures}). Third, the choice is light enough to make the
+early theorems tractable: 2-categorical and double-categorical upgrades
+are reserved for specific obstructions if they arise but are not
+foundational.
+
+A complementary \textbf{interpretive lift} to a sheaf topos is available
+via three functorial bridges. The temporal axis is covered by Schultz
+\& Spivak~\cite{schultz2020sheaves}, whose temporal type theory provides
+a functor from $\mathcal{O}_W$-algebras to sheaves on a base site of
+time-windows. The abstract bridge is the classifying topos of
+$\mathcal{O}_W$: every operad $\mathcal{O}$ admits a classifying topos
+$\mathbf{Sh}(\mathcal{O})$ such that $\mathcal{O}$-algebras in any topos
+$\mathcal{T}$ correspond to geometric morphisms $\mathcal{T} \to
+\mathbf{Sh}(\mathcal{O})$. The practical bridge is substrate-induced
+locality: when the substrate $\X$ carries a natural locality structure
+(lattice geometry, particle positions, memory adjacency), that locality
+pulls back through the $\mathcal{O}_W$-algebra to a site $\mathcal{B}$ of
+substrate patches, and the algebra induces an honest sheaf on
+$\mathcal{B}$. The strategy is \emph{prove in the operadic ambient,
+interpret in the sheaf topos}. The Aristotelian /
+autopoietic~\cite{maturana1980autopoiesis} / free-energy-principle
+readings of biology remain available through this lift; they are not
+foundational but interpretive layers over the same underlying algebra.
+
+\subsection{The independent observer functor}\label{sec:observer}
+
+An \textbf{observer} is a category-theoretic functor
+\[
+  O \;:\; \mathbf{Sys} \;\longrightarrow\; \mathbf{Obs},
+\]
+where $\mathbf{Obs}$ is a category of \emph{observation records} (objects:
+measurable spaces of observation traces; morphisms: measurable maps). $O$
+sends a system $\mathcal{S}$ to its trajectory-functor
+\[
+  O(\mathcal{S}) \;:\; \mathbb{N} \;\longrightarrow\; Y,
+  \qquad t \;\longmapsto\; O_t\!\big((x_s,\mu_s)_{s\le t}\big),
+\]
+which assigns to each tick $t$ an observation $O_t \in Y$ computed from a
+window of trajectory. Stateful observers are accommodated by allowing $O$
+to carry an observer state $a_t \in A_O$ that updates as
+$(o_t, a_{t+1}) = O_s\big((x,\mu)_{t-w:t+1}, a_t\big)$; the observer state
+records archives, descriptor maps, learned embeddings, or saturation
+criteria as appropriate.
+
+\textbf{Independence} is now a property of the morphism, not of the
+system: $O$ is independent of $\mathcal{S}$ when it factors through the
+trajectory functor of $\mathcal{S}$ rather than through any of the slots
+$V, F, T$. Equivalently, $O$ does not appear on the right-hand side of
+the iteration rule
+$\widetilde S_F \circ \widetilde V_T \circ \widetilde \Phi$. The default
+observer is independent. Some systems feed observer output back into
+$V$ via archive state (novelty-search-style adaptive variation); this is
+modelled as a \emph{second} observer $O'$ whose output is post-composed
+onto $V$'s parameter space via the $\rho$-coupling construction of
+\S\ref{sec:variation}, not as $O$ being placed inside the tick rule. The
+independence of the primary observer is structural; whether one wires
+auxiliary observers back into variation is a modelling choice.
+
+Three observer families recur in practice:
+\textbf{density-distance observers} (novelty search,
+Quality-Diversity~\cite{lehman2011novelty,faldor2024leniaqd}), which
+score a window of trajectory by a divergence $D(\mu_{[t-w,t]} \,\Vert\,
+\mu_{\mathrm{ref}})$;
+\textbf{foundation-model embedding observers}, which embed trajectories
+with a foundation model and score in embedding space, as in
+ASAL~\cite{kumar2024asal} and OMNI-EPIC~\cite{faldor2024omniepic};
+and \textbf{information-theoretic observers}, including mutual
+information, transfer entropy~\cite{schreiber2000measuring}, and
+integrated-information quantities. Conjecture C3 (now restated under the
+pivot framing, see \S\ref{sec:conjectures}) proposes that all three
+families are instances of a single divergence-functional schema viewed
+through the observer functor.
+
+A trajectory $(x_t,\mu_t)_{t \geq 0}$ of $\mathcal{S}$ is \emph{alive
+with respect to observer $O$} when $O(\mathcal{S})$ reports the
+structural conditions of $\mathbf{LifeCat}$ membership
+(\S\ref{sec:vitality}). The observer is the witness, not the source, of
+aliveness; the structural conditions are intrinsic to $\mathcal{S}$.
+
+\subsection{Recursive level structure}\label{sec:recursive-levels}
+
+The framework's hierarchy of organisation is defined \textbf{recursively},
+with no a-priori taxonomy of levels by human categories (substrate,
+entity, population, meta). Those labels become emergent descriptions of
+what the recursion produces in particular systems.
+
+\paragraph{Base case (level 0).} $\Phi$ explores the substrate state
+space $X$. The \emph{level-0 entities} are the persistent patterns
+produced by $\Phi$ alone: $(S, \pi)$ pairs satisfying the information-
+closure condition E1 (Definition~\ref{def:entity}) with variation given
+by identity (they persist by $\Phi$, not by any separate $V$ acting on
+them).
+
+\paragraph{Recursive case (level $n \geq 1$).} The system reaches level
+$n$ iff:
+
+\begin{enumerate}[leftmargin=2em,itemsep=2pt]
+  \item \emph{Lower-level search continues:} the system reaches level
+    $n - 1$.
+  \item \emph{Search acts on level-$(n{-}1)$ entities:} there exists a
+    pair $(V_n, F_n)$ acting on the level-$(n{-}1)$ entities such that
+    $V_n$ is non-trivial (Definition~\ref{def:vnontriv}), $F_n$ is
+    non-trivial (Definition~\ref{def:fnontriv}), and the iteration
+    retains \emph{discriminative capacity} at level $n$
+    (Definition~\ref{def:disc-cap}).
+\end{enumerate}
+
+The \emph{level-$n$ entities} are the persistent patterns at level $n$
+--- $(S, \pi)$ pairs satisfying E1 under the $(V_n, F_n)$-induced
+dynamic.
+
+The recursion bottoms out at level 0 and ascends through the system's
+hierarchical structure. The depth $k$ of the recursion for a given
+system is the deepest level at which the recursive case fires. Under the
+operadic ambient (\S\ref{sec:ambient}), level $n$ corresponds to
+arity-$n$ compositions of $\mathcal{O}_W$ --- the level count is not an
+additional axiom but falls out of the ambient category's structure.
+
+\paragraph{Where modeler choice still enters.} The recursive level
+structure is structural, but entity-detection at each step depends on
+the scale projection $\pi$ (Definition~\ref{def:entity}), which is a
+modeler choice. Different reasonable $\pi$ choices typically give the
+same level count $k$ but may disagree on which entities exist at each
+level. The same modeler-dependence applies to horizontal composition
+(\S\ref{sec:horizontal}): whether two physically-coupled subsystems
+read as a single entity, a horizontal $\boxtimes_\kappa$ composition, or
+a vertical composite depends on $\pi$. The framework's discipline is
+that the modeler declares $\pi$; different choices produce internally
+coherent but distinct vitality profiles. This is the
+Option-A-foundational commitment honoured explicitly: boundaries are
+choosable subject to E1, not given from outside.
 
 \subsection{Substrates}\label{sec:substrates}
 
@@ -713,86 +930,431 @@ channels are independent, or the $\diamond_\rho$-composition
 (cf.\ \S\ref{sec:variation}) when they are not. The mixture form
 guarantees that $V_T(\mu;x) \in \Mplus(X)$ whenever each layer kernel is.
 
-\subsection{Observer--Evaluator}\label{sec:observer}
+\subsection{Non-triviality}\label{sec:nontriviality}
 
-The observer--evaluator $O$ acts on trajectories. In the stateless case, we
-model it as a functional
+The recursive level structure of \S\ref{sec:recursive-levels} uses
+``non-trivial $V$'' and ``non-trivial $F$'' in its inductive step. The
+following definitions tighten the terms.
+
+\begin{definition}[Non-trivial variation operator]\label{def:vnontriv}
+A variation operator $V_n : E_{n-1} \times \Theta \to \Pmeas(E_{n-1})$
+on the space of level-$(n{-}1)$ entities is \emph{non-trivial} iff there
+exists $e \in E_{n-1}$ and $\theta \in \Theta$ such that
+$V_n(e, \theta) \neq \delta_e$. A stronger condition, \emph{diversifying},
+holds when $V_n(e, \theta)$ has positive Shannon entropy for some
+$(e, \theta)$.
+\end{definition}
+
+In plain terms: $V_n$ is non-trivial when some input produces some
+output that differs from the input. The identity map (every entity
+reproduces itself exactly) is the only trivial case. Most operationally
+interesting variation operators are diversifying.
+
+\begin{definition}[Non-trivial viability filter]\label{def:fnontriv}
+A viability filter $F_n : \Mplus(E_{n-1}) \to \Mplus(E_{n-1})$ is
+\emph{non-trivial} iff it is not a scalar multiple of the identity:
+there exist entities $e_1, e_2 \in E_{n-1}$ such that
 \[
-  O \;:\; Z^{w} \;\to\; \R^k,
+  \frac{F_n(\delta_{e_1})(\{e_1\})}{F_n(\delta_{e_2})(\{e_2\})} \;\neq\; 1.
 \]
-where $Z = X \times \Mplus(X)$ is the joint state space of
-\S\ref{sec:framework} and $w \in \N \cup \{\infty\}$ is a fixed
-\emph{window length} (number of consecutive ticks $O$ consumes). Components
-of the output are interpreted as \emph{observed quantities} (novelty,
-complexity, learnability, value). Practical observers use finite $w$;
-$w=\infty$ recovers the long-trajectory limit. The window length $w$ is part
-of the observer specification and is reported in the system description
-(\S\ref{sec:description}).
+\end{definition}
 
-Many observers used in novelty search and Quality-Diversity algorithms are
-stateful rather than purely functional. To accommodate these cases without
-adding a sixth framework slot, we allow $O$ to carry an observer state
-$a_t \in A_O$:
+In plain terms: $F_n$ is non-trivial iff it differentially retains
+different entities. A filter that scales every entity's retention by the
+same factor (e.g.\ a fixed death rate applied uniformly) is trivial in
+this sense --- it changes total mass but not relative composition. A
+filter that retains some entities preferentially is non-trivial.
+
+\begin{definition}[Discriminative capacity at level $n$]\label{def:disc-cap}
+A level-$n$ iteration $(V_n, F_n)$ has \emph{discriminative capacity at
+level $n$} iff, for any candidate entity $e^\ast \in E_{n-1}$ that is
+strictly fitter than the current population --- meaning
+$F_n(\delta_{e^\ast})(\{e^\ast\}) / F_n(\delta_e)(\{e\}) > 1$ for all
+$e$ in the current population --- the iteration $V_n \circ F_n$ applied
+to the population augmented by $\epsilon\,\delta_{e^\ast}$ gives
+$e^\ast$ a strictly increasing share of the population mass over time,
+for all sufficiently small $\epsilon > 0$.
+\end{definition}
+
+In plain terms: a fitter mutant injected into the population grows in
+relative frequency. The condition is observable via a perturbation
+experiment: drop a known-fitter mutant into the simulation, run forward,
+check that its share grows. This is the operational condition that
+distinguishes a converged-but-still-search-active GA (which would
+amplify a strictly fitter mutant if one appeared) from a frozen-in-time
+snapshot (which would not). The condition replaces an earlier
+``not at a fixed point'' formulation that incorrectly excluded
+homeostatic systems.
+
+These three definitions cleanly exclude the cases the framework needs
+to exclude. A hurricane has trivial $V$ at level 1 (no variation
+operator proposes new hurricane variants) and trivial $F$ at level 1
+(no filter selects among them); the recursion in
+\S\ref{sec:recursive-levels} halts at level 0 by these conditions, not
+by hand-waving.
+
+\subsection{Vitality profile and $\mathbf{LifeCat}$ membership}\label{sec:vitality}
+
+The framework's central predicate ---  ``the system--observer pair
+$(\mathcal{S}, O)$ is alive'' --- is reported as a structured
+measurement on $\mathcal{S}$.
+
+\begin{definition}[Vitality profile]\label{def:vitality}
+The \emph{vitality profile} of a system $\mathcal{S}$ relative to a
+choice of scale projections at each level is the pair
 \[
-  O_s \;:\; Z^w \times A_O \to \R^k \times A_O .
+  (k, \boldsymbol{\sigma}) \;\in\; \N \times [0,1]^k,
 \]
-The state $a_t$ may contain an archive of previous behaviours, a descriptor
-map, a learned embedding model, a reference distribution, or a saturation
-criterion. The public output of the observer remains the score vector in
-$\R^k$; the internal state records how novelty, diversity, or boundedness is
-computed across time.
+where $k$ is the search-hierarchy depth of $\mathcal{S}$ defined
+recursively per \S\ref{sec:recursive-levels} and $\boldsymbol{\sigma} =
+(\sigma_1, \ldots, \sigma_k)$ is the level-indexed \emph{self-reference
+vector}: at each level $i \leq k$,
+\[
+  \sigma_i \;:=\; \frac{T\!\big(\mathrm{state}_i^t \,\to\, F_i^{t+1} \;\big|\; \mathrm{population}_i^t\big)}{T_{\max}}
+\]
+is the conditional transfer entropy from the system's level-$i$ state
+to the level-$i$ filter's output, given the level-$i$ population,
+normalised by its theoretical maximum.
+\end{definition}
 
-Thus the observer is not another hidden force in the default simulator loop.
-It is the measurement apparatus: it watches the history and reports novelty,
-complexity, value, effective information, or another chosen quantity.
+In plain terms: $k$ measures how deep the system's nested
+variation-and-selection hierarchy reaches, and $\sigma_i$ measures
+whether the viability filter at level $i$ depends on the system's own
+state beyond the current population. $\sigma_i = 1$ corresponds to
+fully autopoietic / coevolutionary self-shaping at level $i$;
+$\sigma_i = 0$ corresponds to an externally-fixed objective at level
+$i$. The pair $(k, \boldsymbol{\sigma})$ is the framework's
+substrate-agnostic structural measurement of life-likeness.
 
-\topic{Three families}\label{sec:observer-families}
+\begin{definition}[$\mathbf{LifeCat}$ membership]\label{def:lifecat}
+A system--observer pair $(\mathcal{S}, O)$ is a member of
+$\mathbf{LifeCat}$ iff its vitality profile $(k, \boldsymbol{\sigma})$
+satisfies:
+\begin{enumerate}[leftmargin=2em,itemsep=2pt]
+  \item \emph{Emergence:} $\sup_\Pi \mathrm{CE}(M(\mathcal{S}), \Pi) > 0$
+    (Definition~\ref{def:CE} below).
+  \item \emph{Entity persistence:} there is an entity
+    $e = (S, \pi)$ whose support remains non-empty across a window of
+    the trajectory, with positive $F$-weight.
+  \item \emph{Search-active at level $k \geq 1$:} the recursive level
+    structure (Defs.~\ref{def:vnontriv}--\ref{def:disc-cap}) reaches
+    depth at least one.
+\end{enumerate}
+\end{definition}
+
+The membership predicate is binary (a pair is in $\mathbf{LifeCat}$
+or it is not, depending on whether $k \geq 1$). The full vitality
+profile is reported as an \emph{attribute} of each member, capturing
+the structural complexity that biology distinguishes via the cluster
+of properties traditionally associated with ``how alive'' a thing is.
+
+\paragraph{Where the framework's content lives.} Conditions~1 and~2
+are intrinsic to $\mathcal{S}$. The level-$k$ condition is intrinsic.
+The self-reference vector $\boldsymbol{\sigma}$ is intrinsic. The
+observer functor $O$ does not enter the membership predicate; it
+\emph{reports} the profile but does not constitute it. The
+independence of the observer (\S\ref{sec:observer}) is what makes
+``life'' a well-defined structural property of $\mathcal{S}$ rather
+than a perspective-dependent label.
+
+\paragraph{Worked vitality profiles.} The predicate gives principled
+verdicts across the range of cases the framework needs to handle:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{4pt}
+\scriptsize
+\begin{tabular}{@{}p{0.35\columnwidth} p{0.30\columnwidth} c@{}}
+\hline
+\textbf{System} & \textbf{Vitality profile} & \textbf{In $\mathbf{LifeCat}$?} \\
+\hline
+Hurricane                                    & $(0, ())$                       & No  \\
+Chaotic map, no entity                       & $(0, ())$                       & No  \\
+Plain Game-of-Life glider, no $V$            & $(0, ())$                       & No  \\
+Standard converged GA                        & $(1, (0))$                      & Yes \\
+Bacteria in fixed nutrient bath              & $(1, (1))$                      & Yes \\
+Frequency-dependent GA                       & $(1, (1))$                      & Yes \\
+Active Tierra arms race                      & $(2, (1, 1))$                   & Yes \\
+Stabilised Tierra                            & $(2, (1, 0))$                   & Yes \\
+HeLa cells in lab culture                    & $(2, (1, \approx 0.4))$         & Yes \\
+Wild bacterial ecosystem                     & $(2, (1, 1))$                   & Yes \\
+Multicellular organism                       & $(3, (1, 1, 1))$                & Yes \\
+Human language / cultural evolution          & $(3, (1, 1, 1))$ or deeper       & Yes \\
+\hline
+\end{tabular}
+\end{center}
+
+The framework reads all of the ``yes'' rows as alive in the same
+formal sense; the differences in structural complexity are captured
+by the full profile $(k, \boldsymbol{\sigma})$, not by binary
+membership. A converged GA at $(1, (0))$ and a wild bacterial
+ecosystem at $(2, (1, 1))$ are both alive; the bacterial ecosystem is
+\emph{more structurally alive} in the precise sense that it reaches a
+deeper level with non-zero self-reference at both. The framework's
+substrate-agnosticism is operationally cashed out: Tierra in its arms
+race phase lands at the same profile as a wild bacterial ecosystem,
+which is the operational content of the claim that programmatic life
+and biological life are the same theorem in different substrates.
+
+\subsection{Horizontal composition}\label{sec:horizontal}
+
+The recursive level structure of \S\ref{sec:recursive-levels} describes
+\textbf{vertical composition}: level-$n$ entities become the substrate for
+level-$(n{+}1)$ search, and the recursion climbs the hierarchy. This is
+one of two compositional moves the framework needs. The other is
+\textbf{horizontal composition} via the substrate-composition operator
+$\boxtimes_\kappa$ of Definition~\ref{def:coupled-composition}.
+
+Under the ambient category $\mathbf{Sys}$ (\S\ref{sec:ambient}),
+$\boxtimes_\kappa$ is the \emph{monoidal product}: its associativity
+up to canonical isomorphism is precisely the SMC structure of
+$\mathbf{Sys}$. Horizontal composition combines systems running in
+parallel at the same level rather than stacking them into a higher
+level.
+
+\paragraph{Effect on vitality profiles.}
+Given systems $\mathcal{S}_1$ and $\mathcal{S}_2$ with vitality profiles
+$(k_1, \boldsymbol{\sigma}_1)$ and $(k_2, \boldsymbol{\sigma}_2)$ where
+$k_1 = k_2 = k$, the horizontal composite $\mathcal{S}_1
+\boxtimes_\kappa \mathcal{S}_2$ has depth $k$ (level is preserved). Its
+$\boldsymbol{\sigma}$ depends on the coupling structure:
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Density-distance observers.} Score a window of trajectory by
-    a divergence $D(\mu_{[t-w,t]}\,\Vert\, \mu_{\mathrm{ref}})$ --- e.g.\ KL
-    divergence to a uniform reference, or Wasserstein distance to an archive.
-  \item \textbf{FM-embedding observers.} Embed states or trajectories with a
-    foundation model (vision-language or otherwise) and score in embedding
-    space, as in ASAL \cite{kumar2024asal} and OMNI-EPIC
-    \cite{faldor2024omniepic}.
-  \item \textbf{Information-theoretic observers.} Mutual information,
-    transfer entropy, integrated information, or --- at the macroscale ---
-    effective information (used as the basis of \S\ref{sec:emergence}
-    emergence).
+  \item \emph{Trivial $\kappa$} (independent product): composite $\sigma_i
+    \approx \max(\sigma_i^{(1)}, \sigma_i^{(2)})$. No new self-reference
+    is created.
+  \item \emph{One-way coupling} ($\kappa_{1 \to 2}$ non-trivial,
+    $\kappa_{2 \to 1}$ trivial): $\mathcal{S}_2$'s effective $\sigma_i$
+    rises by the dependence on $\mathcal{S}_1$; $\mathcal{S}_1$'s is
+    unchanged.
+  \item \emph{Mutual coupling}: $\sigma_i$ for the composite can
+    strictly exceed either component's. \textbf{This is the case where
+    horizontal composition manufactures self-reference} that was not
+    present in either component on its own.
 \end{itemize}
 
-\topic{Observer-relative novelty as divergence}
+The mutual-coupling case is the operationally interesting one. It is
+the formal mechanism behind coevolution: a host lineage with
+$\sigma_2^{(1)} = 0$ under Darwinian selection from a fixed environment
+horizontally composed with a parasite lineage with $\sigma_2^{(2)} = 0$
+via mutual $\kappa$ jumps to a composite with $\sigma_2 = 1$. Tierra
+during the arms race, predator--prey ecologies, host--parasite
+biology, and bilingual speech communities all instantiate this
+mechanism. The historical observation that ``coevolution feels
+open-ended'' becomes the formal statement that mutual horizontal
+coupling generates $\sigma$ uplift.
 
-Following novelty search \cite{lehman2011novelty}, learnability-oriented
-open-endedness \cite{hughes2024openendedness}, and the $\Omega$ metric
-\cite{lopezdiaz2025undecidability}, we treat observer-relative
-open-endedness as an assessment made by a specified observer. A strong version
-says that a system exhibits \textbf{observer-relative open-endedness} w.r.t.\
-$O$ iff the observer's score is unbounded along the trajectory (in a suitably
-regularised sense --- typically learnable novelty, as in
-\cite{hughes2024openendedness}). A weaker version reports sustained novelty
-or increasing functional information over a finite horizon but does not infer
-unboundedness. The distinction is important: a bounded system may still show
-emergence, adaptation, or increasing functional information, while failing a
-strict open-endedness test.
+\paragraph{Examples across substrates.} A non-exhaustive list of cases
+worth keeping in mind:
 
-This is \textbf{distinct} from the mathematical definition of emergence we
-develop in \S\ref{sec:emergence}.
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \emph{Symbiosis (lichen).} Alga $(1, (1))$ + fungus $(1, (1))$,
+    horizontally composed via mutualistic metabolic coupling. The
+    composite is at level 1 but is operationally a single entity in
+    many readings.
+  \item \emph{Coevolutionary populations (Tierra arms race).} Host
+    lineage and parasite lineage at level 2, horizontally composed via
+    mutual exploit/resist coupling. Composite has $\sigma_2 = 1$
+    manufactured by the coupling.
+  \item \emph{Coupled organs.} Heart + lungs in a vertebrate, both at
+    organ-system level, composed via circulatory $\kappa$.
+  \item \emph{Endosymbiosis.} Historically, ancestral bacterium
+    $\boxtimes$ archaeon at level 1, fused so tightly the composite
+    now reads as a single level-1 entity (the eukaryotic cell).
+  \item \emph{Bilingual speech communities.} Two languages at level 2,
+    horizontally composed via shared speakers, code-switching, and
+    loanword traffic.
+  \item \emph{Hybrid biological--computational systems.} A bacterium
+    horizontally composed with a foundation-model agent observing and
+    acting on it; cross-substrate coupling.
+\end{itemize}
 
-\topic{Adjacent possible as a special case}
+The two compositions can be applied in any order. Real life-forms
+typically exhibit both: a multicellular organism is vertically composed
+(cells stacked into tissues into organs) and horizontally coupled to
+its microbiome, environment, and conspecifics.
 
-Tria \emph{et al.} \cite{tria2014novelties} and the P\'olya-urn-with-triggering
-family yield Heaps' law for novelty rate $\sim t^\beta$ with $\beta<1$. This
-is recovered when $O$ maintains an archive of distinct
-$\pi$-equivalence classes seen so far (with an open-ended class set) and
-emits the count of new classes per tick. First-occurrence triggers in the
-variation operator are realised by an \emph{archive feedback}
-$\rho_O : O\text{-state} \to \Theta$ that re-parameterises $V$ on
-first-occurrence events --- formally, the same $\rho$-coupling construction
-of \S\ref{sec:variation} with $O$'s archive state playing the role of
-an additional channel. This keeps $V$'s signature intact while permitting
-history-dependent triggering.
+\subsection{Cross-system comparison}\label{sec:comparison}
+
+A natural question once $(k, \boldsymbol{\sigma})$ is defined: when can
+we say one system is ``more alive'' than another? Two systems will, in
+general, have different state spaces and different probability measures,
+so the floating-point values of $\sigma_i$ are not literally on the
+same scale across systems. The framework handles cross-substrate
+comparison with three distinct operations, each appropriate in
+different contexts.
+
+\paragraph{Structural equivalence in $\mathbf{LifeCat}$.} Two systems
+with the same $k$ and componentwise-equal $\boldsymbol{\sigma}$ (within
+estimator tolerance) are \emph{structurally equivalent} as objects of
+$\mathbf{LifeCat}$. They have the same categorical shape --- the same
+depth of search hierarchy, with the same self-reference at each level
+--- regardless of substrate differences. A Tierra arms race at
+$(2, (1, 1))$ and a wild bacterial ecosystem at $(2, (1, 1))$ are
+structurally equivalent in this sense. Structural equivalence is
+necessary but not sufficient for operational equivalence; two
+structurally-equivalent systems can still differ under any particular
+observer.
+
+\paragraph{Partial order on profiles.} Define
+\[
+  (k_1, \boldsymbol{\sigma}_1) \;\preceq\; (k_2, \boldsymbol{\sigma}_2)
+  \;\iff\; k_1 \leq k_2 \text{ and } \forall i \leq k_1,\;
+  \sigma_{1, i} \leq \sigma_{2, i}.
+\]
+System 2 is ``at least as life-like'' as System 1 iff it dominates in
+every component. Most pairs of systems are incomparable in this partial
+order, and this is the right answer rather than a bug. A
+strong-autopoiesis-but-shallow system $(1, (1.0))$ and a
+deep-but-weakly-coupled system $(3, (0.3, 0.3, 0.3))$ are not
+ordered by $\preceq$ --- neither dominates the other --- and the
+framework's partial order refuses to fabricate an ordering between
+them.
+
+\paragraph{Observer-mediated quantitative comparison.} Quantitative
+comparison across substrates requires a common observer functor $O$
+valid for both systems. Given $\mathcal{S}_1, \mathcal{S}_2$ and $O$,
+compute $O$'s output trajectories and compare via a divergence
+$D(O(\mathcal{S}_1) \,\Vert\, O(\mathcal{S}_2))$ (KL, Wasserstein, MMD,
+or any divergence satisfying C3 in \S\ref{sec:conjectures}). The result
+is observer-relative: the same two systems compared under different
+observers can produce different orderings, and the framework treats
+this as a feature, not a bug. ASAL's CLIP-embedding
+observer~\cite{kumar2024asal} is the canonical substrate-independent
+observation space in which Lenia, Boids, Tierra, and any
+renderable-as-images system become quantitatively comparable.
+
+\paragraph{Reporting discipline.} A framework-conforming comparison
+between two systems reports three items: (i) both systems' vitality
+profiles, (ii) the partial-order verdict (LT, EQ, GT, or INCOMPARABLE),
+and (iii) if a quantitative comparison is needed, the specific
+observer $O$ and divergence $D$ used. The discipline forbids cheap
+``higher $\sigma$ therefore more alive'' claims when the systems do
+not share a measure. The legitimate move is either ``structurally
+equivalent,'' or ``incomparable in the partial order,'' or ``ordered
+relative to observer $O$ and metric $D$.''
+
+The thermodynamic analogy is apt: $(k, \boldsymbol{\sigma})$ is the
+framework's substrate-agnostic ``temperature'' of life; observer-
+mediated quantities are the further substrate-specific measurements
+(``heat capacity'', ``specific heat''). Two systems at the same
+temperature can have different heat capacities; both facts are real,
+and the framework's discipline is to keep them straight.
+
+\subsection{Level emergence}\label{sec:le}
+
+The recursive level definition of \S\ref{sec:recursive-levels} is
+\emph{static}: given a system, it determines what level the system has
+reached. It does not describe how a system at depth $k$ comes to reach
+depth $k+1$. But the historical and dynamical reality is that
+biological life underwent multiple level transitions --- chemistry
+$\to$ cells, cells $\to$ multicellular organisms, organisms $\to$
+ecosystems, hominids $\to$ cultures --- and the framework should
+describe the mechanism of these transitions, not just the resulting
+hierarchy.
+
+Biology calls these \textbf{major evolutionary
+transitions}~\cite{maynardsmith1995major,buss1987evolution,west2015majortransitions}.
+Eight have been catalogued by Maynard Smith \& Szathm\'ary (replicating
+molecules $\to$ compartments $\to$ chromosomes $\to$ DNA + protein
+$\to$ eukaryotes $\to$ sexual populations $\to$ multicellular
+organisms $\to$ societies $\to$ linguistic societies). These have
+not been formalised categorically; the framework does so.
+
+A level transition from depth $k$ to depth $k + 1$ requires the
+system to develop a $(V_{k+1}, F_{k+1})$ pair acting on level-$k$
+entities. The pair cannot be supplied externally; it must emerge from
+the dynamics of level-$k$ entities themselves. Four conditions, drawn
+from the cases biology recognises, are the framework's structural
+characterisation of the transition. The conditions are themselves
+\emph{graded} (each can be partially met), so a system in which the
+conditions are partially satisfied is ``on the way to'' a level
+transition without having completed one; this is the framework's
+content for the ``becoming'' intuition without requiring a separate
+continuous quantity.
+
+\begin{namedconjecture}{LE: Level Emergence}
+A system $\mathcal{S}$ at vitality profile depth $k$ undergoes a
+level transition to depth $k + 1$ over a time window $W$ if and only
+if its level-$k$ entities satisfy four conditions over $W$:
+
+\begin{enumerate}[leftmargin=2em,itemsep=2pt]
+  \item \emph{Persistence.} Level-$k$ entities have lifetimes much
+    longer than the substrate's relaxation time. There must be
+    something durable to aggregate before aggregation can produce a
+    new level.
+  \item \emph{Aggregation.} A non-trivial coupling structure
+    $\kappa^{(k)}$ on level-$k$ entities (\S\ref{sec:horizontal})
+    produces persistent multi-entity patterns. These are the
+    \emph{candidate} level-$(k{+}1)$ entities.
+  \item \emph{Group variation.} The coupling $\kappa^{(k)}$ varies
+    across the population of aggregates; different aggregate types
+    are possible and arise with positive frequency. This is the
+    precursor to $V_{k+1}$.
+  \item \emph{Group selection.} Different aggregate types have
+    measurably different persistence rates. This is the precursor to
+    $F_{k+1}$.
+\end{enumerate}
+\end{namedconjecture}
+
+When all four conditions are met over a sufficient time window, the
+persistent aggregates become the level-$(k{+}1)$ entities, the
+variation among them becomes $V_{k+1}$, the differential selection
+becomes $F_{k+1}$, and the system's depth has increased by 1.
+
+\paragraph{Walking through chemistry $\to$ cells $\to$ organisms $\to$
+ecosystems.} The four conditions apply uniformly to each transition;
+only the starting substrate differs.
+
+\emph{Chemistry $\to$ cells.}
+Persistence: autocatalytic chemical reaction networks (RAFs in the
+sense of Hordijk \& Steel~\cite{hordijk2004raf,hordijk2015algorithms})
+persist in primordial chemistry as level-0 entities.
+Aggregation: lipid bilayer membranes form spontaneously and enclose
+patches of chemistry; the membrane is $\kappa^{(0)}$.
+Group variation: different membrane compositions, different enclosed
+reactions, different geometries.
+Group selection: proto-cells with internally self-sustaining
+chemistry persist; ones whose chemistry collapses do not. Result:
+level-1 entities (cells) emerge as a new categorical type.
+
+\emph{Cells $\to$ organisms.}
+Persistence: free-living cells reproduce and persist.
+Aggregation: cell-cell adhesion molecules link cells into colonies
+(Volvox) or true multicellular structures.
+Group variation: different patterns of cell adhesion, different
+multicellular geometries, different division-of-labour configurations.
+Group selection: some multicellular configurations are mechanically
+and metabolically stable; others fall apart. Result: level-2 entities
+(multicellular organisms) emerge.
+
+\emph{Organisms $\to$ ecosystems.}
+Persistence: free-living organisms persist over generations.
+Aggregation: organisms develop trophic relationships, mutualisms,
+competitive interactions, niche construction~\cite{odlingsmee2003niche};
+the coupling $\kappa^{(2)}$ is the food web plus interaction matrix.
+Group variation: different community compositions, food-web
+topologies, species assemblages.
+Group selection: stable communities (cycled nutrients, balanced
+trophic levels) persist; collapsed ones don't. Result: level-3
+entities (ecosystems) emerge.
+
+The same mechanism reads each transition uniformly; only the
+starting-level substrate differs. LE applies in non-biological
+substrates as well: Tierra during its arms race underwent the
+level-1 $\to$ level-2 transition (individual programs aggregated into
+ecological roles); cultural transitions (spoken $\to$ written
+language; pre-literate $\to$ literate societies; pre-Internet $\to$
+post-Internet communication networks) are predicted by LE; engineered
+multi-agent systems can undergo level transitions when stable
+coalitions and niches form.
+
+The negative predictions are equally important. Hurricanes do not
+undergo level transitions because their level-0 entities do not
+satisfy conditions 3 and 4 (no variation among hurricane types, no
+differential persistence among aggregates). A converged GA does not
+undergo a transition because its level-1 entities do not aggregate
+into stable higher-level structures.
 
 \subsection{Emergence}\label{sec:emergence}
 
@@ -1121,39 +1683,63 @@ $T_{t}^{(2)}$ is uniformly random pairing of LLM judges and namers;
 $T_{t}^{(3)}$ is the bipartite stigmergic layer connecting an LLM agent to
 each Flow-Lenia entity it has named.
 
-\paragraph{Observer}
-$O = (O_{\Omega},\, O_{\mathrm{CLIP}})$ with window $w = W$:
-\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item $O_{\Omega}\big((x_{t-w:t},\mu_{t-w:t})\big)$ is the
-        residence-time $\Omega$ metric of
-        \cite{lopezdiaz2025undecidability} on the time series of distinct
-        Flow-Lenia attractors;
-  \item $O_{\mathrm{CLIP}}\big((x_{t-w:t},\mu_{t-w:t})\big)$ is the mean
-        cosine novelty of CLIP embeddings of (frame, name) pairs against
-        an archive of size $A$.
-\end{itemize}
-
 \paragraph{Iteration rule}
+The system is the 4-tuple $\mathcal{S} = (\X, V, F^\ast, T)$ with the
+iteration
 $(x_{t+1},\mu_{t+1}) =
   \big(\widetilde S_{F^{*}} \circ
         \widetilde V_{T_{t}} \circ
         \widetilde\Phi\big)(x_{t},\mu_{t})$
-exactly as in \S\ref{sec:framework}, with each lifted operator constructed
-as specified above.
+exactly as in \S\ref{sec:framework}.
+
+\paragraph{External observer}
+The observer is an external functor
+$O = (O_\Omega, O_{\mathrm{CLIP}}) : \mathbf{Sys} \to \mathbf{Obs}$
+with window $w = W$:
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item $O_\Omega$ is the residence-time $\Omega$
+        metric~\cite{lopezdiaz2025undecidability} on the time series of
+        distinct Flow-Lenia attractors;
+  \item $O_{\mathrm{CLIP}}$ is the mean cosine novelty of CLIP
+        embeddings of (frame, name) pairs against an archive of size
+        $A$.
+\end{itemize}
+$O$ is independent of $\mathcal{S}$ in the sense of \S\ref{sec:observer}:
+it factors through the trajectory functor of $\mathcal{S}$ and does not
+appear in the right-hand side of the iteration rule. Whether the
+naming-success score from the LLM side is fed back into the variation
+$V_{\mathrm{LLM}}$ is handled by the $\rho$-coupling
+construction of \S\ref{sec:variation}, not by
+placing the observer inside $\mathcal{S}$.
+
+\paragraph{Vitality profile (target)}
+The framework predicts the system reaches vitality profile
+$(2, (1, 1))$ during active arms-race phases of the coupled dynamics
+(if Flow-Lenia and the LLM-naming agent enter a mutual coevolutionary
+regime), and profile $(2, (1, \approx 0))$ if the LLM-side dynamics
+stabilises. Computing the profile is the subject of an empirical
+methodology paper; the algorithm is specified in companion
+documentation accompanying this paper (see
+\texttt{docs/vitality\_computation.md}).
 
 \paragraph{Emergence assessment (open)}
 Whether $\sup_{\Pi}\CE(M(\mathcal{S}),\Pi) > 0$ holds for this system is a
-concrete instance of OP1 (\S\ref{sec:op1}).
+concrete instance of L1 (= renamed OP1; see
+\S\ref{sec:op1}).
 
 \medskip
 
-The scaffold's non-prescriptiveness is now visible: every slot can be
+The framework's substrate-agnosticism is visible: every slot can be
 ablated independently --- replace $V_{\mathrm{LLM}}$ with random prompts,
-swap $F^{*}$ for Markov-blanket viability, collapse the multiplex $T$ to a
-complete graph, narrow $O$ to $O_{\mathrm{CLIP}}$ alone --- and the
-resulting system remains an instance of the same scaffold. Slot-wise
-comparison (\S\ref{sec:description}) requires only that each ablation
-reports its choices in the same template.
+swap $F^{*}$ for Markov-blanket viability, collapse the multiplex $T$
+to a complete graph, narrow $O$ to $O_{\mathrm{CLIP}}$ alone --- and the
+resulting system remains an instance of the framework. The categorical
+comparison machinery of \S\ref{sec:comparison} applies to ablations: the
+profile $(k, \boldsymbol{\sigma})$ either changes (in which case the
+ablation has structural content) or does not (in which case the
+ablation is decorative). Cross-substrate comparison with another
+framework instance (e.g.\ Tierra at $(2, (1, 1))$) is by the partial
+order on profiles plus a chosen observer.
 
 \subsection{Implementation and Reproducibility}\label{sec:parallel}
 
@@ -1294,47 +1880,66 @@ This is the pragmatic payoff of the abstract slot decomposition.
 
 \topic{System Description}\label{sec:description}
 
-The framework decomposes any emergent system into the slot tuple
-$\mathcal{S}=(X,V,F,T,O)$. The items below are not a gate the system passes
-but a vocabulary in which the system is read: the structural items are
-exhibitable for any emergent system by construction, and the reproducibility
-metadata is what an implementer additionally records so others can re-run
-the simulator.
+The framework decomposes any emergent system into the 4-tuple
+$\mathcal{S} = (\X, V, F, T)$ plus an external observer $O$, with the
+vitality profile $(k, \boldsymbol{\sigma})$ as a derived structural
+attribute. A description has two parts: the \textbf{system description}
+(intrinsic to $\mathcal{S}$) and the \textbf{observation record}
+(intrinsic to $O$ and how it is attached). The two compose at run
+time; they do not need to be specified together. The items below are
+not a gate the system passes; structural items are exhibitable for
+any emergent system by construction, observation-record items are
+what an external observer adds, and reproducibility metadata is what
+an implementer records so others can re-run the simulator.
 
-\paragraph{Structural items (read off the slot decomposition).}
+\paragraph{System description (intrinsic to $\mathcal{S}$).}
 \begin{enumerate}[leftmargin=2em,itemsep=2pt]
-  \item Substrate $\X=(X,\Phi,\mu_0)$, including
-    $\boxtimes_\kappa$-decomposition if composite.
-  \item Entity definition (supporting set determination; scale projection
-    $\pi$).
-  \item Variation channels and any $\diamond_\rho$ couplings.
-  \item Viability filter family (named, not merely typed) and predicates;
-    if departing from the default of \S\ref{sec:defaults}, justify.
-  \item Interaction topology including any multiplex layers and weights
-    $(\alpha_\ell)$.
-  \item Observer family, window length $w$, and state variables, if any
-    (archive size, embedding model, reference distribution, etc.).
+  \item Substrate $\X=(X,\Phi,\mu_0)$, including any
+    $\boxtimes_\kappa$-decomposition (\S\ref{sec:horizontal}) if
+    the system is horizontally composed.
+  \item Entity definition: scale projection $\pi$ and the
+    entity-detection rule satisfying E1.
+  \item Variation operator $V$ and any $\diamond_\rho$ couplings.
+  \item Viability filter family $F$ (named explicitly:
+    Markov-blanket, autopoietic, RAF, MCC, or other); if departing
+    from the default of \S\ref{sec:defaults}, justify.
+  \item Interaction topology $T$, including any multiplex layers and
+    weights $(\alpha_\ell)$.
   \item Iteration order. Default:
     $\widetilde S_F \circ \widetilde V_T \circ \widetilde\Phi$. Any
-    deviation (e.g.\ $\widetilde V_T \circ \widetilde S_F \circ
-    \widetilde\Phi$ for asynchronous selection) is stated explicitly.
+    deviation is stated explicitly.
+  \item Vitality profile $(k, \boldsymbol{\sigma})$ if computed
+    (the profile is not part of the input description; it is
+    reported once the trajectory has been observed).
 \end{enumerate}
 
-\paragraph{Reproducibility metadata (specified by the implementer).}
+\paragraph{Observation record (intrinsic to $O$).}
 \begin{enumerate}[leftmargin=2em,itemsep=2pt,start=8]
-  \item Descriptor space, archive update rule, saturation criterion, and
-    boundedness/open-endedness test used by the observer.
+  \item Observer functor $O : \mathbf{Sys} \to \mathbf{Obs}$,
+    family (density-distance, FM-embedding, or
+    information-theoretic), window length $w$, and observer state
+    variables (archive size, embedding model, reference
+    distribution).
+  \item Descriptor space, archive update rule, saturation criterion,
+    and boundedness test used by $O$.
+\end{enumerate}
+
+\paragraph{Reproducibility metadata (intrinsic to the implementation).}
+\begin{enumerate}[leftmargin=2em,itemsep=2pt,start=10]
   \item RNG provenance per kernel (counter-based scheme,
     $(\mathrm{seed},\,\mathrm{worker\,id},\,t)$ key triple).
   \item Per-tick wall-clock and theoretical complexity.
-  \item Pseudocode or executable specification for initialization, tick
-    update, observer-state update, stopping rule, and outputs.
+  \item Pseudocode or executable specification for initialization,
+    tick update, observer-state update, stopping rule, and outputs.
 \end{enumerate}
 
-The structural items follow from the system being an emergent system at
-all; supplying them is description, not certification. The reproducibility
-metadata is additionally required for replication, but is not implied by
-being an emergent system.
+The system description (items 1--7) follows from the system being an
+emergent system at all. The observation record (items 8--9) is what
+an external observer additionally specifies; an observer can be
+swapped without re-deriving the system description. The
+reproducibility metadata (items 10--12) is what an implementer
+records for replication; it is independent of both the system and
+the observer.
 
 \paragraph{Minimal pseudocode}
 A description-complete implementation supplies at least the following
@@ -1367,155 +1972,268 @@ two implementations be a comparison of choices, not of unstated defaults.
 
 \section{Results}\label{sec:results}
 
-% Results intentionally left open until empirical or formal results are added.
+No concrete results are claimed in this paper beyond the definitions
+and statements of conjecture (\S\ref{sec:conjectures}). The framework
+targets \textbf{L1} (causal emergence of a scaffolded system) as the
+first concrete result, with a Game-of-Life-under-Markov-blanket-
+viability candidate identified in \texttt{docs/proof\_techniques.md}.
+The proof itself will be developed as a focused result paper under
+\texttt{docs/papers/}, not in this manuscript. Subsequent result
+papers will address S1, N1, CAT1, LE, C1--C3, OP2, and OP3 in turn,
+each under its own subdirectory.
+
+Until L1 lands, this section remains empty.
 
 \section{Discussion}\label{sec:discussion}
 
 \subsection{Conjectures and Open Problems}\label{sec:conjectures}
 
-This section consolidates \emph{all} claims in the scaffold that we have
-\emph{not} proven. They are stated as conjectures or open problems to
-distinguish them from definitions and established propositions.
+This section consolidates \emph{all} claims in the framework that we
+have \emph{not} proven. They are stated as conjectures or open
+problems to distinguish them from definitions and established
+propositions. The framework's central content is four top-level
+conjectures: \textbf{S1} (sufficiency), \textbf{N1} (necessity),
+\textbf{CAT1} (characterisation), and \textbf{LE} (level emergence).
+Six lemma-level conjectures (\textbf{C1}, \textbf{C2}, \textbf{C3},
+\textbf{L1} = renamed \textbf{OP1}, \textbf{OP2}, \textbf{OP3}) are
+re-pointed as sub-claims that contribute to N1's machinery. All ten
+are unproven; status is tracked in \texttt{RESULTS.md}.
 
-\topic{Conjecture (closure-operator unification of viability)}\label{sec:c1}
+\topic{Top-level: sufficiency}\label{sec:s1}
+
+\begin{namedconjecture}{S1: sufficiency}
+There exists a 4-tuple system $\mathcal{S}$ and an external observer
+functor $O$ such that the pair $(\mathcal{S}, O)$ has vitality profile
+$(k, \boldsymbol{\sigma})$ with $k \geq 1$, hence $(\mathcal{S}, O) \in
+\mathbf{LifeCat}$.
+\end{namedconjecture}
+
+\paragraph{Status} Open. A positive answer to L1 (below) immediately
+gives a sufficiency witness for S1.
+
+\topic{Top-level: necessity}\label{sec:n1}
+
+\begin{namedconjecture}{N1: necessity}
+For every life-producing pair $(\mathcal{S}', O)$ in which
+$\mathcal{S}'$ is presentable as an $\mathcal{O}_W$-algebra
+$A: \mathcal{O}_W \to \mathbf{Stoch}$, there exists a 4-tuple system
+$\mathcal{S} = (\X, V, F, T) \in \mathbf{Sys}$ and a slot-preserving
+morphism $\mathcal{S} \to \mathcal{S}'$ that is essentially surjective
+on $O$-observable behaviour.
+\end{namedconjecture}
+
+\paragraph{Status} Open; the hardest of the top-level conjectures. The
+load-bearing object is a constructive decomposition functor
+$\mathrm{Decomp} : \mathrm{Alg}(\mathcal{O}_W) \to \mathbf{Sys}^{4\text{-slot}}$.
+Yau's finite-presentation theorem~\cite{yau2018operads} for $\mathcal{O}_W$
+reduces the proof to checking a small finite list of generators.
+Coordinate with OP3 (which shares the operadic-universality machinery).
+
+\topic{Top-level: characterisation}\label{sec:cat1}
+
+\begin{namedconjecture}{CAT1: characterisation}
+$\mathbf{LifeCat} \simeq \mathrm{image}(\mathrm{Decomp})$, with the
+vitality-profile equivalence preserved: life-producing pairs at
+profile $(k, \boldsymbol{\sigma})$ correspond to 4-tuple systems in
+the image of $\mathrm{Decomp}$ at matching $(k, \boldsymbol{\sigma})$.
+\end{namedconjecture}
+
+\paragraph{Status} Open; depends on S1 and N1 first. Largely a
+coherence theorem once those two land.
+
+\topic{Top-level: level emergence}\label{sec:le-conjecture}
+
+The LE conjecture is stated in \S\ref{sec:le} with its four
+conditions and worked walk-through; we restate it here as part of the
+top-level conjecture set:
+
+\begin{namedconjecture}{LE: level emergence}
+A system $\mathcal{S}$ at vitality profile depth $k$ undergoes a level
+transition to depth $k + 1$ over a time window iff its level-$k$
+entities satisfy four conditions over that window: persistence,
+aggregation, group variation, and group selection
+(\S\ref{sec:le}).
+\end{namedconjecture}
+
+\paragraph{Status} Open. The biological precedents (Maynard Smith \&
+Szathm\'ary~\cite{maynardsmith1995major}; Buss~\cite{buss1987evolution})
+are strong evidence for necessity. Sufficiency is genuinely open. LE
+is independent of S1/N1/CAT1 and can be pursued in parallel.
+
+\medskip
+
+\noindent The remaining six items are sub-lemma conjectures and open
+problems that contribute to N1's machinery and to the framework's
+specialisation in concrete substrates. They are stated unchanged from
+the pre-pivot version where applicable; the framing is sharper but the
+mathematical content is the same.
+
+\topic{Sub-lemma: closure-operator unification of viability}\label{sec:c1}
 
 \begin{namedconjecture}{C1: closure-operator unification of viability}
 Each of the four viability formalisms --- Markov-blanket viability,
 autopoietic closure, RAF set membership, and MCC --- corresponds to a
-closure operator $c_\bullet$ on a partial order of supporting sets (suitable
-to the formalism), in the sense that an entity passes the filter iff its
-supporting set is closed under $c_\bullet$.
+closure operator $c_\bullet$ on a partial order of supporting sets
+(suitable to the formalism), in the sense that an entity passes the
+filter iff its supporting set is closed under $c_\bullet$.
 \end{namedconjecture}
 
-\paragraph{Status} Partial evidence:
-\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \emph{Autopoiesis.} Beer's formalisation of Game-of-Life gliders
-    \cite{beer2014glider,beer2015autopoiesis} explicitly uses preimage-closure on the reaction
-    network --- this is a genuine closure operator on the reaction-set
-    lattice.
-  \item \emph{RAF.} The RAF property is defined exactly as ``$R'$ is closed
-    under reflexive autocatalysis and food-generation''; the maxRAF is the
-    largest closed set. Hordijk \& Steel's polynomial-time algorithm is a
-    closure-iteration. This case is essentially proven.
-  \item \emph{Markov blanket.} The statistical decomposition is \emph{not
-    obviously} a closure operator. Sparse-coupling implies blanket
-    structure only under additional conditions
-    \cite{aguilera2022particular,heins2022sparse}. C1 in this case is genuinely open.
-  \item \emph{MCC.} The minimal criterion is a predicate, not obviously a
-    closure. Reformulating it as ``smallest set of solver-and-problem pairs
-    satisfying mutual qualification'' gives a closure-like structure but
-    the equivalence is unproven.
-\end{itemize}
+\paragraph{Status} Open. Partial evidence: the RAF case is essentially
+proven via Hordijk-Steel
+algorithms~\cite{hordijk2004raf,hordijk2015algorithms}; the autopoietic
+case is given by Beer's preimage-closure construction on Game-of-Life
+gliders~\cite{beer2014glider,beer2015autopoiesis}; the Markov-blanket
+case is open and requires the additional conditions
+of~\cite{aguilera2022particular,heins2022sparse}; the MCC case requires
+a reformulation. C1 contributes to N1 by making Decomp canonical at
+each level $i$.
 
-A proof of C1 would unify the four formalisms abstractly; a refutation
-(e.g.\ a counterexample for the Markov-blanket case) would reveal that
-``viability'' is genuinely heterogeneous.
-
-\topic{Conjecture (hierarchical viability composition)}\label{sec:c2}
+\topic{Sub-lemma: hierarchical viability composition}\label{sec:c2}
 
 \begin{namedconjecture}{C2: hierarchical viability composition}
-Under the entity composition rule (E3), each viability formalism in C1 lifts
-to hierarchical entities such that $F^*$-validity at the composite level
-implies $F$-validity of each component. Equivalently: if each component
-closure operator agrees on its component supporting set, the composite is
-closed under the joint closure operator.
+Under the entity composition rule (E3), each viability formalism in C1
+lifts to hierarchical entities such that $F^*$-validity at the
+composite level implies $F$-validity of each component.
 \end{namedconjecture}
 
-\paragraph{Status} Open. Beer's autopoietic gliders compose correctly under
-simple unions; RAF sets do not in general (a union of two RAFs is not
-necessarily an RAF without their joint catalyses), giving a partial
-counterexample for one direction.
+\paragraph{Status} Open. Known partial counterexample: the union of
+two RAFs is not in general an RAF without their joint catalyses. C2 is
+the post-transition state of LE's mechanism --- it characterises
+which compositions of level-$k$ entities are valid level-$(k{+}1)$
+entities.
 
-\topic{Conjecture (observer-relative novelty as divergence)}
+\topic{Sub-lemma: observer-functor divergence schema}\label{sec:c3}
 
-\begin{namedconjecture}{C3: observer-relative novelty as divergence}
-All three observer families in \S\ref{sec:observer-families} ---
-density-distance, FM-embedding,
-information-theoretic --- are instances of a single divergence-functional
-schema $O[\mu] = D(\mu \,\Vert\, \mu_{\mathrm{ref}})$ for a context-dependent
-reference $\mu_{\mathrm{ref}}$.
+\begin{namedconjecture}{C3: observer functor as divergence functional}
+The external observer functor $O : \mathbf{Sys} \to \mathbf{Obs}$
+factors, in each of the three families
+(\S\ref{sec:observer}), through a single divergence-functional schema
+$O(\mathcal{S})[\mu] = D(\mu \,\Vert\, \mu_{\mathrm{ref}})$ for a
+context-dependent reference $\mu_{\mathrm{ref}}$.
 \end{namedconjecture}
 
-\paragraph{Status} Plausible by inspection but unproven in generality.
+\paragraph{Status} Open; plausible by inspection. Likely the easiest
+of the lemma-level conjectures. C3 contributes to N1 by tightening
+the typing of $\mathbf{Obs}$.
 
-\topic{Open problem (causal emergence of scaffolded systems)}\label{sec:op1}
+\topic{Concrete witness: causal emergence of scaffolded systems}\label{sec:op1}
 
-\begin{namedopenproblem}{OP1: causal emergence of scaffolded systems}
+\begin{namedopenproblem}{L1 (= renamed OP1): causal emergence of scaffolded systems}
 Find substrate--viability pairs $(\X, F)$ for which one can prove
-$\sup_\Pi \CE(M(\mathcal{S}),\Pi)>0$ for the scaffolded system $\mathcal{S}$.
+$\sup_\Pi \CE(M(\mathcal{S}),\Pi) > 0$ for the scaffolded system
+$\mathcal{S}$.
 \end{namedopenproblem}
 
-This manuscript does \emph{not} attempt a proof of OP1. Concrete candidate
-systems include:
-\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \emph{Flow-Lenia substrates with Markov-blanket viability filters.}
-    Are these emergent in the sense of Definition~\ref{def:CE}?
-  \item \emph{Differentiable Logic CA implementing Conway's Game of Life.}
-    Israeli and Goldenfeld \cite{israeli2004irreducibility,israeli2006coarse}
-    showed Class III/IV ECAs admit
-    non-trivial coarse-grainings; does CE follow?
-  \item \emph{POET / Enhanced POET coevolved environments and agents.} Is
-    there a coarse-graining at which environment--agent dynamics achieve
-    higher EI than the joint microscale?
-\end{itemize}
+\paragraph{Status} Open. L1 is the \textbf{first concrete result the
+framework targets}. A positive L1 result is automatically a positive
+S1 witness. The lowest-cost candidate is Game-of-Life under
+Markov-blanket viability: the dynamics is finite and deterministic,
+Israeli and Goldenfeld~\cite{israeli2004irreducibility,israeli2006coarse}
+have exhibited non-trivial coarse-grainings on related ECAs, and the
+combinatorics of preimage multiplicity give a tractable handle on
+$\mathrm{CE}$. See \texttt{docs/proof\_techniques.md} for the
+proof-strategy reading list. Other candidates: Flow-Lenia with
+Markov-blanket viability filters; POET / Enhanced POET coevolved
+environments and agents.
 
-OP1 is the scaffold's first concrete open problem.
-
-\topic{Open problem (FEP-as-lens scope)}
+\topic{Open problem: FEP-as-lens scope}
 
 \begin{namedopenproblem}{OP2: FEP-as-lens scope}
-Characterise precisely the substrate--dynamics pairs for which the FEP is
-informative as a parameterisation of viability and observer slots, in light
-of \cite{aguilera2022particular,biehl2021critique} and Friston's reply
-\cite{friston2022reply}.
+Characterise precisely the substrate--dynamics pairs $(X, \Phi)$ for
+which the FEP is informative as a parameterisation of viability and
+observer slots, in light
+of~\cite{aguilera2022particular,biehl2021critique} and Friston's
+reply~\cite{friston2022reply}.
 \end{namedopenproblem}
 
-\topic{Open problem (interaction-topology expressiveness)}
+\paragraph{Status} Open. Under the pivot framing, OP2 is the
+FEP-specialised case of N1: it asks which
+$\mathcal{O}_W$-presentations admit informative FEP parameterisations.
+
+\topic{Open problem: operadic universality of interaction topology}
 
 \begin{namedopenproblem}{OP3: interaction-topology expressiveness}
 Is the multiplex-with-$\diamond_\rho$ formalism in
-\S\ref{sec:multi-regime-topologies} universal, in the
-sense that every ``natural'' multi-coupling-regime ALife system can be
-expressed as a multiplex with countably many layers? A categorical
-formulation would express this in terms of the operad of wiring diagrams
-\cite{vagner2015algebras}.
+\S\ref{sec:multi-regime-topologies} universal in the operad of wiring
+diagrams~\cite{vagner2015algebras}, in the sense that every
+countably-many-layer multi-coupling-regime variation kernel factors
+through a wiring-diagram presentation?
 \end{namedopenproblem}
+
+\paragraph{Status} Open. OP3 shares machinery with N1 (both use
+$\mathcal{O}_W$); should be coordinated.
 
 \subsection{Scope and Commitments}\label{sec:scope}
 
-The scaffold \textbf{commits to} the five-slot decomposition, the substrate
-composition operator $\boxtimes_\kappa$, the variation-channel composition
-operator $\diamond_\rho$, the entity definition (Def.~\ref{def:entity}), the
-strict separation of substrate topology from interaction topology, the
-canonical iteration order
-$\widetilde S_F \circ \widetilde V_T \circ \widetilde\Phi$ (variants must be
-declared), and the Hoel-style definition of emergence
-(Def.~\ref{def:CE}).
+The framework \textbf{commits to} the 4-tuple decomposition
+$\mathcal{S} = (\X, V, F, T)$ with the observer as an \emph{external}
+category-theoretic functor, the operad of wiring diagrams as the
+ambient operad for $\mathbf{Sys}$, the symmetric monoidal category of
+$\mathcal{O}_W$-algebras in $\mathbf{Stoch}$ as the ambient category,
+the substrate composition operator $\boxtimes_\kappa$ as the monoidal
+product, the variation-channel composition operator $\diamond_\rho$,
+the entity definition (Def.~\ref{def:entity}), the strict separation
+of substrate topology from interaction topology, the canonical
+iteration order $\widetilde S_F \circ \widetilde V_T \circ
+\widetilde\Phi$ (variants must be declared), the Hoel-style definition
+of emergence (Def.~\ref{def:CE}), the vitality profile
+$(k, \boldsymbol{\sigma})$ as the structural measurement of
+$\mathbf{LifeCat}$ membership, the recursive level structure of
+\S\ref{sec:recursive-levels} (with non-triviality and discriminative
+capacity per Defs.~\ref{def:vnontriv}--\ref{def:disc-cap}), and the
+four-condition characterisation of level emergence (\S\ref{sec:le}).
 
-The scaffold \textbf{stays neutral on} the choice of fitness landscape, the
-choice of interaction-topology family, the choice of observer family (we
-offer three but commit to none), the metaphysical status of agency, the
-specific closure-operator structure of viability formalisms (left as
-Conjecture~C1), and --- critically --- the relationship between causal
-emergence and the rest of the framework (left as OP1).
+The framework \textbf{commits} on agency: agency is the value of the
+highest non-zero $\sigma_i$ in the vitality profile. A system has more
+agency at higher levels of self-shaping search. This is a precise
+structural commitment, not a metaphysical posit; it replaces an
+earlier neutrality on the metaphysical status of agency.
+
+The framework \textbf{stays open on} the choice of scale projection
+$\pi$ (modeler-relative; subject to E1), the choice of specific
+viability formalism (Markov-blanket, autopoietic, RAF, MCC, or other,
+each named explicitly when used), the choice of observer family
+(density-distance, FM-embedding, information-theoretic --- C3
+conjectures they unify, but the choice in any specific case remains
+free), the choice of coarse-graining $\Pi$ for causal emergence (the
+$\sup_\Pi$ in Def.~\ref{def:CE} is over all measurable partitions),
+the precise mathematical form of $\sigma_i$ in any specific substrate
+(the framework specifies conditional transfer entropy normalised by
+its theoretical maximum; alternative definitions are possible if they
+preserve the structural content), and the proof status of every
+conjecture and open problem (all are UNPROVEN as of the pivot date).
 
 \subsection{Limitations and Submission Positioning}
 
-The framework is intended to support comparison rather than to impose a single
-theory of agency, fitness, or open-endedness. Its main advantage is that a
-model can vary one slot while holding the others fixed, making ablations and
-cross-substrate comparisons explicit. Its main limitation is that several
-unifications remain conjectural: C1--C3 and OP1--OP3 identify where the
-framework still requires either proof, counterexample, or domain-specific
-instantiation.
+The framework is intended as a \textbf{theory} of life: a
+substrate-agnostic, predictive, categorical characterisation of what
+systems are alive and what is the structural shape of their life. It
+is not a methodology paper, not a comparison framework for existing
+ALife simulators, and not a survey. Where the framework's predictive
+content disagrees with the descriptive habits of artificial-life
+research, the framework's content takes precedence.
 
-For IEEE submission, the manuscript should therefore be read as a methodology
-and framework paper rather than an empirical benchmark paper. The representative
-instances and worked composite example demonstrate expressibility and
-implementation structure; they do not by themselves establish a new empirical
-state of the art. A venue that expects experimental validation may require a
-follow-on section with simulator results, ablations, or a quantitative
-comparison across at least two substrate families.
+The principal limitations are three. First, all four top-level
+conjectures (S1, N1, CAT1, LE) and all six sub-lemma conjectures
+(C1--C3, L1, OP2, OP3) are unproven; the framework's claims require
+proof, not just exposition. The first concrete result target is L1,
+to be developed as a focused result paper under
+\texttt{docs/papers/}; subsequent result papers under the same
+directory will address the remaining conjectures, one at a time.
+Second, the vitality-profile computation requires non-trivial
+algorithmic machinery (transfer entropy, counterfactual perturbation,
+substrate-specific entity detection) that is specified in the
+companion documentation but not yet implemented. Third, the framework
+predicts that cultural and linguistic systems are structurally
+deeper than individual biological organisms; this is a substantive
+empirical claim that requires validation against linguistic-evolution
+data.
+
+For submission to a venue expecting empirical validation, the
+framework's status is best read as a theoretical contribution
+analogous to early thermodynamics: a precise structural claim with
+staged proof obligations, awaiting both formal proofs and empirical
+witnesses across substrates.
 
 \section{Conclusion}
 

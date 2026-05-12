@@ -6,6 +6,16 @@ subdirectory. The scaffolding paper at
 reference; everything in this directory **cites** the scaffolding paper rather
 than redefining its types or notation.
 
+> **Framing pivot (2026-05-11).** Following the framing pivot documented in
+> [`../FRAMING_AUDIT.md`](../FRAMING_AUDIT.md), the downstream expository and
+> proof work develops as **a series of focused result papers under this
+> directory**, not as a textbook. A previous textbook draft under
+> `docs/textbook/` was deleted on 2026-05-11; see `CHANGELOG.md`. The full
+> catalogue of result papers to be written — covering both the existing
+> conjectures `C1`–`C3` / `OP1`–`OP3` and the new top-level conjectures `S1`,
+> `N1`, `CAT1`, `LE`, plus worked-example and methodology papers — is in
+> [`../FRAMING_PIVOT_TASKS.md`](../FRAMING_PIVOT_TASKS.md) Part 5.
+
 ## Layout
 
 ```text
@@ -35,9 +45,14 @@ Subdirectory names follow `<id>_<short-slug>/`:
   `c1_closure_unification/`).
 - `op<n>_<slug>/` for results addressing Open Problem OP\<n\> (e.g.
   `op1_causal_emergence_lenia/`).
+- `l<n>_<slug>/` for the renamed `L1` (= former `OP1`) and any
+  future lemma-level results.
+- `s<n>_<slug>/`, `n<n>_<slug>/`, `cat<n>_<slug>/`, `le_<slug>/`
+  for the post-pivot top-level conjectures (`S1`, `N1`, `CAT1`,
+  `LE` respectively).
 
 The `<id>` prefix matches the conjecture/open-problem identifiers used in the
-scaffolding paper §5.1 and tracked in [`RESULTS.md`](../../RESULTS.md). Use
+scaffolding paper and tracked in [`RESULTS.md`](../../RESULTS.md). Use
 lowercase ASCII for the slug; underscores between words.
 
 ## Starting a new result paper
