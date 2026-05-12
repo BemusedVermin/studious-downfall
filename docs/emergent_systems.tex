@@ -24,6 +24,11 @@
 % ---------- Hyperlinks ----------
 \usepackage[hidelinks]{hyperref}
 
+% ---------- Line-break tolerance ----------
+% Reduces benign Underfull \hbox warnings from IEEE's narrow two-column
+% measure on draft text. Doesn't change final typography quality.
+\setlength{\emergencystretch}{3em}
+
 % ---------- Theorem environments ----------
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[section]
