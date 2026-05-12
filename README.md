@@ -11,21 +11,34 @@
 A typed JAX scaffold for the substrate-agnostic emergent-systems framework defined in
 [`docs/emergent_systems.tex`](docs/emergent_systems.tex).
 
+> **2026-05-11 framing pivot.** The framework was repositioned from a descriptive vocabulary
+> for existing artificial-life systems to a **predictive characterisation theorem** for all
+> life — biological, artificial, and culturally constituted. The full audit and the new
+> conjecture set (S1, N1, CAT1, LE) live in
+> [`docs/FRAMING_AUDIT.md`](docs/FRAMING_AUDIT.md). The downstream task tracker is in
+> [`docs/FRAMING_PIVOT_TASKS.md`](docs/FRAMING_PIVOT_TASKS.md). The code refactor (4-slot
+> system, external observer functor, vitality-profile module) is pending as of the pivot
+> date; the description below reflects the v2 target.
+
 ## What this is
 
-The paper specifies an emergent system as a typed 5-tuple
+The paper specifies an emergent system as a typed 4-tuple
 
 ```text
-S = (X, V, F, T, O)
+S = (X, V, F, T)
 ```
 
-— substrate, variation, viability, interaction topology, observer — operating on a joint state
+— substrate, variation, viability, interaction topology — operating on a joint state
 space `Z = X × M+(X)` via the iteration rule
-`(x_{t+1}, μ_{t+1}) = (S̃_F ∘ Ṽ_T ∘ Φ̃)(x_t, μ_t)`.
+`(x_{t+1}, μ_{t+1}) = (S̃_F ∘ Ṽ_T ∘ Φ̃)(x_t, μ_t)`. The observer is an external
+category-theoretic functor `O: Sys → Obs` applied to the system's trajectory; it is not part
+of the tuple.
 
 This library encodes those types as Python `Protocol`s and provides the harness that wires them
 together. **The library does not ship concrete simulators.** Implementers supply the slots; the
-library composes, validates, and runs them.
+library composes, validates, and runs them. A new `vitality.py` module (pending implementation)
+computes the vitality profile $(k, \boldsymbol{\sigma})$ that determines `LifeCat` membership
+per [`docs/vitality_computation.md`](docs/vitality_computation.md).
 
 ## What the user supplies
 
@@ -35,8 +48,8 @@ library composes, validates, and runs them.
 | Variation | `Variation[State, Params]` | `V : X × Θ → P(X)` |
 | Viability | `ViabilityFilter[State]` | `F : M+(X) → M+(X)` |
 | Topology | `InteractionTopology` | `T_t` |
-| Observer | `StatefulObserver[State, ObserverState]` | `O_s` |
 | Entity detection | `EntityDetector[State]` | `e = (S, π)` |
+| Observer (external) | `StatefulObserver[State, ObserverState]` | `O: Sys → Obs` |
 
 ## Naming convention
 
@@ -83,12 +96,18 @@ of the form `# PERF[reason]: ...` mark candidates for a port to a faster languag
 
 ## Results
 
-Status of every conjecture (C1–C3) and open problem (OP1–OP3) from the scaffolding
-paper §5.1 is tracked in [`RESULTS.md`](RESULTS.md). Per-result proof papers live
-under [`docs/papers/`](docs/papers/), one self-contained LaTeX project per
-result; copy [`docs/papers/_template/`](docs/papers/_template/) to start one.
+Status of every conjecture (S1, N1, CAT1, LE, C1–C3) and open problem (L1 = OP1, OP2, OP3) is
+tracked in [`RESULTS.md`](RESULTS.md). Per-result proof papers live under
+[`docs/papers/`](docs/papers/), one self-contained LaTeX project per result; copy
+[`docs/papers/_template/`](docs/papers/_template/) to start one.
+
+The catalogue of result papers to be written is in
+[`docs/FRAMING_PIVOT_TASKS.md`](docs/FRAMING_PIVOT_TASKS.md) Part 5.
 
 ## Status
 
-The framework's conjectures (C1–C3) and open problems (OP1–OP3) are deliberately **not** baked
-into the type hierarchy. See [`docs/emergent_systems.tex`](docs/emergent_systems.tex) §5.1.
+The framework's conjectures are deliberately **not** baked into the type hierarchy. See
+[`docs/emergent_systems.tex`](docs/emergent_systems.tex) and the new conjecture set introduced
+by the 2026-05-11 framing pivot (S1, N1, CAT1, LE). The pivot's audit is in
+[`docs/FRAMING_AUDIT.md`](docs/FRAMING_AUDIT.md); the v2 design rationale is in
+[`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md).

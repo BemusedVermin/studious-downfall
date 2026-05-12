@@ -151,7 +151,9 @@ jobs:
           base="$(basename "${{ matrix.paper.root }}" .tex)"
           log="${{ matrix.paper.workdir }}/${base}.log"
           src="${{ matrix.paper.workdir }}/${{ matrix.paper.root }}"
-          bash scripts/check-latex-log.sh "$log" "$src" --format=actions
+          # --strict fails the leg on any Overfull/Underfull \hbox or \vbox,
+          # not only on hard errors. The PR-comment job remains informational.
+          bash scripts/check-latex-log.sh "$log" "$src" --format=actions --strict
 
   comment:
     # Aggregate every paper's log into a single sticky PR comment. Runs only on

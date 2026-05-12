@@ -287,3 +287,100 @@ What changed:
 - `spec.py`: `ConformanceReport`, `check_conformance`, `is_conformant`, and the `ConformanceStatus` literal are removed. The new method is `SystemSpec.missing_reproducibility_fields() -> tuple[str, ...]`.
 
 Treat the rest of this plan as a snapshot of the v1 design; the spec-as-gate framing in §`spec.py — the conformance checklist as data` and the surrounding test descriptions are superseded.
+
+## Divergence from the v1 plan — 2026-05-11 (framing pivot, v2 design)
+
+This addendum supersedes the v1 plan above for the components the
+framing pivot touches. See [`FRAMING_AUDIT.md`](FRAMING_AUDIT.md) for
+the full audit and [`FRAMING_PIVOT_TASKS.md`](FRAMING_PIVOT_TASKS.md)
+Part 2 for the corresponding code tasks.
+
+### What changed structurally
+
+The framework is no longer a 5-slot descriptive vocabulary; it is a
+4-slot predictive characterisation theorem with an external observer
+functor. The change cascades through the code as follows:
+
+- **System tuple is now $(\mathbf{X}, V, F, T)$.** The observer slot
+  `O` is removed from `System` and from the iteration. The observer
+  becomes a category-theoretic functor $O: \mathbf{Sys} \to \mathbf{Obs}$
+  attached at run time, not stored on the system.
+- **Iteration rule unchanged.** $\widetilde{S}_F \circ \widetilde{V}_T \circ \widetilde{\Phi}$
+  remains the canonical tick.
+- **Ambient category committed.** $\mathbf{Sys}$ is the SMC of
+  $\mathcal{O}_W$-algebras in $\mathbf{Stoch}$. An interpretive lift
+  to a sheaf topos is available via Schultz–Spivak 2019 /
+  classifying-topos / substrate-induced-locality, but is not
+  foundational.
+- **`LifeCat` membership predicate is the vitality profile
+  $(k, \boldsymbol{\sigma})$.** Membership requires $k \geq 1$. See
+  [`vitality_computation.md`](vitality_computation.md) for the
+  algorithm.
+
+### What the v2 code changes need
+
+**`System` dataclass** ([`src/emergent_systems/system.py`](../src/emergent_systems/system.py)):
+remove the `observer` field; `run(system, observer, ...)` takes the
+observer as an argument. New helper `observe(system, trajectory, observer)`
+applies an external observer functor to a trajectory.
+
+**`SystemSpec` split** ([`src/emergent_systems/spec.py`](../src/emergent_systems/spec.py)):
+the spec splits into `SystemSpec` (structural items 1–7) +
+`ObservationSpec` (observer family, window, state, descriptor
+space). The two compose at the call site.
+
+**New module `vitality.py`** ([`src/emergent_systems/vitality.py`](../src/emergent_systems/vitality.py)):
+implements the algorithm from [`vitality_computation.md`](vitality_computation.md).
+Provides `VitalityProfile`, `compute_vitality_profile`,
+`compute_composite_vitality_profile`, `infer_coupling_structure`,
+plus comparison machinery (`are_structurally_equivalent`,
+`partial_order_compare`, `observer_mediated_compare`,
+`compare_systems`) and transition-detection machinery
+(`detect_level_transition`, `scan_trajectory_for_transitions`).
+
+**Conditional transfer entropy helper.** Pin one of IDTxl / JIDT /
+pyinform in `pyproject.toml`; alternatively, write a
+Kraskov-Stögbauer-Grassberger estimator in pure JAX.
+
+**Counterfactual perturbation infrastructure.** Helper for
+`has_discriminative_capacity` that runs the system with and without
+an injected mutant.
+
+**Substrate-specific entity detectors.** Extend
+[`entity.py`](../src/emergent_systems/entity.py) with
+connected-component / DBSCAN / syntactic detectors per
+[`vitality_computation.md`](vitality_computation.md) §1.2.
+
+**Test fixtures.** Add `tests/test_vitality.py` with fixtures
+matching the regression table in
+[`vitality_computation.md`](vitality_computation.md) §"Validation":
+hurricane → $(0, ())$, converged GA → $(1, (0))$, active Tierra →
+$(2, (1, 1))$, etc. Update `tests/test_pipeline.py` and
+`tests/test_conformance.py` to construct system and observer
+separately.
+
+### What survives unchanged from v1
+
+- The four viability formalisms remain separate (`MarkovBlanketViability`,
+  `AutopoieticClosureViability`, `RAFSetViability`,
+  `MinimalCriterionViability`). C1' (closure-operator unification)
+  is still UNPROVEN; the library deliberately does not unify them.
+- `Distribution[State]` / `Population[State]` split is unchanged.
+- Performance-flagging discipline (`PERF[...]` comments) is unchanged.
+- No `@beartype` / `@jaxtyped` on hot paths (the test-typing
+  guard remains).
+- The naming convention (English identifiers + `# paper: <symbol>`
+  comments) is unchanged.
+
+### What is no longer load-bearing
+
+- The observer-as-slot typing (`Observer` Protocol stays as a
+  Protocol, but it is no longer composed *inside* `System`; it is
+  consumed *by* `observe()` at the call site).
+- The "five-slot model" framing throughout this plan.
+- `SystemSpec` as a single document for both structural and
+  observation-side data (now split).
+
+The full task breakdown for the v2 code refactor is in
+[`FRAMING_PIVOT_TASKS.md`](FRAMING_PIVOT_TASKS.md) Part 2 (`C-1`
+through `C-12`).
