@@ -4,11 +4,13 @@
 # Two output formats:
 #   --format=actions   (default) — emits ::error::/::warning:: GitHub Actions
 #                                  annotations. Exit 1 on hard errors so the
-#                                  workflow leg fails.
+#                                  workflow leg fails. Pair with --strict to
+#                                  also fail on soft warnings.
 #   --format=markdown            — emits a markdown fragment for use in PR
 #                                  comments. Exit 0 unless the log file is
 #                                  missing (so the comment job aggregates all
-#                                  papers even when one has errors).
+#                                  papers even when one has errors). --strict
+#                                  is ignored in this mode.
 #
 # Hard errors (always counted, both formats):
 #   - LaTeX Warning: Reference|Citation ... undefined
@@ -20,16 +22,19 @@
 #   - Overfull|Underfull \h|\vbox
 #
 # Usage:
-#   check-latex-log.sh <log_file> <source_path> [--format=actions|markdown]
+#   check-latex-log.sh <log_file> <source_path>
+#       [--format=actions|markdown] [--strict]
 #
 # Exit codes:
 #   0  clean OR markdown mode (markdown mode never exits non-zero on content)
 #   1  actions mode and hard errors found
+#      (or, with --strict, actions mode and any warning found)
 #   2  usage/setup error (log file missing, bad flag)
 
 set -uo pipefail
 
 format="actions"
+strict=0
 positional=()
 for arg in "$@"; do
   case "$arg" in
@@ -39,6 +44,9 @@ for arg in "$@"; do
     --format=*)
       echo "::error::unknown --format value: ${arg#--format=}" >&2
       exit 2
+      ;;
+    --strict)
+      strict=1
       ;;
     -*)
       echo "::error::unknown flag: $arg" >&2
@@ -51,7 +59,7 @@ for arg in "$@"; do
 done
 
 if (( ${#positional[@]} != 2 )); then
-  echo "usage: $0 <log_file> <source_path> [--format=actions|markdown]" >&2
+  echo "usage: $0 <log_file> <source_path> [--format=actions|markdown] [--strict]" >&2
   exit 2
 fi
 
@@ -108,8 +116,16 @@ case "$format" in
       echo "::warning file=${src}::$w"
     done
     echo ""
-    echo "LaTeX log summary for ${src}: ${n_err} error(s), ${n_warn} warning(s)."
+    if (( strict )); then
+      mode="strict"
+    else
+      mode="errors-only"
+    fi
+    echo "LaTeX log summary for ${src} (${mode}): ${n_err} error(s), ${n_warn} warning(s)."
     if (( n_err > 0 )); then
+      exit 1
+    fi
+    if (( strict && n_warn > 0 )); then
       exit 1
     fi
     ;;
