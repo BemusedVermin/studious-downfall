@@ -1,0 +1,165 @@
+% =============================================================================
+%  L1 (= renamed OP1): Causal Emergence of Game of Life
+%      under Markov-blanket viability — skeleton paper
+%  STATUS: UNPROVEN. This file is a skeleton; the proof is not attempted here.
+% =============================================================================
+\documentclass[11pt]{article}
+
+% ---------- Encoding & fonts ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+
+% ---------- Math ----------
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+
+% ---------- Layout ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+
+% ---------- Hyperlinks ----------
+\usepackage[hidelinks]{hyperref}
+
+% ---------- Theorem environments ----------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem*{namedconjecture}{Conjecture}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% ---------- Math shortcuts (mirror scaffolding paper) ----------
+\DeclareMathOperator{\EI}{EI}
+\DeclareMathOperator{\CE}{CE}
+\newcommand{\X}{\mathbf{X}}
+
+% =============================================================================
+\title{Causal Emergence of Game of Life under Markov-blanket Viability \\
+       \large (UNPROVEN --- skeleton paper for L1)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} that records the statement of L1
+(= renamed OP1) from the scaffolding paper~\cite{emergent_systems_2026},
+identifies the lowest-cost candidate witness system
+(Game of Life under Markov-blanket viability), and sketches the
+proof-attack plan. \textbf{No proof is attempted in this paper as of
+its current revision.} The result is UNPROVEN. The paper exists so
+that a future proof can be developed against a fixed statement and
+plan, with status tracked in \texttt{RESULTS.md}.
+\end{abstract}
+
+% -----------------------------------------------------------------------------
+\section{Statement (UNPROVEN)}
+
+\begin{quote}
+\emph{``L1 (= renamed OP1): causal emergence of scaffolded systems ---
+Find substrate--viability pairs $(\X, F)$ for which one can prove
+$\sup_\Pi \CE(M(\mathcal{S}), \Pi) > 0$ for the scaffolded system
+$\mathcal{S}$.''}
+\end{quote}
+
+\noindent (Scaffolding paper~\cite{emergent_systems_2026},
+\S\texttt{sec:op1}.)
+
+This is L1's role in the framework's conjecture set: a positive
+answer is a sufficiency witness for the top-level conjecture S1
+($\mathbf{LifeCat}$ is non-empty), and is therefore the first
+concrete result the framework targets.
+
+% -----------------------------------------------------------------------------
+\section{Result (target, UNPROVEN)}
+
+The result this paper \emph{intends} to prove --- but does not yet ---
+is the existence direction of L1 on a specific candidate:
+
+\begin{quote}
+\emph{Conjectured.} Game of Life with a Markov-blanket viability filter
+$F_{\mathrm{MB}}$ on bounded-support configurations is causally
+emergent in the sense of $\sup_\Pi \CE(M(\mathcal{S}), \Pi) > 0$.
+\end{quote}
+
+The candidate is taken from \texttt{proof\_techniques.md} §OP1.D,
+``Lowest-hanging fruit.''
+
+% -----------------------------------------------------------------------------
+\section{Plan of attack (no proof attempted)}
+
+The plan below is the proposed proof structure. \emph{No step is
+discharged in this paper.} Each step has a UNPROVEN tag; future
+revisions of this paper will discharge them one at a time.
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{Finite-Markov reduction (UNPROVEN).} Restrict GoL to
+    bounded-support configurations of total area $\leq A$. The
+    resulting state space is finite; the GoL update is deterministic;
+    the induced Markov chain $M(\mathcal{S})$ is finite-state. This is
+    routine combinatorics and is included as the first lemma so the
+    rest of the proof has a finite chain to work with.
+  \item \textbf{Markov-blanket filter (UNPROVEN).} Construct
+    $F_{\mathrm{MB}}$ on the finite state space by following the
+    sparse-coupling-to-blanket-structure conditions of Heins \& Da Costa
+    \cite{heins2022sparse}. Verify that the resulting filter is
+    non-trivial (Definition non-trivial F in the scaffolding paper)
+    and has discriminative capacity.
+  \item \textbf{Macroscale partition $\Pi^*$ (UNPROVEN).} Promote the
+    Israeli--Goldenfeld~\cite{israeli2004irreducibility,israeli2006coarse}
+    block-coarse-grainings for related ECAs to GoL. Identify a
+    candidate $\Pi^*$ partitioning configurations by their
+    oscillator / glider / still-life equivalence classes.
+  \item \textbf{Lumpability (UNPROVEN).} Verify the strong-lumpability
+    condition of Kemeny and Snell, $UVPV = PV$, on the pair
+    $(M(\mathcal{S}), \Pi^*)$. This yields a well-defined macro
+    chain $M^{\Pi^*}$.
+  \item \textbf{EI comparison (UNPROVEN).} Compute $\EI(M^{\Pi^*})$
+    and $\EI(M(\mathcal{S}))$ via the
+    Hoel--Albantakis--Tononi~\cite{hoel2013macro} determinism--degeneracy
+    decomposition. Show that the macro-EI is strictly greater than
+    the micro-EI on the bounded-support GoL with the chosen blanket
+    filter, by bounding preimage multiplicity.
+  \item \textbf{Robustness (UNPROVEN).} Apply
+    Comolatti--Hoel~\cite{comolatti2022causal} to argue the
+    $\CE > 0$ result is robust across causal measures (not an
+    artefact of EI specifically).
+\end{enumerate}
+
+The above steps are listed as targets, not as proven lemmas. None of
+them is discharged in this paper as of its current revision.
+
+% -----------------------------------------------------------------------------
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN.} This paper currently exists as a
+statement-and-plan skeleton, not as a proof. \texttt{RESULTS.md}
+records L1 as \texttt{open}.
+
+When the proof lands, the status should flip to \texttt{proved} and
+this paper should expand the ``Plan of attack'' section into the
+actual proof. A positive L1 result will simultaneously provide a
+sufficiency witness for the framework's top-level conjecture S1; the
+companion paper \texttt{s1\_sufficiency/} can then cite this paper
+rather than constructing its own witness from scratch.
+
+If a step in the plan fails (e.g., strong lumpability cannot be
+verified for any natural $\Pi^*$ on GoL), the paper should record
+the obstruction and pivot to one of the alternative candidate
+systems flagged in the scaffolding paper §\texttt{sec:op1} ---
+Flow-Lenia with Markov-blanket viability, Differentiable Logic CA,
+POET-style coevolved environments --- with status
+\texttt{mutated} in \texttt{RESULTS.md}.
+
+% =============================================================================
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

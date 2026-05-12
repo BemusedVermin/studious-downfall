@@ -1,0 +1,89 @@
+% =============================================================================
+%  C3: Observer functor as divergence functional — skeleton paper
+%  STATUS: UNPROVEN. Plausibly the easiest of the lemma-level conjectures.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{namedconjecture}{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{Observer Functor as Divergence Functional \\
+       \large (UNPROVEN --- skeleton paper for C3)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} that records C3 from the scaffolding
+paper~\cite{emergent_systems_2026}. \textbf{No proof is attempted.}
+Plausibly the easiest of the lemma-level conjectures; the three
+observer families very likely unify via a Reid--Williamson-style
+divergence schema, but the proof is not written here.
+The result is UNPROVEN.
+\end{abstract}
+
+\section{Statement (UNPROVEN)}
+
+\begin{quote}
+\emph{``C3 (observer functor as divergence functional): the external
+observer functor $O : \mathbf{Sys} \to \mathbf{Obs}$ factors, in each
+of the three families (density-distance, FM-embedding,
+information-theoretic), through a single divergence-functional schema
+$O(\mathcal{S})[\mu] = D(\mu \,\Vert\, \mu_{\mathrm{ref}})$ for a
+context-dependent reference $\mu_{\mathrm{ref}}$.''}
+\end{quote}
+\noindent (Scaffolding paper~\cite{emergent_systems_2026},
+\S\texttt{sec:c3}.)
+
+\section{Plan of attack (no proof attempted)}
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{Density-distance family (UNPROVEN, easy).} Fits by
+    construction: novelty-search and Quality-Diversity observers
+    score by a divergence against an archive or uniform reference.
+    Citing Lehman \& Stanley~\cite{lehman2011novelty} and the QD
+    literature is the work.
+  \item \textbf{FM-embedding family (UNPROVEN, moderate).} ASAL and
+    OMNI-EPIC observers fit when $\mu_{\mathrm{ref}}$ is taken as the
+    archive's embedding distribution. The proof uses
+    Belghazi et al.'s MINE construction and Sriperumbudur's IPM
+    machinery to express embedding distance as an integral
+    probability metric.
+  \item \textbf{Information-theoretic family (UNPROVEN, easy).}
+    Mutual information, transfer entropy, and effective information
+    are all KL divergences against appropriate factored references.
+    Schreiber's transfer entropy is one line; Hoel's EI is the
+    intervention-averaged KL.
+  \item \textbf{Unification (UNPROVEN, the load-bearing step).}
+    Following Reid \& Williamson, all three reduce to a single
+    schema modulo monotone reparametrisations. The exact equivalence
+    statement depends on how strict the schema is required to be.
+\end{enumerate}
+
+The Agrawal--Horel optimal-bounds result on f-divergences vs.\ IPMs
+suggests the right statement is ``equivalent up to monotone
+reparametrisation'' rather than literal equality.
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN.} Plausibly the lowest-cost lemma to
+prove. A positive C3 tightens the typing of $\mathbf{Obs}$ for
+N1's Decomp construction.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

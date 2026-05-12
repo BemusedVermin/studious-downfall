@@ -1,0 +1,106 @@
+% =============================================================================
+%  LE: Level Emergence — skeleton paper
+%  STATUS: UNPROVEN. Independent of S1/N1/CAT1; can be pursued in parallel.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{namedconjecture}{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{Level Emergence: The Four-Condition Mechanism by which \\
+       Hierarchical Life Arises Dynamically \\
+       \large (UNPROVEN --- skeleton paper for LE)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} that records LE from the
+scaffolding paper~\cite{emergent_systems_2026}. \textbf{No proof is
+attempted.} LE is the framework's structural theory of major
+evolutionary transitions, generalised from Maynard Smith \&
+Szathm\'ary~\cite{maynardsmith1995major} to a substrate-agnostic
+setting. It is the dynamical companion to the static
+characterisation theorems (S1, N1, CAT1). The result is UNPROVEN.
+\end{abstract}
+
+\section{Statement (UNPROVEN)}
+
+\begin{quote}
+\emph{``LE (level emergence): a system $\mathcal{S}$ at vitality
+profile depth $k$ undergoes a level transition to depth $k+1$ over a
+time window iff its level-$k$ entities satisfy four conditions over
+that window: persistence, aggregation, group variation, and group
+selection.''}
+\end{quote}
+\noindent (Scaffolding paper~\cite{emergent_systems_2026},
+\S\texttt{sec:le}; restated in \S\texttt{sec:le-conjecture}.)
+
+\section{Plan of attack (no proof attempted)}
+
+Four sub-lemmas, one per condition, plus the iff bridging them.
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{Persistence sub-lemma (UNPROVEN).} Level-$k$ entities
+    have lifetimes much longer than substrate relaxation time. Make
+    precise what ``much longer'' means in the operadic setting.
+  \item \textbf{Aggregation sub-lemma (UNPROVEN).} A non-trivial
+    coupling structure $\kappa^{(k)}$ produces persistent multi-entity
+    patterns. Connect to the substrate composition operator
+    $\boxtimes_\kappa$.
+  \item \textbf{Group-variation sub-lemma (UNPROVEN).} The coupling
+    varies non-trivially across the population of aggregates.
+    Operationalise as positive Shannon entropy of $\kappa^{(k)}$
+    across aggregate types.
+  \item \textbf{Group-selection sub-lemma (UNPROVEN).} Aggregate
+    types have measurably different persistence rates.
+    Operationalise as positive coefficient of variation across
+    persistence rates.
+  \item \textbf{Necessity direction (UNPROVEN, easier).} If a level
+    transition has occurred, the four conditions held over a
+    preceding window. Empirically grounded in
+    Maynard Smith \& Szathm\'ary~\cite{maynardsmith1995major} and
+    Buss~\cite{buss1987evolution}; formalising for substrate-agnostic
+    systems is the work.
+  \item \textbf{Sufficiency direction (UNPROVEN, harder).} If the
+    four conditions hold over a sufficient time window, a level
+    transition occurs. Requires either a substrate-agnostic
+    construction or a case analysis across operadic generators.
+\end{enumerate}
+
+\section{Worked specialisations}
+
+The scaffolding paper walks through chemistry $\to$ cells, cells $\to$
+organisms, organisms $\to$ ecosystems. Each is a candidate
+specialisation of LE. Other candidates worth working out:
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item Tierra-arms-race level-1 $\to$ level-2 transition (programmatic);
+  \item spoken $\to$ written language transition (cultural);
+  \item endosymbiosis-as-level-transition (Margulis, biological).
+\end{itemize}
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN.} Independent of S1/N1/CAT1; can be
+pursued in parallel. Coordinate with \texttt{c2\_hierarchical\_viability/}
+(C2 is the post-transition structure).
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
