@@ -86,9 +86,13 @@ Seattle, Washington, United States. Email: liammcg44@gmail.com.}}
 
 \begin{document}
 \maketitle
-% Looser line-break tolerance for IEEE's narrow two-column measure on
-% paragraphs containing long unbreakable math and tabular cells.
+% IEEE's narrow two-column measure produces residual Underfull \hbox
+% warnings in paragraphs containing long unbreakable inline math, even
+% with full microtype expansion. Suppress reports below moderate badness
+% (5000) and allow variable column heights to clear the Underfull \vbox.
 \sloppy
+\hbadness=5000
+\raggedbottom
 
 \begin{abstract}
 This paper proposes a substrate-agnostic mathematical theory of life as the
@@ -1207,9 +1211,11 @@ observer.
 
 \paragraph{Partial order on profiles.} Define
 \[
-  (k_1, \boldsymbol{\sigma}_1) \;\preceq\; (k_2, \boldsymbol{\sigma}_2)
-  \;\iff\; k_1 \leq k_2 \text{ and } \forall i \leq k_1,\;
-  \sigma_{1, i} \leq \sigma_{2, i}.
+  \begin{aligned}
+    (k_1, \boldsymbol{\sigma}_1) \;\preceq\; (k_2, \boldsymbol{\sigma}_2)
+    \;&\iff\; k_1 \leq k_2 \\
+    &\quad \text{and } \sigma_{1,i} \leq \sigma_{2,i} \;\forall i \leq k_1.
+  \end{aligned}
 \]
 System 2 is ``at least as life-like'' as System 1 iff it dominates in
 every component. Most pairs of systems are incomparable in this partial
@@ -1629,15 +1635,13 @@ $\X = \X_{\mathrm{FL}} \boxtimes_{\kappa} \X_{\mathrm{LLM}}$, where
         \mu_{0}^{\mathrm{LLM}}\big)$ with $\Sigma^{*}$ the space of token
         sequences and the LLM substrate dynamics taken to be the identity
         (the LLM is queried, not autonomously evolved);
-  \item coupling
-        $\kappa = (\kappa_{\mathrm{FL}\to\mathrm{LLM}},\,
-                    \kappa_{\mathrm{LLM}\to\mathrm{FL}})$ with
-        $\kappa_{\mathrm{FL}\to\mathrm{LLM}}(x_{\mathrm{FL}}) =
-         \mathrm{render}(x_{\mathrm{FL}})$ (a text-prompt context drawn
-        from the rendered frame) and
-        $\kappa_{\mathrm{LLM}\to\mathrm{FL}}(x_{\mathrm{LLM}})$ a
-        per-creature scalar viability bonus indexed by the entity's
-        support $S$ each tick.
+  \item coupling $\kappa = (\kappa_{\mathrm{FL}\to\mathrm{LLM}},\,
+        \kappa_{\mathrm{LLM}\to\mathrm{FL}})$, where
+        $\kappa_{\mathrm{FL}\to\mathrm{LLM}}$ renders a text-prompt
+        context from the Flow-Lenia frame and
+        $\kappa_{\mathrm{LLM}\to\mathrm{FL}}$ supplies a per-creature
+        scalar viability bonus indexed by the entity's support $S$ each
+        tick.
 \end{itemize}
 
 \paragraph{Entities}
@@ -1732,8 +1736,11 @@ documentation accompanying this paper (see
 \texttt{docs/vitality\_computation.md}).
 
 \paragraph{Emergence assessment (open)}
-Whether $\sup_{\Pi}\CE(M(\mathcal{S}),\Pi) > 0$ holds for this system is a
-concrete instance of L1 (= renamed OP1; see
+Whether
+\[
+  \sup_{\Pi}\,\CE\bigl(M(\mathcal{S}),\Pi\bigr) > 0
+\]
+holds for this system is a concrete instance of L1 (= renamed OP1; see
 \S\ref{sec:op1}).
 
 \medskip
@@ -1962,10 +1969,10 @@ control-flow template, specialised to its chosen slots:
     $\mu' = V_{T_t}(\mu_t;x')$.
   \item Apply the viability filter $\mu_{t+1}=F(\mu')$ and set
     $x_{t+1}=x'$.
-  \item Evaluate $(o_t,a_{t+1})=O_s((x,\mu)_{t-w:t+1},a_t)$, update any
-    archive, and test the stopping or saturation criterion.
-  \item Return trajectory summaries, observer outputs, archive state, and
-    reproducibility metadata.
+  \item Evaluate $(o_t,a_{t+1})=O_s((x,\mu)_{t-w:t+1},a_t)$,
+    update any archive, and test the saturation criterion.
+  \item Return trajectory summaries, observer outputs, archive
+    state, and reproducibility metadata.
 \end{enumerate}
 
 \paragraph{Comparing implementations}
@@ -2042,9 +2049,9 @@ Coordinate with OP3 (which shares the operadic-universality machinery).
 
 \begin{namedconjecture}{CAT1: characterisation}
 $\mathbf{LifeCat} \simeq \mathrm{image}(\mathrm{Decomp})$, with the
-vitality-profile equivalence preserved: life-producing pairs at
-profile $(k, \boldsymbol{\sigma})$ correspond to 4-tuple systems in
-the image of $\mathrm{Decomp}$ at matching $(k, \boldsymbol{\sigma})$.
+vitality profile preserved: life-producing pairs at profile
+$(k, \boldsymbol{\sigma})$ correspond to 4-tuple systems in the image
+of $\mathrm{Decomp}$ at matching $(k, \boldsymbol{\sigma})$.
 \end{namedconjecture}
 
 \paragraph{Status} Open; depends on S1 and N1 first. Largely a
