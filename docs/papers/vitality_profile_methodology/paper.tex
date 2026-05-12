@@ -40,10 +40,16 @@ predictive thesis.
 \section{Goal (UNPROVEN-as-validated)}
 
 Present the vitality-profile algorithm in publishable form, with
-sufficient detail for an external researcher to implement it and to
-validate it against the regression-test cases in
-\texttt{vitality\_computation.md} (hurricane $\to (0, ())$,
-converged GA $\to (1, (0))$, active Tierra $\to (2, (1, 1))$, etc.).
+sufficient detail for an external researcher to implement and
+validate it. The test fixtures live in
+\texttt{vitality\_computation.md}:
+%
+\begin{itemize}[leftmargin=2em,itemsep=2pt]
+  \item hurricane gives $(0, ())$;
+  \item converged GA gives $(1, (0))$;
+  \item active Tierra gives $(2, (1, 1))$;
+  \item and so on.
+\end{itemize}
 
 \section{Plan of attack (no proof attempted)}
 
@@ -55,14 +61,15 @@ converged GA $\to (1, (0))$, active Tierra $\to (2, (1, 1))$, etc.).
     and Stage 5 (level-transition detection). The current draft of
     \texttt{vitality\_computation.md} is the source.
   \item \textbf{Implementation reference (UNPROVEN).} Describe the
-    \texttt{vitality.py} module (pending, see
-    \texttt{FRAMING\_PIVOT\_TASKS.md} Part 2 C-5) and how it composes
-    existing primitives from \texttt{emergence.py},
-    \texttt{entity.py}, \texttt{viability.py}, \texttt{observer.py}.
+    \texttt{vitality.py} module (pending; see
+    \texttt{FRAMING\_PIVOT\_TASKS.md} Part 2, task C-5). Show how
+    it composes existing primitives from \texttt{emergence.py},
+    \texttt{entity.py}, \texttt{viability.py}, and
+    \texttt{observer.py}.
   \item \textbf{Empirical validation (UNPROVEN).} Run the algorithm
     on the regression-test fixtures. Verify that the verdicts match
-    the structural predictions. Where they disagree, identify
-    estimator-vs-truth discrepancies vs.\ algorithm errors.
+    the structural predictions. Where they disagree, distinguish
+    estimator error from algorithm error.
   \item \textbf{Methodology comparison (UNPROVEN).} Compare with
     existing ALife methodology: Phi-ID, Wolfram classes,
     open-endedness metrics. Where the vitality profile gives a

@@ -71,10 +71,10 @@ $O$-observable behaviour.''}
     (8 generators, 28 relations for the directed case; 6/17 for the
     undirected variant). Verify that $\mathrm{Decomp}$ respects each
     generator's action and each relation.
-  \item \textbf{Essential surjectivity (UNPROVEN).} Prove that for
-    every life-producing pair, $\mathrm{Decomp}$ produces a 4-slot
+  \item \textbf{Essential surjectivity (UNPROVEN).} For every
+    life-producing pair, $\mathrm{Decomp}$ should yield a 4-slot
     system whose $O$-observable behaviour matches. This is the
-    behaviour-preserving condition the framework actually needs.
+    behaviour-preservation condition.
   \item \textbf{Specialisation cases (UNPROVEN).} Instantiate
     $\mathrm{Decomp}$ for at least three canonical examples: a cell
     (chemical reaction network presentation), an immune-system
@@ -84,8 +84,9 @@ $O$-observable behaviour.''}
 
 \section{Coordination}
 
-N1 shares machinery with `op3_topology_universality/` (both invoke
-the operad of wiring diagrams) and depends on `c1_closure_unification/`
+N1 shares machinery with \texttt{op3\_topology\_universality/} (both
+invoke the operad of wiring diagrams) and depends on
+\texttt{c1\_closure\_unification/}
 to make $\mathrm{Decomp}$ canonical on the viability side. The three
 papers should be developed together.
 
