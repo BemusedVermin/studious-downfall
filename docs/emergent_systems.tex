@@ -16,6 +16,7 @@
 
 % ---------- Layout and references ----------
 \usepackage{enumitem}
+\usepackage{array}  % required for >{\raggedright\arraybackslash}p{...} column specs
 \usepackage{cite}
 \usepackage{url}
 \usepackage{tikz}
@@ -1538,7 +1539,7 @@ substrate-agnostic systems. Morphogenesis-as-Bayesian-inference
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{3pt}
 \scriptsize
-\begin{tabular}{@{}p{0.13\textwidth} p{0.205\textwidth} p{0.19\textwidth} p{0.19\textwidth} p{0.19\textwidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.13\textwidth} >{\raggedright\arraybackslash}p{0.205\textwidth} >{\raggedright\arraybackslash}p{0.19\textwidth} >{\raggedright\arraybackslash}p{0.19\textwidth} >{\raggedright\arraybackslash}p{0.19\textwidth}@{}}
 \hline
 \textbf{Slot} & \textbf{Lattice-like} & \textbf{Particle-like} & \textbf{Graph-like} & \textbf{Program-like} \\
 \hline
