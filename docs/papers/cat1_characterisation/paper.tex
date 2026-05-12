@@ -1,0 +1,81 @@
+% =============================================================================
+%  CAT1: Characterisation — skeleton paper
+%  STATUS: UNPROVEN. Skeleton only; depends on S1 and N1 first.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{namedconjecture}{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{Characterisation of $\mathbf{LifeCat}$ via the Decomposition Functor \\
+       \large (UNPROVEN --- skeleton paper for CAT1)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} that records the statement of the
+characterisation conjecture CAT1 from the scaffolding
+paper~\cite{emergent_systems_2026}. \textbf{No proof is attempted.}
+The result is UNPROVEN. CAT1 depends on S1 and N1, both of which are
+also UNPROVEN; CAT1 should be the \emph{last} of the top-level
+conjectures attempted, not the first.
+\end{abstract}
+
+\section{Statement (UNPROVEN)}
+
+\begin{quote}
+\emph{``CAT1 (characterisation): $\mathbf{LifeCat} \simeq
+\mathrm{image}(\mathrm{Decomp})$, with the vitality-profile equivalence
+preserved.''}
+\end{quote}
+\noindent (Scaffolding paper~\cite{emergent_systems_2026},
+\S\texttt{sec:cat1}.)
+
+\section{Plan of attack (no proof attempted)}
+
+CAT1 is essentially S1 + N1 + a coherence theorem. Once S1 and N1
+land, the remaining content is:
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{Equivalence direction $\subseteq$ (UNPROVEN).} Every
+    pair in $\mathbf{LifeCat}$ is in $\mathrm{image}(\mathrm{Decomp})$.
+    Follows from N1 plus a verification that the decomposed system
+    remains in $\mathbf{LifeCat}$ (preserves the membership predicate).
+  \item \textbf{Equivalence direction $\supseteq$ (UNPROVEN).} Every
+    object in $\mathrm{image}(\mathrm{Decomp})$ is in
+    $\mathbf{LifeCat}$ when paired with an appropriate observer.
+    Follows from S1 applied per object.
+  \item \textbf{Vitality-profile preservation (UNPROVEN).} The
+    equivalence respects the profile attribute: $(k, \boldsymbol{\sigma})$
+    is the same on both sides of the equivalence. This is the
+    coherence-theorem step.
+\end{enumerate}
+
+\section{Dependencies}
+
+CAT1 should not be attempted before S1 and N1 land. The paper exists
+as a placeholder so the framework's characterisation claim is on
+record and can be cited as a target.
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN. Blocked on S1 and N1.}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

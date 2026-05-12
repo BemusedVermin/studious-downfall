@@ -1,0 +1,86 @@
+% =============================================================================
+%  OP2: FEP-as-lens scope — skeleton paper
+%  STATUS: UNPROVEN. Hardest of the open problems; depends on what
+%          "informative FEP" is committed to mean.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{namedopenproblem}{Open Problem}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{The Scope of the Free Energy Principle as a Parameterisation \\
+       \large (UNPROVEN --- skeleton paper for OP2)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} that records OP2 from the
+scaffolding paper~\cite{emergent_systems_2026}. \textbf{No proof is
+attempted.} OP2 is technically heavy: the answer requires committing
+to a precise meaning of ``informative FEP parameterisation,'' which
+the field has not converged on. The result is UNPROVEN.
+\end{abstract}
+
+\section{Statement (UNPROVEN)}
+
+\begin{quote}
+\emph{``OP2 (FEP-as-lens scope): characterise precisely the
+substrate--dynamics pairs $(X, \Phi)$ for which the FEP is
+informative as a parameterisation of viability and observer slots.''}
+\end{quote}
+\noindent (Scaffolding paper~\cite{emergent_systems_2026},
+\S\texttt{sec:c1}-onward; the open-problem statement is in the
+Conjectures section.)
+
+\section{Plan of attack (no proof attempted)}
+
+Following the proof pattern of Aguilera et
+al.~\cite{aguilera2022particular}:
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{Tractable class restriction (UNPROVEN).} Restrict to
+    weakly-coupled linear / Gaussian-NESS SDEs.
+  \item \textbf{Translate FEP requirements to matrix conditions
+    (UNPROVEN).} ``MB exists'' becomes a block-zero condition on the
+    NESS precision $\Pi$; ``non-trivial variational bound'' becomes
+    a non-degeneracy condition on the synchronisation map.
+  \item \textbf{Codimension computation (UNPROVEN).} Show the
+    simultaneous block-zero + solenoidal constraints cut out a
+    measure-zero submanifold (Aguilera) OR that a relaxation
+    recovers a positive-measure regime (Sakthivadivel; Heins--Da Costa).
+  \item \textbf{Iff statement (UNPROVEN).} Candidate:
+    \emph{$(X, \Phi)$ admits an informative FEP parameterisation iff
+    (i) sparse-causal-coupling-admits-MB regime, (ii) non-degenerate
+    synchronisation manifold, (iii) tractability of the implicit
+    generative model.}
+\end{enumerate}
+
+\section{Connection to N1}
+
+Under the pivot framing, OP2 is the FEP-specialised case of N1: it
+characterises which $\mathcal{O}_W$-presentations admit informative
+FEP parameterisations.
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN.} The hardest of the open problems.
+Requires committing to what ``informative'' means.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

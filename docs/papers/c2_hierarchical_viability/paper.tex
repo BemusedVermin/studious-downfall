@@ -1,0 +1,85 @@
+% =============================================================================
+%  C2: Hierarchical viability composition — skeleton paper
+%  STATUS: UNPROVEN. Known partial counterexample for RAFs.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{namedconjecture}{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{Hierarchical Viability Composition \\
+       \large (UNPROVEN --- skeleton paper for C2)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} that records C2 from the scaffolding
+paper~\cite{emergent_systems_2026}. \textbf{No proof is attempted.}
+A known partial counterexample (unions of RAFs are not always RAFs)
+means the conjecture as stated needs to be refined into a precise
+composition rule before any proof can land. The result is UNPROVEN.
+\end{abstract}
+
+\section{Statement (UNPROVEN)}
+
+\begin{quote}
+\emph{``C2 (hierarchical viability composition): under the entity
+composition rule (E3), each viability formalism in C1 lifts to
+hierarchical entities such that $F^*$-validity at the composite level
+implies $F$-validity of each component.''}
+\end{quote}
+\noindent (Scaffolding paper~\cite{emergent_systems_2026},
+\S\texttt{sec:c2}.)
+
+\section{Plan of attack (no proof attempted)}
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{Resolve the RAF counterexample (UNPROVEN).} Hordijk
+    \& Steel~\cite{hordijk2004raf} showed unions of two RAFs are not
+    in general RAFs. The refined composition rule must require joint
+    catalyses or restrict to subsets where the union is preserved.
+  \item \textbf{Autopoietic case (UNPROVEN).} Beer's gliders compose
+    under simple unions; verifying that the composite-level closure
+    operator is the join of component-level closures is the work.
+  \item \textbf{Markov-blanket case (UNPROVEN).} Palacios et
+    al.~\cite{palacios2020markov} proved Markov-blanket structure is
+    closed under hierarchical nesting. This is essentially C2 for
+    the MB case; citing and translating to the framework's vocabulary
+    is the work.
+  \item \textbf{MCC case (UNPROVEN; depends on C1).} If C1's
+    reformulation of MCC as a closure operator goes through, C2 for
+    MCC follows by a similar union-or-restriction argument.
+  \item \textbf{Categorical statement (UNPROVEN).} The cleanest
+    formulation uses Dikranjan \& Tholen's categorical closure
+    operators; the conjecture is then ``viability is a lax
+    morphism of operad-algebras.''
+\end{enumerate}
+
+\section{Connection to LE}
+
+C2 characterises which compositions of level-$k$ entities are valid
+level-$(k+1)$ entities. It is the post-transition state of LE's
+mechanism (`le_level_emergence/`); the two should be coordinated.
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN.} Depends on C1; coordinate with LE.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

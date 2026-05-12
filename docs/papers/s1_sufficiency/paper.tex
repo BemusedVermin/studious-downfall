@@ -1,0 +1,83 @@
+% =============================================================================
+%  S1: Sufficiency — skeleton paper
+%  STATUS: UNPROVEN. This file is a skeleton; the proof is not attempted here.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{namedconjecture}{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\newcommand{\X}{\mathbf{X}}
+
+\title{Sufficiency of the Four-Slot Framework for $\mathbf{LifeCat}$ Membership \\
+       \large (UNPROVEN --- skeleton paper for S1)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} that records the statement of the
+sufficiency conjecture S1 from the
+scaffolding paper~\cite{emergent_systems_2026} and identifies
+\texttt{l1\_causal\_emergence\_gol/} as the natural concrete witness.
+\textbf{No proof is attempted in this paper as of its current
+revision.} The result is UNPROVEN.
+\end{abstract}
+
+\section{Statement (UNPROVEN)}
+
+\begin{quote}
+\emph{``S1 (sufficiency): there exists a 4-tuple system $\mathcal{S}$ and
+an external observer functor $O$ such that the pair $(\mathcal{S}, O)$
+has vitality profile $(k, \boldsymbol{\sigma})$ with $k \geq 1$, hence
+$(\mathcal{S}, O) \in \mathbf{LifeCat}$.''}
+\end{quote}
+\noindent (Scaffolding paper~\cite{emergent_systems_2026},
+\S\texttt{sec:s1}.)
+
+\section{Plan of attack (no proof attempted)}
+
+Two natural routes.
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{Witness route (UNPROVEN).} Cite the companion paper
+    \texttt{l1\_causal\_emergence\_gol/} (also UNPROVEN). A positive L1
+    result automatically yields a sufficiency witness for S1: the
+    Game-of-Life-under-Markov-blanket system satisfies the three
+    $\mathbf{LifeCat}$ conditions
+    (Definition~\texttt{def:lifecat} of the scaffolding paper).
+  \item \textbf{Abstract route (UNPROVEN).} Construct an
+    $\mathcal{O}_W$-algebra in $\mathbf{Stoch}$ that satisfies the
+    membership predicate by direct construction, without needing the
+    causal-emergence verification to be carried out on a specific
+    finite system.
+\end{enumerate}
+
+Either route discharges S1. The witness route is cheaper and is the
+default plan. The abstract route is a fallback if L1 turns out to be
+obstructed.
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN.} Subsumed by L1 in practice.
+\texttt{RESULTS.md} should track S1 alongside L1 and flip them
+together when the L1 witness lands.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

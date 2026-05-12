@@ -39,10 +39,10 @@ statements and dependencies.
 
 | ID   | Statement (short)                                                              | Paper § | Status | Result paper | Last updated |
 |------|--------------------------------------------------------------------------------|---------|--------|--------------|--------------|
-| S1   | Sufficiency: some 4-tuple system + observer has vitality profile $(k,\sigma)$ with $k \geq 1$ | §sec:s1 | open | — | 2026-05-11 |
-| N1   | Necessity: every life-producing pair decomposes as a 4-tuple system in $\mathrm{Alg}(\mathcal{O}_W)$ | §sec:n1 | open | — | 2026-05-11 |
-| CAT1 | Characterisation: $\mathbf{LifeCat} \simeq \mathrm{image}(\mathrm{Decomp})$    | §sec:cat1 | open | — | 2026-05-11 |
-| LE   | Level emergence: depth-$k$ system transitions to depth $k+1$ iff four conditions hold | §sec:le | open | — | 2026-05-11 |
+| S1   | Sufficiency: some 4-tuple system + observer has vitality profile $(k,\sigma)$ with $k \geq 1$ | §sec:s1 | in-progress | [`docs/papers/s1_sufficiency/`](docs/papers/s1_sufficiency/) (skeleton) | 2026-05-11 |
+| N1   | Necessity: every life-producing pair decomposes as a 4-tuple system in $\mathrm{Alg}(\mathcal{O}_W)$ | §sec:n1 | in-progress | [`docs/papers/n1_necessity/`](docs/papers/n1_necessity/) (skeleton) | 2026-05-11 |
+| CAT1 | Characterisation: $\mathbf{LifeCat} \simeq \mathrm{image}(\mathrm{Decomp})$    | §sec:cat1 | in-progress | [`docs/papers/cat1_characterisation/`](docs/papers/cat1_characterisation/) (skeleton) | 2026-05-11 |
+| LE   | Level emergence: depth-$k$ system transitions to depth $k+1$ iff four conditions hold | §sec:le | in-progress | [`docs/papers/le_level_emergence/`](docs/papers/le_level_emergence/) (skeleton) | 2026-05-11 |
 
 ## Sub-lemma conjectures (pivot-renamed; track under both names)
 
@@ -51,9 +51,9 @@ them as sub-lemmas of `N1`).
 
 | ID (canonical) | Statement (short)                                  | Paper § | Status | Result paper | Last updated |
 |----------------|----------------------------------------------------|---------|--------|--------------|--------------|
-| C1             | Closure-operator unification of viability          | §5.1    | open   | —            | 2026-05-11   |
-| C2             | Hierarchical viability composition                 | §5.1    | open   | —            | 2026-05-11   |
-| C3             | Observer-relative novelty as divergence-functional | §5.1    | open   | —            | 2026-05-11   |
+| C1             | Closure-operator unification of viability          | §5.1    | in-progress | [`docs/papers/c1_closure_unification/`](docs/papers/c1_closure_unification/) (skeleton) | 2026-05-11 |
+| C2             | Hierarchical viability composition                 | §5.1    | in-progress | [`docs/papers/c2_hierarchical_viability/`](docs/papers/c2_hierarchical_viability/) (skeleton) | 2026-05-11 |
+| C3             | Observer-relative novelty as divergence-functional | §5.1    | in-progress | [`docs/papers/c3_observer_divergence/`](docs/papers/c3_observer_divergence/) (skeleton) | 2026-05-11 |
 
 C1', C2', C3' are the pivot-renamed forms of C1, C2, C3 in the post-pivot
 notation. The mathematical statements are unchanged; only the framing is
@@ -67,9 +67,9 @@ Source: scaffolding paper §5.1 (pre-pivot `OP1`–`OP3`). The pivot renames
 
 | ID (canonical) | Question (short)                                                                       | Paper § | Status | Result paper | Last updated |
 |----------------|----------------------------------------------------------------------------------------|---------|--------|--------------|--------------|
-| OP1 (= L1)     | Causal emergence of scaffolded systems: $\sup_\Pi \mathrm{CE}(M(\mathcal{S}),\Pi) > 0$ | §5.1    | open   | —            | 2026-05-11   |
-| OP2            | FEP-as-lens scope: substrate–dynamics pairs for which FEP is informative               | §5.1    | open   | —            | 2026-05-11   |
-| OP3            | Interaction-topology expressiveness: multiplex-with-$\diamond_\rho$ universality       | §5.1    | open   | —            | 2026-05-11   |
+| OP1 (= L1)     | Causal emergence of scaffolded systems: $\sup_\Pi \mathrm{CE}(M(\mathcal{S}),\Pi) > 0$ | §5.1    | in-progress | [`docs/papers/l1_causal_emergence_gol/`](docs/papers/l1_causal_emergence_gol/) (skeleton) | 2026-05-11 |
+| OP2            | FEP-as-lens scope: substrate–dynamics pairs for which FEP is informative               | §5.1    | in-progress | [`docs/papers/op2_fep_scope/`](docs/papers/op2_fep_scope/) (skeleton) | 2026-05-11 |
+| OP3            | Interaction-topology expressiveness: multiplex-with-$\diamond_\rho$ universality       | §5.1    | in-progress | [`docs/papers/op3_topology_universality/`](docs/papers/op3_topology_universality/) (skeleton) | 2026-05-11 |
 
 `L1` is the **first concrete result targeted** by the framework
 post-pivot. A positive `L1` result on Game-of-Life-under-Markov-blanket-

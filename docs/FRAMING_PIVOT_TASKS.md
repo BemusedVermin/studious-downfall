@@ -332,64 +332,62 @@ For the per-file checklist on creating a new result paper, see
 
 ### 5.1 Existence-witness papers
 
-- [ ] **`l1_causal_emergence_gol/`** — Concrete $L_1$ witness on
-  Game of Life under Markov-blanket viability. Lowest-cost first
-  result. Status flip in `RESULTS.md` from `open` to `in-progress`
-  when the directory is created.
-- [ ] **`s1_sufficiency/`** — Full `S1` sufficiency theorem. May
-  depend on `L1` landing first; can also be written abstractly
-  using the LifeCat membership conditions.
+- [x] **`l1_causal_emergence_gol/`** — *Skeleton created
+  2026-05-11.* Concrete $L_1$ witness on Game of Life under
+  Markov-blanket viability. Status flipped in `RESULTS.md` to
+  `in-progress` (skeleton). Proof is UNPROVEN; plan-of-attack in
+  `paper.tex` §3.
+- [x] **`s1_sufficiency/`** — *Skeleton created 2026-05-11.*
+  Subsumed in practice by `L1`. Plan: cite L1's witness as the
+  sufficiency proof, or construct an abstract witness.
 
 ### 5.2 Necessity / characterisation papers
 
-- [ ] **`n1_necessity/`** — `N1` necessity theorem. Includes the
-  construction of the Decomp functor. Likely the longest of the
-  papers; share machinery with `op3_topology_universality/`.
-- [ ] **`cat1_characterisation/`** — `CAT1` characterisation
-  (LifeCat $\simeq$ image of Decomp). Depends on `S1` and `N1`.
+- [x] **`n1_necessity/`** — *Skeleton created 2026-05-11.* The
+  load-bearing object is the $\mathrm{Decomp}$ functor; proof
+  reduces to Yau's finite generator presentation. UNPROVEN.
+- [x] **`cat1_characterisation/`** — *Skeleton created 2026-05-11.*
+  Blocked on S1 and N1; largely a coherence theorem once those
+  land.
 
 ### 5.3 Conjecture papers
 
-- [ ] **`c1_closure_unification/`** — Closure-operator unification
-  of the four viability formalisms (Markov blanket, autopoietic,
-  RAF, MCC). Two cases (autopoietic, RAF) already mostly proved
-  in literature (Beer; Hordijk-Steel); MCC is the novel piece.
-- [ ] **`c2_hierarchical_viability/`** — Hierarchical viability
-  composition. Known partial counterexample for RAFs needs
-  resolution.
-- [ ] **`c3_observer_divergence/`** — Observer divergence-functional
-  schema. Plausibly the easiest of the lemmas.
-- [ ] **`le_level_emergence/`** — `LE` conjecture proper. Four
-  sub-lemmas (persistence, aggregation, group variation, group
-  selection) form the body.
+- [x] **`c1_closure_unification/`** — *Skeleton created 2026-05-11.*
+  Four sub-cases listed: RAF (citable), autopoietic (citable),
+  Markov-blanket (open), MCC (novel). UNPROVEN.
+- [x] **`c2_hierarchical_viability/`** — *Skeleton created
+  2026-05-11.* Known partial counterexample for RAFs flagged.
+  Coordinate with LE. UNPROVEN.
+- [x] **`c3_observer_divergence/`** — *Skeleton created 2026-05-11.*
+  Plausibly easiest lemma. Reid-Williamson-style unification.
+  UNPROVEN.
+- [x] **`le_level_emergence/`** — *Skeleton created 2026-05-11.*
+  Four sub-lemmas. Maynard Smith & Szathmáry as biological
+  precedent. UNPROVEN.
 
 ### 5.4 Open-problem papers
 
-- [ ] **`op2_fep_scope/`** — FEP scope characterisation. Following
-  the Aguilera et al. 2022 / Heins–Da Costa 2022 proof pattern.
-- [ ] **`op3_topology_universality/`** — Operadic universality of
-  multiplex topology. Vagner-Spivak-Lerman + Yau machinery;
-  coordinate with `n1_necessity/`.
+- [x] **`op2_fep_scope/`** — *Skeleton created 2026-05-11.* Aguilera
+  et al. proof pattern. Hardest open problem. UNPROVEN.
+- [x] **`op3_topology_universality/`** — *Skeleton created
+  2026-05-11.* Coordinate with `n1_necessity/`. UNPROVEN.
 
 ### 5.5 Worked-example / methodology papers
 
-- [ ] **`programmatic_life_decomposition/`** — Specialise the
-  Decomp functor on a Tierra-arms-race fragment, exhibit the
-  four slots, report vitality profile $(2, (1, 1))$. The cheapest
-  demonstration that the "programmatic life is the same theorem"
-  claim is auditable.
-- [ ] **`cultural_life_decomposition/`** — Specialise Decomp on a
-  small slice of linguistic evolution (Great Vowel Shift or a
-  meme cycle). Deepest test of the predictive thesis.
-- [ ] **`vitality_profile_methodology/`** — Methodology paper
-  documenting the computational algorithm of
-  `vitality_computation.md` for an external research audience.
-  Includes the validation suite of canonical systems.
-- [ ] **`horizontal_composition_formalisation/`** — Formal
-  treatment of $\boxtimes_\kappa$ as the monoidal product of
-  $\mathbf{Sys}$, including the $\sigma$-uplift formula and the
-  three coupling cases. Could be folded into `n1_necessity/`
-  rather than written separately.
+- [x] **`programmatic_life_decomposition/`** — *Skeleton created
+  2026-05-11.* Tierra-arms-race fragment, vitality profile
+  $(2, (1, 1))$ target. UNPROVEN; depends on N1 + methodology.
+- [x] **`cultural_life_decomposition/`** — *Skeleton created
+  2026-05-11.* Linguistic-evolution slice, vitality profile
+  $(3, (1, 1, 1))$ or deeper target. UNPROVEN; deepest test of
+  the predictive thesis.
+- [x] **`vitality_profile_methodology/`** — *Skeleton created
+  2026-05-11.* Methodology paper for the vitality-profile
+  computation algorithm. UNPROVEN; depends on
+  `vitality.py` implementation.
+- [x] **`horizontal_composition_formalisation/`** — *Skeleton
+  created 2026-05-11.* Optional standalone target; may be folded
+  into `n1_necessity/`. UNPROVEN.
 
 ### 5.6 Ordering and dependencies
 

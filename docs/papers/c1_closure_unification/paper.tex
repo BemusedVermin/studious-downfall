@@ -1,0 +1,88 @@
+% =============================================================================
+%  C1: Closure-operator unification of viability — skeleton paper
+%  STATUS: UNPROVEN. Two cases partially proven in literature; MCC novel.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{namedconjecture}{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{Closure-operator Unification of the Four Viability Formalisms \\
+       \large (UNPROVEN --- skeleton paper for C1)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} that records C1 from the scaffolding
+paper~\cite{emergent_systems_2026}. \textbf{No proof is attempted.}
+Two of the four cases (autopoietic, RAF) are mostly proven in the
+literature; the Markov-blanket case is genuinely open; the MCC case
+requires a novel reformulation. The result is UNPROVEN.
+\end{abstract}
+
+\section{Statement (UNPROVEN)}
+
+\begin{quote}
+\emph{``C1 (closure-operator unification of viability): each of the
+four viability formalisms --- Markov-blanket viability, autopoietic
+closure, RAF set membership, and MCC --- corresponds to a closure
+operator $c_\bullet$ on a partial order of supporting sets, in the
+sense that an entity passes the filter iff its supporting set is
+closed under $c_\bullet$.''}
+\end{quote}
+\noindent (Scaffolding paper~\cite{emergent_systems_2026},
+\S\texttt{sec:c1}.)
+
+\section{Plan of attack (no proof attempted)}
+
+Four sub-cases, in order of difficulty.
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{RAF case (mostly proven in literature).} The RAF
+    property is exactly closure under reflexive autocatalysis and
+    food-generation. Hordijk \& Steel's polynomial-time
+    algorithm~\cite{hordijk2004raf} is a Kleene-iteration to the
+    greatest fixed point. The closure operator is
+    $c_{\mathrm{RAF}}(R) = R \cup \{r : r \text{ catalysed and reactants in } R\}$.
+    Citing this is the work.
+  \item \textbf{Autopoietic case (mostly proven in literature).}
+    Beer's formalisation of Game-of-Life
+    gliders~\cite{beer2014glider,beer2015autopoiesis} uses preimage-
+    closure on the reaction network. Translating to the closure-
+    operator vocabulary is the work.
+  \item \textbf{Markov-blanket case (UNPROVEN; genuinely open).}
+    Sparse-coupling implies blanket structure only under additional
+    conditions. The closure operator (if it exists) is not obvious.
+    Heins \& Da Costa's conditions are the closest existing
+    formalisation.
+  \item \textbf{MCC case (UNPROVEN; novel work required).} The minimal
+    criterion is a predicate, not obviously a closure. The proposed
+    reformulation is ``smallest set of solver-and-problem pairs
+    satisfying mutual qualification.'' Verifying this is a genuine
+    closure operator is the load-bearing novel work.
+\end{enumerate}
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN.} Two cases citable, two cases open.
+A proof of C1 simplifies the construction of the $\mathrm{Decomp}$
+functor in `n1_necessity/`.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

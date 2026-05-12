@@ -1,0 +1,80 @@
+% =============================================================================
+%  Programmatic-life decomposition — skeleton paper
+%  STATUS: UNPROVEN. Worked-example paper exhibiting Decomp on Tierra.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{Programmatic Life as a Theorem Instance: \\
+       Decomposition of Tierra under $\mathrm{Decomp}$ \\
+       \large (UNPROVEN --- skeleton paper)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} for a worked-example paper that
+specialises the decomposition functor $\mathrm{Decomp}$
+(\texttt{n1\_necessity/}) on an active Tierra arms-race fragment,
+exhibits the four slots concretely, and reports vitality profile
+$(2, (1, 1))$. \textbf{No proof is attempted.} The exhibition
+requires N1's Decomp construction to be complete first. The result is
+UNPROVEN.
+\end{abstract}
+
+\section{Goal (UNPROVEN)}
+
+Exhibit, for a specific Tierra-arms-race fragment, the four-slot
+system $(\X, V, F, T) \in \mathbf{Sys}$ that the decomposition
+functor $\mathrm{Decomp}$ produces, and verify that its vitality
+profile is $(2, (1, 1))$. This is the operational realisation of the
+framework's predictive thesis: programmatic life and biological life
+at the same vitality profile become the same categorical object
+(\texttt{cat1\_characterisation/}).
+
+\section{Plan of attack (no proof attempted)}
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{Choose the fragment (UNPROVEN).} Pick a specific
+    Tierra run with host, parasite, and hyperparasite lineages
+    active. Bound the configuration: fixed memory size, fixed
+    instruction set, fixed mutation rate.
+  \item \textbf{Present as $\mathcal{O}_W$-algebra (UNPROVEN).}
+    Encode the simulation as an algebra of wiring diagrams; the
+    boxes are programs, the wires are memory-address dependencies.
+  \item \textbf{Apply $\mathrm{Decomp}$ (UNPROVEN; needs N1).}
+    Exhibit the four-slot system $(\X, V, F, T)$ produced by the
+    functor. Compare against the descriptive Tierra slot reading
+    given in the scaffolding paper.
+  \item \textbf{Compute vitality profile (UNPROVEN; needs
+    \texttt{vitality\_profile\_methodology/}).} Apply the algorithm
+    of \texttt{vitality\_computation.md} and verify $(k, \sigma) =
+    (2, (1, 1))$ during the arms-race phase, $(2, (1, 0))$ after
+    stabilisation.
+\end{enumerate}
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN.} Depends on N1 and on the
+methodology paper. Once both land, this paper is the cheapest
+empirical demonstration that the framework's predictive thesis is
+operationally cashed out.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

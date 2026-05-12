@@ -1,0 +1,89 @@
+% =============================================================================
+%  OP3: Operadic universality of interaction topology — skeleton paper
+%  STATUS: UNPROVEN. Shares machinery with N1.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{namedopenproblem}{Open Problem}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{Operadic Universality of Multiplex Interaction Topology \\
+       \large (UNPROVEN --- skeleton paper for OP3)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} that records OP3 from the
+scaffolding paper~\cite{emergent_systems_2026}. \textbf{No proof is
+attempted.} OP3 shares machinery with N1 (both use the operad of
+wiring diagrams) and should be developed jointly. The result is
+UNPROVEN.
+\end{abstract}
+
+\section{Statement (UNPROVEN)}
+
+\begin{quote}
+\emph{``OP3 (interaction-topology expressiveness): is the
+multiplex-with-$\diamond_\rho$ formalism universal in the operad of
+wiring diagrams~\cite{vagner2015algebras}, in the sense that every
+countably-many-layer multi-coupling-regime variation kernel factors
+through a wiring-diagram presentation?''}
+\end{quote}
+\noindent (Scaffolding paper~\cite{emergent_systems_2026},
+Conjectures section.)
+
+\section{Plan of attack (no proof attempted)}
+
+A two-stage Vagner--Spivak--Lerman / Yau-style proof, following the
+sketch in \texttt{proof\_techniques.md} §OP3.
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{Define $\mathcal{O}_W^{\mathrm{multi}}$ (UNPROVEN).}
+    A coloured symmetric operad whose colours are pairs $(X,
+    \mathcal{M}_+(X))$, operations are weighted hyperedge wiring
+    diagrams with layer labels, composition is concatenation modulo
+    associativity.
+  \item \textbf{$W$-algebra on $V_T$ (UNPROVEN).} The candidate
+    algebra sends each colour to the set of variation kernels and
+    each operation to the $V_T$ construction implemented in the
+    scaffolding paper §\texttt{sec:vt}.
+  \item \textbf{Generator factorisation (UNPROVEN).} Every
+    multiplex-with-$\diamond_\rho$ kernel factors through Yau's
+    generators (identity, single hyperedge, layer-mixture,
+    $\rho$-fusion). Verify by case analysis.
+  \item \textbf{Scope conditions (UNPROVEN).} State conditions
+    explicitly: countable layer index, measurable coupling rules,
+    symmetric $\rho$, no higher-order coupling. Some of these are
+    natural restrictions; others may need a non-symmetric operad
+    upgrade.
+\end{enumerate}
+
+\section{Coordination with N1}
+
+OP3 and N1 share the operadic machinery. The Decomp functor of N1
+should be constructed on $\mathcal{O}_W^{\mathrm{multi}}$ rather than
+on plain $\mathcal{O}_W$. Develop the two papers in lockstep.
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN.} Develop alongside
+`n1_necessity/`.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

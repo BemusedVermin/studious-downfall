@@ -1,0 +1,73 @@
+% =============================================================================
+%  Horizontal composition formalisation — skeleton paper
+%  STATUS: UNPROVEN. Could be folded into N1 rather than written separately.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{Horizontal Composition $\boxtimes_\kappa$ as the Monoidal Product \\
+       of $\mathbf{Sys}$, with $\sigma$-Uplift Formula \\
+       \large (UNPROVEN --- skeleton paper)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} for a formal treatment of
+$\boxtimes_\kappa$ as the monoidal product of $\mathbf{Sys}$, with
+the precise $\sigma$-uplift formula across the three coupling cases
+(trivial, one-way, mutual). \textbf{No proof is attempted.} The paper
+exists as an optional standalone target; the content may
+alternatively be folded into \texttt{n1\_necessity/} when that paper
+develops the monoidal structure of $\mathbf{Sys}$. The result is
+UNPROVEN.
+\end{abstract}
+
+\section{Goal (UNPROVEN)}
+
+Formal treatment of horizontal composition. Three main lemmas:
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{$\boxtimes_\kappa$ is monoidal (UNPROVEN).} Verify
+    the SMC axioms (associator, unitor, symmetry, hexagon, pentagon)
+    on the substrate-composition operator. Most of this is in the
+    scaffolding paper §3.3; making it precise in the SMC vocabulary
+    is the work.
+  \item \textbf{$\sigma$-uplift formula (UNPROVEN).} For two systems
+    $\mathcal{S}_1, \mathcal{S}_2$ at common depth $k$ with profiles
+    $(k, \boldsymbol{\sigma}_1)$ and $(k, \boldsymbol{\sigma}_2)$,
+    the composite $\mathcal{S}_1 \boxtimes_\kappa \mathcal{S}_2$ has
+    $\sigma_i$ at each level $i$ given by a formula in $\sigma_i^{(1)},
+    \sigma_i^{(2)}$, and the coupling structure $\kappa$. The
+    scaffolding paper §\texttt{sec:horizontal} gives the three cases
+    informally; this paper makes them precise.
+  \item \textbf{Three coupling cases (UNPROVEN).} Verify the
+    saturation-at-1 behaviour for trivial / one-way / mutual
+    coupling; in particular, that mutual coupling can manufacture
+    $\sigma$ at the shared level.
+\end{enumerate}
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN.} May be folded into
+\texttt{n1\_necessity/}; alternatively published standalone for
+operadic-theory audiences.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

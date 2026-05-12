@@ -1,0 +1,83 @@
+% =============================================================================
+%  Vitality-profile methodology — skeleton paper
+%  STATUS: UNPROVEN. Methodology paper; algorithmic exposition.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{Computing the Vitality Profile $(k, \boldsymbol{\sigma})$: \\
+       Algorithm, Implementation, and Validation \\
+       \large (DRAFT --- skeleton methodology paper)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} for a methodology paper presenting
+the algorithm for computing the vitality profile $(k, \boldsymbol{\sigma})$
+on a \texttt{System} instance, following the algorithmic
+specification in \texttt{docs/vitality\_computation.md}. \textbf{No
+proof is attempted in the conjecture sense; the methodology itself is
+an exposition of an unproven algorithm rather than a mathematical
+theorem.} The paper is the operational complement to the framework's
+predictive thesis.
+\end{abstract}
+
+\section{Goal (UNPROVEN-as-validated)}
+
+Present the vitality-profile algorithm in publishable form, with
+sufficient detail for an external researcher to implement it and to
+validate it against the regression-test cases in
+\texttt{vitality\_computation.md} (hurricane $\to (0, ())$,
+converged GA $\to (1, (0))$, active Tierra $\to (2, (1, 1))$, etc.).
+
+\section{Plan of attack (no proof attempted)}
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{Algorithm exposition (UNPROVEN).} Present Stage 1
+    (detect $k$ recursively), Stage 2 (measure $\sigma_i$ via
+    conditional transfer entropy), Stage 3 (composite systems via
+    $\boxtimes_\kappa$), Stage 4 (cross-system comparison machinery),
+    and Stage 5 (level-transition detection). The current draft of
+    \texttt{vitality\_computation.md} is the source.
+  \item \textbf{Implementation reference (UNPROVEN).} Describe the
+    \texttt{vitality.py} module (pending, see
+    \texttt{FRAMING\_PIVOT\_TASKS.md} Part 2 C-5) and how it composes
+    existing primitives from \texttt{emergence.py},
+    \texttt{entity.py}, \texttt{viability.py}, \texttt{observer.py}.
+  \item \textbf{Empirical validation (UNPROVEN).} Run the algorithm
+    on the regression-test fixtures. Verify that the verdicts match
+    the structural predictions. Where they disagree, identify
+    estimator-vs-truth discrepancies vs.\ algorithm errors.
+  \item \textbf{Methodology comparison (UNPROVEN).} Compare with
+    existing ALife methodology: Phi-ID, Wolfram classes,
+    open-endedness metrics. Where the vitality profile gives a
+    different verdict, explain the disagreement structurally.
+\end{enumerate}
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN (as a publishable methodology paper).}
+The algorithmic spec exists; the implementation is pending; the
+empirical validation requires the implementation to land first. This
+paper is the empirical-research-audience-facing exposition once
+those pieces are in place.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

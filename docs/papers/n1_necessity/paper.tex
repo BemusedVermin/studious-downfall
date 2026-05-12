@@ -1,0 +1,101 @@
+% =============================================================================
+%  N1: Necessity — skeleton paper
+%  STATUS: UNPROVEN. This file is a skeleton; the proof is not attempted here.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{namedconjecture}{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\newcommand{\X}{\mathbf{X}}
+
+\title{Necessity of the Four-Slot Decomposition for Life-Producing Systems \\
+       \large (UNPROVEN --- skeleton paper for N1)}
+\author{Liam McGuire\thanks{Unaffiliated researcher, Seattle, USA. liammcg44@gmail.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper is a \textbf{skeleton} that records the statement of the
+necessity conjecture N1 from the scaffolding
+paper~\cite{emergent_systems_2026}, identifies the load-bearing
+object (the decomposition functor $\mathrm{Decomp}$), and sketches the
+operadic proof strategy. \textbf{No proof is attempted in this paper
+as of its current revision.} The result is UNPROVEN.
+
+N1 is the hardest of the framework's top-level conjectures. It
+requires a constructive decomposition of arbitrary
+$\mathcal{O}_W$-algebras into four-slot form, with proven essential
+surjectivity on observer-observable behaviour.
+\end{abstract}
+
+\section{Statement (UNPROVEN)}
+
+\begin{quote}
+\emph{``N1 (necessity): for every life-producing pair
+$(\mathcal{S}', O)$ in which $\mathcal{S}'$ is presentable as an
+$\mathcal{O}_W$-algebra $A: \mathcal{O}_W \to \mathbf{Stoch}$,
+there exists a 4-tuple system $\mathcal{S} = (\X, V, F, T)
+\in \mathbf{Sys}$ and a slot-preserving morphism
+$\mathcal{S} \to \mathcal{S}'$ that is essentially surjective on
+$O$-observable behaviour.''}
+\end{quote}
+\noindent (Scaffolding paper~\cite{emergent_systems_2026},
+\S\texttt{sec:n1}.)
+
+\section{Plan of attack (no proof attempted)}
+
+\begin{enumerate}[leftmargin=2em,itemsep=4pt]
+  \item \textbf{Define $\mathrm{Decomp}$ (UNPROVEN).} Construct a
+    decomposition functor
+    $\mathrm{Decomp}: \mathrm{Alg}(\mathcal{O}_W) \to \mathbf{Sys}^{4\text{-slot}}$
+    that takes an $\mathcal{O}_W$-algebra and returns a four-slot
+    system. The construction must respect the operad's composition
+    structure.
+  \item \textbf{Generator check (UNPROVEN).} Apply Yau's finite-
+    presentation theorem~\cite{yau2018operads} for $\mathcal{O}_W$
+    (8 generators, 28 relations for the directed case; 6/17 for the
+    undirected variant). Verify that $\mathrm{Decomp}$ respects each
+    generator's action and each relation.
+  \item \textbf{Essential surjectivity (UNPROVEN).} Prove that for
+    every life-producing pair, $\mathrm{Decomp}$ produces a 4-slot
+    system whose $O$-observable behaviour matches. This is the
+    behaviour-preserving condition the framework actually needs.
+  \item \textbf{Specialisation cases (UNPROVEN).} Instantiate
+    $\mathrm{Decomp}$ for at least three canonical examples: a cell
+    (chemical reaction network presentation), an immune-system
+    trajectory (finite-state Markov chain presentation), and an
+    ecological food web (coupled multi-substrate presentation).
+\end{enumerate}
+
+\section{Coordination}
+
+N1 shares machinery with `op3_topology_universality/` (both invoke
+the operad of wiring diagrams) and depends on `c1_closure_unification/`
+to make $\mathrm{Decomp}$ canonical on the viability side. The three
+papers should be developed together.
+
+\section{Status and follow-up}
+
+\textbf{Current status: UNPROVEN.} \texttt{RESULTS.md} records N1 as
+\texttt{open}. Likely the longest of the result papers; expect
+substantial categorical machinery.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
