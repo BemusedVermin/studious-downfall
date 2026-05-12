@@ -8,8 +8,8 @@
 % ---------- Encoding & fonts ----------
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-% \usepackage{lmodern}  % Optional; uncomment if you have lmodern installed (most full TeX distributions do).
-\usepackage[expansion=false]{microtype}  % drop "expansion=false" if you have lmodern or another scalable font
+\usepackage{lmodern}  % scalable font; required for microtype's font expansion
+\usepackage{microtype}  % full microtype: protrusion + expansion clears most Underfull/Overfull \hbox
 
 % ---------- Math ----------
 \usepackage{amsmath, amssymb, amsthm, mathtools}
